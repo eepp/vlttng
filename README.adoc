@@ -5,9 +5,9 @@ vlttng
 testing specific versions of the
 http://lttng.org/[LTTng] projects. The
 http://lttng.org/[Babeltrace],
-http://liburcu.org/[Userspace RCU], and
-https://github.com/lttng/lttng-analyses[LTTng-analyses] projects
-are also supported.
+http://liburcu.org/[Userspace RCU],
+https://github.com/lttng/lttng-analyses[LTTng-analyses], and
+http://tracecompass.org/[Trace Compass] projects are also supported.
 
 
 == Installing
@@ -103,6 +103,9 @@ The following standard profiles are shipped with the project:
     lttng-ust-stable-2.6
     lttng-ust-stable-2.7
     lttng-ust-stable-2.8
+    tracecompass-1.1.0
+    tracecompass-1.2.0
+    tracecompass-1.2.1
     urcu-master
     urcu-stable-0.7
     urcu-stable-0.8
@@ -150,6 +153,7 @@ A few things to note here:
 ** `lttng-ust`
 ** `lttng-modules`
 ** `lttng-analyses`
+** `tracecompass` (only HTTP/FTP tarball sources are supported)
 ** `babeltrace`
 * The `build-env` property of a specific project defines environment variables
   to be used only during the build stage of this project. A project-specific

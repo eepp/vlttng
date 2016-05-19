@@ -170,6 +170,10 @@ class _Runner:
         cmd = 'mkdir --verbose -p {}'.format(shlex.quote(path))
         self.run(cmd)
 
+    def ln_s(self, target, link):
+        cmd = 'ln -s {} {}'.format(shlex.quote(target), shlex.quote(link))
+        self.run(cmd)
+
     def tar_x(self, path, output_name):
         cmd = 'tar -xvf {} -C {} --strip-components=1'.format(shlex.quote(path),
                                                               shlex.quote(output_name))
@@ -218,6 +222,10 @@ class _Paths:
         return os.path.join(self._venv, 'usr')
 
     @property
+    def bin(self):
+        return os.path.join(self.usr, 'bin')
+
+    @property
     def lib(self):
         return os.path.join(self.usr, 'lib')
 
@@ -247,6 +255,8 @@ class VEnvCreator:
 
         self._runner.mkdir_p(self._paths.venv)
         self._runner.mkdir_p(self._paths.home)
+        self._runner.mkdir_p(self._paths.bin)
+        self._runner.mkdir_p(self._paths.lib)
 
         # fetch sources and extract/checkout
         _pinfo('Fetch sources')
@@ -269,6 +279,9 @@ class VEnvCreator:
 
         # build LTTng-analyses
         self._build_lttng_analyses()
+
+        # build Trace Compass
+        self._build_tracecompass()
 
         # create activate script
         self._create_activate()
@@ -410,3 +423,11 @@ class VEnvCreator:
             self._runner.setuppy_install()
 
         self._build_project('lttng-analyses', build)
+
+    def _build_tracecompass(self):
+        def build(project):
+            target = os.path.join(self._paths.project_src('tracecompass'), 'tracecompass')
+            link = os.path.join(self._paths.bin, 'tracecompass')
+            self._runner.ln_s(target, link)
+
+        self._build_project('tracecompass', build)

@@ -237,6 +237,7 @@ def _validate_projects(projects):
         'lttng-analyses',
         'babeltrace',
         'urcu',
+        'tracecompass',
     )
 
     for name in projects:
@@ -254,6 +255,9 @@ def _validate_projects(projects):
         if '--enable-python-bindings' not in projects['babeltrace'].configure:
             raise InvalidProfile('--enable-python-bindings option of "babeltrace" project is needed by "lttng-analyses" project')
 
+    if 'tracecompass' in projects:
+        if type(projects['tracecompass'].source) is GitSource:
+            raise InvalidProfile('Only HTTP/FTP tarballs are supported for "tracecompass" project')
 
 def _merge_nodes(base, patch):
     if isinstance(base, dict) and isinstance(patch, dict):
