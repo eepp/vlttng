@@ -123,8 +123,15 @@ projects:
 A few things to note here:
 
 * The root `env` property defines the base environment variables. They
-  exist when building the projects, as well as when activating the
-  virtual environment.
+  are set when building the projects, as well as when activating the
+  virtual environment. Exported shell variables are also passed to the
+  executed programs, so you can do:
++
+    CC=clang CFLAGS='-O0 -g3' vlttng ...
++
+but those environment variables **won't be set** when activating the
+virtual environment.
+
 * The only available project names, as of this version, are `urcu`,
   `lttng-tools`, `lttng-ust`, `lttng-modules`, and `babeltrace`.
 * The `build-env` property of a specific project defines environment variables
