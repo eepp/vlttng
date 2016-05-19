@@ -170,8 +170,9 @@ class _Runner:
         cmd = 'mkdir --verbose -p {}'.format(shlex.quote(path))
         self.run(cmd)
 
-    def tar_x(self, path):
-        cmd = 'tar -xvf {}'.format(shlex.quote(path))
+    def tar_x(self, path, output_name):
+        cmd = 'tar -xvf {} -C {} --strip-components=1'.format(shlex.quote(path),
+                                                              shlex.quote(output_name))
         self.run(cmd)
 
     def bootstrap(self):
@@ -226,10 +227,6 @@ class _Paths:
 
     def project_src(self, name):
         return os.path.join(self.src, name)
-
-
-def _name_from_archive_name(archive_name):
-    return re.sub('\.(?:tar|zip|tgz).*', '', archive_name)
 
 
 class VEnvCreator:
@@ -320,14 +317,16 @@ class VEnvCreator:
             src_path = None
 
             if type(source) is vlttng.profile.HttpFtpSource:
+                src_path = project.name
+
                 # download
                 posix_path = PurePosixPath(source.url)
                 filename = posix_path.name
-                src_path = _name_from_archive_name(filename)
                 self._runner.wget(source.url, filename)
 
                 # extract
-                self._runner.tar_x(filename)
+                self._runner.mkdir_p(self._paths.project_src(project.name))
+                self._runner.tar_x(filename, project.name)
             elif type(source) is vlttng.profile.GitSource:
                 src_path = project.name
 
