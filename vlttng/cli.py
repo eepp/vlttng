@@ -168,8 +168,6 @@ def run():
     try:
         vlttng.venv.VEnvCreator(args.path, profile, args.verbose, args.jobs)
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         perror('Unexpected error: {}'.format(e))
 
 
