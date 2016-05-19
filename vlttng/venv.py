@@ -175,6 +175,10 @@ class _Paths:
         return self._venv
 
     @property
+    def home(self):
+        return os.path.join(self._venv, 'home')
+
+    @property
     def usr(self):
         return os.path.join(self._venv, 'usr')
 
@@ -207,6 +211,7 @@ class VEnvCreator:
             perror('Virtual environment path "{}" exists'.format(self._paths.venv))
 
         self._runner.mkdir_p(self._paths.venv)
+        self._runner.mkdir_p(self._paths.home)
 
         # fetch sources and extract/checkout
         _pinfo('Fetch sources')
@@ -242,6 +247,7 @@ class VEnvCreator:
             'LD_LIBRARY_PATH',
             'MANPATH',
             'PYTHONPATH',
+            'LTTNG_HOME',
             'PS1',
         )
 

@@ -86,6 +86,11 @@ fi
 unset _vlttng_python_root
 unset _vlttng_python_packages
 
+# Set new $LTTNG_HOME
+_VLTTNG_OLD_LTTNG_HOME="$LTTNG_HOME"
+LTTNG_HOME="$VLTTNG/home"
+export LTTNG_HOME
+
 if [ -n "$_vlttng_modules_src" ]; then
     if [ "$VLTTNG_NO_RMMOD" != 1 ]; then
         # First, unload the probes
