@@ -93,13 +93,18 @@ class Project:
 
 
 class Profile:
-    def __init__(self, env, projects):
-        self._env = env
+    def __init__(self, virt_env, build_env, projects):
+        self._virt_env = virt_env
+        self._build_env = build_env
         self._projects = projects
 
     @property
-    def env(self):
-        return self._env
+    def virt_env(self):
+        return self._virt_env
+
+    @property
+    def build_env(self):
+        return self._build_env
 
     @property
     def projects(self):
@@ -202,7 +207,7 @@ def _merge_envs(enva, envb):
     return env
 
 
-def _project_from_project_node(name, project_node, base_env):
+def _project_from_project_node(name, project_node, base_build_env):
     source = _source_from_project_node(project_node)
     configure = ''
     build_env = {}
@@ -217,9 +222,9 @@ def _project_from_project_node(name, project_node, base_env):
         build_env_node = project_node['build-env']
 
         if build_env_node is not None:
-            build_env = _merge_envs(base_env, build_env_node)
+            build_env = _merge_envs(base_build_env, build_env_node)
     else:
-        build_env = copy.deepcopy(base_env)
+        build_env = copy.deepcopy(base_build_env)
 
     return Project(name, source, configure, build_env)
 
@@ -274,7 +279,8 @@ def _from_yaml_files(paths, ignored_projects, overrides, verbose):
         print(yaml.dump(root_node, explicit_start=True, explicit_end=True,
                         indent=2, default_flow_style=False))
 
-    base_env = root_node.get('env', {})
+    build_env = root_node.get('build-env', {})
+    virt_env = root_node.get('virt-env', {})
     projects = {}
 
     for name, project_node in root_node['projects'].items():
@@ -284,12 +290,12 @@ def _from_yaml_files(paths, ignored_projects, overrides, verbose):
         if project_node is None:
             continue
 
-        project = _project_from_project_node(name, project_node, base_env)
+        project = _project_from_project_node(name, project_node, build_env)
         projects[name] = project
 
     _validate_projects(projects)
 
-    return Profile(base_env, projects)
+    return Profile(virt_env, build_env, projects)
 
 
 def from_yaml_files(paths, ignored_projects, overrides, verbose):

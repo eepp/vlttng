@@ -239,7 +239,7 @@ class VEnvCreator:
         from vlttng.activate_template import activate_template
 
         env_items = []
-        env = copy.deepcopy(self._profile.env)
+        env = copy.deepcopy(self._profile.virt_env)
         _patch_env(env, self._paths)
         rm_keys = (
             'VLTTNG',

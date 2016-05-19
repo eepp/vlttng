@@ -102,8 +102,11 @@ The following standard profiles are shipped with the project:
 Profiles are written in YAML. Here is an example:
 
 [source,yaml]
-env:
+build-env:
   CFLAGS: -O0 -g3
+virt-env:
+  ENABLE_FEATURE: '1'
+  SOME_PATH: /path/to/omg
 projects:
   lttng-tools:
     source: 'git://git.lttng.org/lttng-tools.git'
@@ -122,17 +125,17 @@ projects:
 
 A few things to note here:
 
-* The root `env` property defines the base environment variables. They
-  are set when building the projects, as well as when activating the
-  virtual environment. Exported shell variables are also passed to the
-  executed programs, so you can do:
+* The root `build-env` property defines the base build environment
+  variables. They are set when building the projects. Exported shell
+  variables are also passed to the executed programs, so you can do:
 +
     CC=clang CFLAGS='-O0 -g3' vlttng ...
-+
-but those environment variables **won't be set** when activating the
-virtual environment.
 
-* The only available project names, as of this version, are:
+* The root `virt-env` property defines the virtual environment variables,
+  which are set when activating the virtual environment. Exported
+  shell variables, when invoking `vlttng`, are _not_ set when activating
+  the resulting virtual environment.
+* The available project names, as of this version, are:
 ** `urcu`
 ** `lttng-tools`
 ** `lttng-ust`
@@ -140,8 +143,8 @@ virtual environment.
 ** `babeltrace`
 * The `build-env` property of a specific project defines environment variables
   to be used only during the build stage of this project. A project-specific
-  environment variable overrides a base environment variable sharing its
-  name.
+  environment variable overrides a base build environment variable
+  sharing its name.
 * When the `source` property contains a Git URL, the `checkout` property
   indicates which branch, tag, or commit to check out. When it's not
   specified, the `master` branch is checked out.
@@ -162,7 +165,7 @@ properties are created; existing ones are replaced recursively. The
 profile (call it `more.yaml`) to the example above:
 
 [source,yaml]
-env:
+build-env:
   CFLAGS: -O0
   SOMEVAR: ok
 projects:
@@ -178,7 +181,7 @@ With this command:
 the effective profile is:
 
 [source,yaml]
-env:
+build-env:
   CFLAGS: -O0
   SOMEVAR: ok
 projects:
@@ -225,7 +228,7 @@ Example:
 
     -o projects.lttng-tools.configure+=--disable-bin-lttng-relayd \
     -o '!projects.lttng-ust.checkout' \
-    -o env.CC=clang
+    -o build-env.CC=clang
 
 In replace and append modes, the property is created if it does not
 exist. This allows you to create projects on the command-line:
