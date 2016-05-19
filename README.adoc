@@ -132,8 +132,12 @@ A few things to note here:
 but those environment variables **won't be set** when activating the
 virtual environment.
 
-* The only available project names, as of this version, are `urcu`,
-  `lttng-tools`, `lttng-ust`, `lttng-modules`, and `babeltrace`.
+* The only available project names, as of this version, are:
+** `urcu`
+** `lttng-tools`
+** `lttng-ust`
+** `lttng-modules`
+** `babeltrace`
 * The `build-env` property of a specific project defines environment variables
   to be used only during the build stage of this project. A project-specific
   environment variable overrides a base environment variable sharing its
