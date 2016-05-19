@@ -67,12 +67,10 @@ _VLTTNG_OLD_MANPATH="$MANPATH"
 MANPATH="$VLTTNG/usr/share/man:$MANPATH"
 export MANPATH
 
-# Python root path in the "lib" directory, if available
-_vlttng_python_root="$(find "$LTTNG_VIRTUAL_ENV/usr/lib" -iname 'python*' -a -type d | head -n1)"
-
-if [ -n "$_vlttng_python_root" ]; then
+# Add Python site packages $PYTHONPATH
+find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read python_root; do
     # Installed Python packages directory, if available
-    _vlttng_python_packages="$(find "$_vlttng_python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
+    _vlttng_python_packages="$(find "$python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
 
     if [ -n "$_vlttng_python_packages" ]; then
         # Set new $PYTHONPATH
@@ -80,10 +78,9 @@ if [ -n "$_vlttng_python_root" ]; then
         PYTHONPATH="$_vlttng_python_packages:$PYTHONPATH"
         export PYTHONPATH
     fi
-fi
+done
 
 # Unset local variables
-unset _vlttng_python_root
 unset _vlttng_python_packages
 
 # Set new $LTTNG_HOME
