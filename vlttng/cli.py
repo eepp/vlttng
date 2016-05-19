@@ -143,7 +143,7 @@ def _create_profile(profile_names, ignored_projects, override_args, verbose):
     except vlttng.profile.UnknownSourceFormat as e:
         perror('Unknown source format: "{}"'.format(e.source))
     except vlttng.profile.InvalidProfile as e:
-        perror('Invalid profile: "{}"'.format(e))
+        perror('Invalid profile: {}'.format(e))
     except:
         perror('Cannot read one of the specified profiles')
 

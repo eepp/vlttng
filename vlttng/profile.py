@@ -234,6 +234,7 @@ def _validate_projects(projects):
         'lttng-tools',
         'lttng-ust',
         'lttng-modules',
+        'lttng-analyses',
         'babeltrace',
         'urcu',
     )
@@ -245,6 +246,13 @@ def _validate_projects(projects):
     if 'lttng-tools' in projects or 'lttng-ust' in projects:
         if 'urcu' not in projects:
             raise InvalidProfile('"urcu" project is needed by "lttng-tools" or "lttng-ust" project')
+
+    if 'lttng-analyses' in projects:
+        if 'babeltrace' not in projects:
+            raise InvalidProfile('"babeltrace" project is needed by "lttng-analyses" project')
+
+        if '--enable-python-bindings' not in projects['babeltrace'].configure:
+            raise InvalidProfile('--enable-python-bindings option of "babeltrace" project is needed by "lttng-analyses" project')
 
 
 def _merge_nodes(base, patch):

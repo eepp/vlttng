@@ -66,17 +66,47 @@ def _pwarn(msg):
 
 
 def _patch_env(env, paths):
+    # CFLAGS
     cflags = env.get('CFLAGS', '')
     include_dir = os.path.join(paths.usr, 'include')
     cflags += ' -I{}'.format(shlex.quote(include_dir))
     env['CFLAGS'] = cflags
+
+    # LDFLAGS
     ldflags = env.get('LDFLAGS', '')
-    lib_dir = os.path.join(paths.usr, 'lib')
-    ldflags += ' -L{}'.format(shlex.quote(lib_dir))
+    ldflags += ' -L{}'.format(shlex.quote(paths.lib))
     env['LDFLAGS'] = ldflags
+
+    # LD_LIBRARY_PATH
     ld_library_path = env.get('LD_LIBRARY_PATH', '')
-    ld_library_path = '{}:{}'.format(lib_dir, ld_library_path)
+    ld_library_path = '{}:{}'.format(paths.lib, ld_library_path)
     env['LD_LIBRARY_PATH'] = ld_library_path
+
+    # PYTHONPATH
+    if os.path.isdir(paths.lib):
+        python_roots = []
+
+        for filename in os.listdir(paths.lib):
+            if filename.startswith('python'):
+                python_root = os.path.join(paths.lib, filename)
+
+                if os.path.isdir(python_root):
+                    python_roots.append(python_root)
+
+        site_packages = []
+
+        for python_root in python_roots:
+            for filename in os.listdir(python_root):
+                if filename.endswith('-packages'):
+                    site_package = os.path.join(python_root, filename)
+
+                    if os.path.isdir(site_package):
+                        site_packages.append(site_package)
+
+        new_pythonpath = ':'.join(site_packages)
+        pythonpath = env.get('PYTHONPATH', '')
+        pythonpath = '{}:{}'.format(new_pythonpath, pythonpath)
+        env['PYTHONPATH'] = pythonpath
 
 
 def _get_full_env(env, paths):
@@ -165,6 +195,10 @@ class _Runner:
 
         fn(cmd)
 
+    def setuppy_install(self):
+        cmd = './setup.py install --prefix={}'.format(shlex.quote(self._paths.usr))
+        self.run(cmd)
+
 
 class _Paths:
     def __init__(self, venv):
@@ -181,6 +215,10 @@ class _Paths:
     @property
     def usr(self):
         return os.path.join(self._venv, 'usr')
+
+    @property
+    def lib(self):
+        return os.path.join(self.usr, 'lib')
 
     @property
     def src(self):
@@ -231,6 +269,9 @@ class VEnvCreator:
 
         # build Babeltrace
         self._build_project('babeltrace', self._configure_make_install)
+
+        # build LTTng-analyses
+        self._build_lttng_analyses()
 
         # create activate script
         self._create_activate()
@@ -364,3 +405,9 @@ class VEnvCreator:
             self._runner.make()
 
         self._build_project('lttng-modules', build)
+
+    def _build_lttng_analyses(self):
+        def build(project):
+            self._runner.setuppy_install()
+
+        self._build_project('lttng-analyses', build)
