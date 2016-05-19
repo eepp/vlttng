@@ -1,0 +1,4 @@
+projects:
+  babeltrace:
+    source: http://git.linuxfoundation.org/diamon/babeltrace.git
+    checkout: stable-1.4

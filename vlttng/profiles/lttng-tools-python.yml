@@ -1,0 +1,3 @@
+projects:
+  lttng-tools:
+    configure: '--enable-python-bindings'

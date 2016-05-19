@@ -1,0 +1,234 @@
+vlttng
+======
+
+**_vlttng_** is a tool which creates a virtual environment (a sandbox) for
+testing specific versions of the
+http://lttng.org/[LTTng] projects. The
+http://lttng.org/[Babeltrace] and
+http://liburcu.org/[Userspace RCU] projects are also supported.
+
+
+== Installing
+
+For the moment, make sure Python 3 and
+https://pypi.python.org/pypi/setuptools[setuptools] for Python 3 are
+installed, clone this repository, and do:
+
+    sudo ./setup.py install
+
+A new command, `vlttng`, is available.
+
+
+== How does it work?
+
+The `vlttng` command does the following:
+
+. It reads one or more _profiles_ given on the command line to know which
+  packages to fetch and build.
+. It fetches and extracts the requested packages. Git, with a specific
+  branch/tag/commit, as well as HTTP/FTP tarball sources are supported.
+. It builds one package at a time, setting some environment variables and
+  configure options so that the dependencies of the packages
+  are contained within the virtual environment.
+. It creates an `activate` script which you can _source_ from your Bash/Zsh
+  prompt to "enter" the virtual environment. This script sets a few
+  environment variables, like `PATH`, `LD_LIBRARY_PATH`, and `PYTHONPATH`,
+  to achieve this. By default, it also prepends the name of the
+  virtual environment directory to your shell prompt for you to know
+  which virtual environment is active.
++
+When the `activate` script is sourced, if the LTTng-modules project is
+part of the effective profile, it removes the currently loaded LTTng kernel
+modules and installs the ones of this virtual environment.
+
+Example:
+
+    vlttng -p lttng-stable-2.8 -p babeltrace-master -p babeltrace-python \
+           -p lttng-tools-no-lttng-relayd -p urcu-stable-0.9 virt
+
+Here, five profiles are used to create a virtual environment in the
+`virt` directory. You can source the `activate` script to enter
+the virtual environment:
+
+----
+. ./virt/activate
+----
+
+Your prompt should start with `[virt]` after this.
+
+
+=== Profiles
+
+A vlttng profile is a layer of configuration. Multiple profiles can be
+used to create an effective profile from multiple files.
+
+The following standard profiles are shipped with the project:
+
+    babeltrace-master
+    babeltrace-python
+    babeltrace-stable-1.2
+    babeltrace-stable-1.3
+    babeltrace-stable-1.4
+    lttng-master
+    lttng-modules-stable-2.6
+    lttng-modules-stable-2.7
+    lttng-modules-stable-2.8
+    lttng-stable-2.6
+    lttng-stable-2.7
+    lttng-stable-2.8
+    lttng-tools-no-lttng-consumerd
+    lttng-tools-no-lttng-crash
+    lttng-tools-no-lttng-relayd
+    lttng-tools-no-lttng-sessiond
+    lttng-tools-no-lttng
+    lttng-tools-no-man-pages
+    lttng-tools-no-python
+    lttng-tools-python
+    lttng-tools-stable-2.6
+    lttng-tools-stable-2.7
+    lttng-tools-stable-2.8
+    lttng-ust-jul-agent
+    lttng-ust-log4j-agent
+    lttng-ust-no-man-pages
+    lttng-ust-python-agent
+    lttng-ust-stable-2.6
+    lttng-ust-stable-2.7
+    lttng-ust-stable-2.8
+    urcu-master
+    urcu-stable-0.7
+    urcu-stable-0.8
+    urcu-stable-0.9
+
+Profiles are written in YAML. Here is an example:
+
+[source,yaml]
+env:
+  CFLAGS: -O0 -g3
+projects:
+  lttng-tools:
+    source: 'git://git.lttng.org/lttng-tools.git'
+    checkout: stable-2.7
+    build-env:
+      CC: clang
+      CFLAGS: ''
+  lttng-ust:
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.7.2.tar.bz2'
+    configure: --enable-python-agent
+  lttng-modules:
+    source: 'git://git.lttng.org/lttng-modules.git'
+    checkout: stable-2.7
+  urcu:
+    source: 'git://git.liburcu.org/userspace-rcu.git'
+
+A few things to note here:
+
+* The root `env` property defines the base environment variables. They
+  exist when building the projects, as well as when activating the
+  virtual environment.
+* The only available project names, as of this version, are `urcu`,
+  `lttng-tools`, `lttng-ust`, `lttng-modules`, and `babeltrace`.
+* The `build-env` property of a specific project defines environment variables
+  to be used only during the build stage of this project. A project-specific
+  environment variable overrides a base environment variable sharing its
+  name.
+* When the `source` property contains a Git URL, the `checkout` property
+  indicates which branch, tag, or commit to check out. When it's not
+  specified, the `master` branch is checked out.
+* The `configure` property specifies the options to pass to the
+  `configure` script of a given project. Some options are handled by
+  vlttng itself, like `--prefix` and `--without-lttng-ust`, to create a
+  working virtual environment.
+
+The profile above can be saved to a file, for example `my-profile.yml`, and
+a virtual environment can be created out of it:
+
+    vlttng -p my-profile.yml virt
+
+When multiple profiles are given to `vlttng`, the first profile is "patched"
+with the second, which is then patched with the third, and so on. Nonexistent
+properties are created; existing ones are replaced recursively. The
+`configure` properties are joined. For example, let's add the following
+profile (call it `more.yaml`) to the example above:
+
+[source,yaml]
+env:
+  CFLAGS: -O0
+  SOMEVAR: ok
+projects:
+  lttng-tools:
+    source: 'https://github.com/lttng/lttng-tools.git'
+  lttng-ust:
+    configure: --enable-java-agent-jul
+
+With this command:
+
+    vlttng -p my-profile.yml -p more.yaml virt
+
+the effective profile is:
+
+[source,yaml]
+env:
+  CFLAGS: -O0
+  SOMEVAR: ok
+projects:
+  lttng-tools:
+    source: 'https://github.com/lttng/lttng-tools.git'
+    checkout: stable-2.7
+    build-env:
+      CC: clang
+      CFLAGS: ''
+  lttng-ust:
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.7.2.tar.bz2'
+    configure: --enable-python-agent --enable-java-agent-jul
+  lttng-modules:
+    source: 'git://git.lttng.org/lttng-modules.git'
+    checkout: stable-2.7
+  urcu:
+    source: 'git://git.liburcu.org/userspace-rcu.git'
+
+
+=== Ignoring projects
+
+Specific projects that exist in the effective profile can be ignored
+using the `--ignore-project` (`-i`) option of `vlttng`:
+
+    vlttng -p lttng-stable-2.7 -p urcu-master -i lttng-ust virt
+
+
+=== Verbose output
+
+By default, `vlttng` hides the standard output and error of the commands
+it run. In this mode, all the commands to run and the exported environment
+variables are printed along with comments, so that the entire output can
+be "replayed" as is to create the same virtual environment (except for the
+`activate` script which would not be generated).
+
+The `--verbose` (`-v`) option can be used to also print the standard output
+and error of all the executed commands.
+
+
+=== Make jobs
+
+The `--jobs` (`-j`) option of `vlttng` is given as is to the `make` commands
+executed by the tool.
+
+
+=== `activate` script options
+
+When sourcing the `activate` script, the following environment variables
+can be used to alter its behaviour:
+
+`VLTTNG_NO_RMMOD`::
+    Set to `1` to disable the unloading of the currently loaded LTTng
+    kernel modules.
+
+`VLTTNG_NO_MODULES_INSTALL`::
+    Set to `1` to disable the installation of the LTTng kernel modules
+    built within this virtual environment.
+
+`VLTTNG_NO_KILL`::
+    Set to `1` to disable sending the SIGKILL signal to all the processes
+    with a name containing `lttng` or `babeltrace`.
+
+`VLTTNG_NO_PROMPT`::
+    Set to `1` to keep your current shell prompt after the activation.

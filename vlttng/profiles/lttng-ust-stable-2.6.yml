@@ -1,0 +1,4 @@
+projects:
+  lttng-ust:
+    source: 'git://git.lttng.org/lttng-ust.git'
+    checkout: stable-2.6

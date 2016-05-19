@@ -1,0 +1,3 @@
+projects:
+  lttng-ust:
+    configure: '--enable-python-agent'

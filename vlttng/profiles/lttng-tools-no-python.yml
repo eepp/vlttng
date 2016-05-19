@@ -1,0 +1,3 @@
+projects:
+  lttng-tools:
+    configure: '--disable-python-bindings'
