@@ -234,7 +234,7 @@ exist. This allows you to create projects on the command-line:
     -o projects.lttng-tools.checkout=v2.7.1 \
     -o projects.lttng-tools.configure='--disable-bin-lttng --disable-man-pages'
 
-Note that the overrides are applied command line in order.
+Note that the overrides are applied in command line order.
 
 
 === Ignoring projects
