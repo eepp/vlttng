@@ -42,7 +42,6 @@ def _parse_args():
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
     ap.add_argument('-p', '--profile', metavar='PROFILE', action='append',
-                    required=True,
                     help='profile name or path (may be repeated to patch)')
     ap.add_argument('-v', '--verbose', action='store_true',
                     help='verbose output')
