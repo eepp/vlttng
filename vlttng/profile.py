@@ -41,6 +41,10 @@ class ParseError(Exception):
     pass
 
 
+class InvalidOverride(Exception):
+    pass
+
+
 class GitSource:
     def __init__(self, clone_url, checkout):
         self._clone_url = clone_url
@@ -100,6 +104,75 @@ class Profile:
     @property
     def projects(self):
         return self._projects
+
+
+class Override:
+    OP_REPLACE = 'replace'
+    OP_APPEND = 'append'
+    OP_REMOVE = 'remove'
+
+    def __init__(self, path, op, rep):
+        if len(path) is 0:
+            raise InvalidOverride('Empty override path')
+
+        self._path = path
+        self._op = op
+        self._rep = rep
+
+    @property
+    def path(self):
+        return self._path
+
+    @property
+    def op(self):
+        return self._op
+
+    @property
+    def rep(self):
+        return self._rep
+
+    def apply(self, node):
+        # find the root node in which to override a property and the
+        # remaining path from where the existing property is found
+        common_node = node
+        remaining_path = self._path
+
+        for index, key in enumerate(self._path[:-1]):
+            if key in common_node:
+                common_node = common_node[key]
+
+                if not isinstance(common_node, dict):
+                    fmt = 'Cannot override a non-associative array property ("{}") with an associative array'
+                    raise InvalidOverride(fmt.format(key))
+
+                remaining_path = self._path[index + 1:]
+                continue
+            else:
+                break
+
+        # create new property from remaining path
+        cur_node = common_node
+        prop_key = remaining_path[-1]
+
+        if self._op in (Override.OP_REPLACE, Override.OP_APPEND):
+            if remaining_path:
+                for key in remaining_path[:-1]:
+                    cur_node[key] = {}
+                    cur_node = cur_node[key]
+
+                if prop_key not in cur_node:
+                    cur_node[prop_key] = ''
+
+        # apply
+        if self._op == Override.OP_REPLACE:
+            cur_node[prop_key] = self._rep
+        elif self._op == Override.OP_APPEND:
+            if prop_key == 'configure':
+                cur_node[prop_key] += ' '
+
+            cur_node[prop_key] += self._rep
+        elif self._op == Override.OP_REMOVE:
+            del cur_node[prop_key]
 
 
 def _source_from_project_node(project_node):
@@ -184,13 +257,16 @@ def _merge_nodes(base, patch):
                     base[k] = v
 
 
-def _from_yaml_files(paths, ignored_projects, verbose):
+def _from_yaml_files(paths, ignored_projects, overrides, verbose):
     root_node = {}
 
     for path in paths:
         with open(path) as f:
             patch_root_node = yaml.load(f)
             _merge_nodes(root_node, patch_root_node)
+
+    for override in overrides:
+        override.apply(root_node)
 
     if verbose:
         print('Effective profile:')
@@ -216,9 +292,9 @@ def _from_yaml_files(paths, ignored_projects, verbose):
     return Profile(base_env, projects)
 
 
-def from_yaml_files(paths, ignored_projects, verbose):
+def from_yaml_files(paths, ignored_projects, overrides, verbose):
     try:
-        return _from_yaml_files(paths, ignored_projects, verbose)
+        return _from_yaml_files(paths, ignored_projects, overrides, verbose)
     except (UnknownSourceFormat, InvalidProfile):
         raise
     except Exception as e:

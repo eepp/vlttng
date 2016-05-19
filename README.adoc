@@ -187,6 +187,42 @@ projects:
     source: 'git://git.liburcu.org/userspace-rcu.git'
 
 
+=== Overriding profile properties
+
+You can replace, append to, and remove effective profile properties
+(after each `--profile`/`-p` option has been processed) with the
+`--override` (`-o`) option. The three syntaxes are:
+
+Replace a property::
++
+    PATH=REPLACEMENT
+
+
+Append to a property::
++
+    PATH+=APPEND
+
+Remove a property::
++
+    !PATH
+
+`PATH` is the path to the property, from the root of the profile, using
+a dot-separated list of keys.
+
+Example:
+
+    -o projects.lttng-tools.configure+=--disable-bin-lttng-relayd \
+    -o '!projects.lttng-ust.checkout' \
+    -o env.CC=clang
+
+In replace and append modes, the property is created if it does not
+exist. This allows you to create projects on the command-line:
+
+    -o projects.lttng-tools.source=https://github.com/lttng/lttng-tools.git \
+    -o projects.lttng-tools.checkout=v2.7.1 \
+    -o projects.lttng-tools.configure='--disable-bin-lttng --disable-man-pages'
+
+
 === Ignoring projects
 
 Specific projects that exist in the effective profile can be ignored

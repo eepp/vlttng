@@ -28,6 +28,7 @@ import argparse
 import platform
 import os.path
 import vlttng
+import re
 
 
 def _parse_args():
@@ -35,6 +36,9 @@ def _parse_args():
     ap.add_argument('-j', '--jobs', metavar='JOBS', action='store', type=int,
                     default=1, help='number of make jobs to run simultaneously')
     ap.add_argument('-i', '--ignore-project', metavar='PROJECT',
+                    action='append',
+                    help='ignore project PROJECT (may be repeated)')
+    ap.add_argument('-o', '--override', metavar='PROP',
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
     ap.add_argument('-p', '--profile', metavar='PROFILE', action='append',
@@ -56,6 +60,9 @@ def _parse_args():
     if args.profile is None:
         args.profile = []
 
+    if args.override is None:
+        args.override = []
+
     return args
 
 
@@ -75,15 +82,63 @@ def _find_profile(profile_name):
     return filename
 
 
-def _create_profile(profile_names, ignored_projects, verbose):
+def _create_overrides(override_args):
+    overrides = []
+
+    try:
+        for arg in override_args:
+            arg = arg.strip()
+
+            # replace
+            m = re.match(r'^([a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]+)*)=(.+)$', arg)
+
+            if m:
+                path = m.group(1).split('.')
+                rep = m.group(2)
+                op = vlttng.profile.Override.OP_REPLACE
+                overrides.append(vlttng.profile.Override(path, op, rep))
+                continue
+
+            # append
+            m = re.match(r'^([a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]+)*)\+=(.+)$', arg)
+
+            if m:
+                path = m.group(1).split('.')
+                rep = m.group(2)
+                op = vlttng.profile.Override.OP_APPEND
+                overrides.append(vlttng.profile.Override(path, op, rep))
+                continue
+
+            # remove
+            m = re.match(r'^!([a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]+)*)$', arg)
+
+            if m:
+                path = m.group(1).split('.')
+                op = vlttng.profile.Override.OP_REMOVE
+                overrides.append(vlttng.profile.Override(path, op, None))
+                continue
+
+            perror('Malformed override option: "{}"'.format(arg))
+    except vlttng.profile.InvalidOverride as e:
+        perror('In override option: "{}": {}'.format(arg, e))
+
+    return overrides
+
+
+def _create_profile(profile_names, ignored_projects, override_args, verbose):
     filenames = []
+
+    try:
+        overrides = _create_overrides(override_args)
+    except Exception as e:
+        perror('Cannot parse overrides: {}'.format(e))
 
     for profile_name in profile_names:
         filenames.append(_find_profile(profile_name))
 
     try:
         profile = vlttng.profile.from_yaml_files(filenames, ignored_projects,
-                                                 verbose)
+                                                 overrides, verbose)
     except vlttng.profile.ParseError:
         perror('Malformed YAML profile')
     except vlttng.profile.UnknownSourceFormat as e:
@@ -108,7 +163,8 @@ def _register_sigint():
 def run():
     _register_sigint()
     args = _parse_args()
-    profile = _create_profile(args.profile, args.ignore_project, args.verbose)
+    profile = _create_profile(args.profile, args.ignore_project, args.override,
+                              args.verbose)
 
     try:
         vlttng.venv.VEnvCreator(args.path, profile, args.verbose, args.jobs)
