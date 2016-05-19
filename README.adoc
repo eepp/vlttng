@@ -248,7 +248,7 @@ The `--verbose` (`-v`) option can be used to also print the standard output
 and error of all the executed commands.
 
 
-=== Make jobs
+=== Number of make jobs
 
 The `--jobs` (`-j`) option of `vlttng` is given as is to the `make` commands
 executed by the tool.
