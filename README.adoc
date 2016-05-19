@@ -250,7 +250,7 @@ Another option is to simply <<override,remove the property>>:
 === Verbose output
 
 By default, `vlttng` hides the standard output and error of the commands
-it run. In this mode, all the commands to run and the exported environment
+it runs. In this mode, all the commands to run and the exported environment
 variables are printed along with comments, so that the entire output can
 be "replayed" as is to create the same virtual environment (except for the
 `activate` script which would not be generated).
