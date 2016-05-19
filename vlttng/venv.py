@@ -170,6 +170,10 @@ class _Runner:
         cmd = 'mkdir --verbose -p {}'.format(shlex.quote(path))
         self.run(cmd)
 
+    def cp_rv(self, src, dst):
+        cmd = 'cp -rv {} {}'.format(shlex.quote(src), shlex.quote(dst))
+        self.run(cmd)
+
     def ln_s(self, target, link):
         cmd = 'ln -s {} {}'.format(shlex.quote(target), shlex.quote(link))
         self.run(cmd)
@@ -204,6 +208,10 @@ class _Runner:
         cmd = './setup.py install --prefix={}'.format(shlex.quote(self._paths.usr))
         self.run(cmd)
 
+    def maven(self, args):
+        cmd = 'mvn {}'.format(args)
+        self.run(cmd)
+
 
 class _Paths:
     def __init__(self, venv):
@@ -228,6 +236,10 @@ class _Paths:
     @property
     def lib(self):
         return os.path.join(self.usr, 'lib')
+
+    @property
+    def opt(self):
+        return os.path.join(self.usr, 'opt')
 
     @property
     def src(self):
@@ -257,6 +269,7 @@ class VEnvCreator:
         self._runner.mkdir_p(self._paths.home)
         self._runner.mkdir_p(self._paths.bin)
         self._runner.mkdir_p(self._paths.lib)
+        self._runner.mkdir_p(self._paths.opt)
 
         # fetch sources and extract/checkout
         _pinfo('Fetch sources')
@@ -425,9 +438,36 @@ class VEnvCreator:
         self._build_project('lttng-analyses', build)
 
     def _build_tracecompass(self):
-        def build(project):
-            target = os.path.join(self._paths.project_src('tracecompass'), 'tracecompass')
+        def finalize(src):
+            dst = os.path.join(self._paths.opt, 'tracecompass')
+            self._runner.cp_rv(src, dst)
             link = os.path.join(self._paths.bin, 'tracecompass')
-            self._runner.ln_s(target, link)
+            self._runner.ln_s(os.path.join(dst, 'tracecompass'), link)
 
-        self._build_project('tracecompass', build)
+        def build_from_tarball(project):
+            finalize(self._paths.project_src('tracecompass'))
+
+        def build_from_git(project):
+            self._runner.maven('clean install -Dmaven.test.skip=true')
+            src = os.path.join('rcp',
+                               'org.eclipse.tracecompass.rcp.product',
+                               'target',
+                               'products',
+                               'org.eclipse.tracecompass.rcp',
+                               'linux',
+                               'gtk',
+                               'x86_64',
+                               'trace-compass')
+            finalize(src)
+
+        project = self._profile.projects.get('tracecompass')
+
+        if project is None:
+            return
+
+        if type(project.source) is vlttng.profile.HttpFtpSource:
+            build_fn = build_from_tarball
+        else:
+            build_fn = build_from_git
+
+        self._build_project('tracecompass', build_fn)

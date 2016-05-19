@@ -106,6 +106,7 @@ The following standard profiles are shipped with the project:
     tracecompass-1.1.0
     tracecompass-1.2.0
     tracecompass-1.2.1
+    tracecompass-master
     urcu-master
     urcu-stable-0.7
     urcu-stable-0.8
@@ -153,7 +154,7 @@ A few things to note here:
 ** `lttng-ust`
 ** `lttng-modules`
 ** `lttng-analyses`
-** `tracecompass` (only HTTP/FTP tarball sources are supported)
+** `tracecompass`
 ** `babeltrace`
 * The `build-env` property of a specific project defines environment variables
   to be used only during the build stage of this project. A project-specific

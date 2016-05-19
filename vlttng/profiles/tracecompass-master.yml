@@ -1,0 +1,4 @@
+projects:
+  tracecompass:
+    source: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
+    checkout: master
