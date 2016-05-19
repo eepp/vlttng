@@ -187,6 +187,7 @@ projects:
     source: 'git://git.liburcu.org/userspace-rcu.git'
 
 
+[[override]]
 === Overriding profile properties
 
 You can replace, append to, and remove effective profile properties
@@ -229,6 +230,10 @@ Specific projects that exist in the effective profile can be ignored
 using the `--ignore-project` (`-i`) option of `vlttng`:
 
     vlttng -p lttng-stable-2.7 -p urcu-master -i lttng-ust virt
+
+Another option is to simply <<override,remove the property>>:
+
+    vlttng -p lttng-stable-2.7 -p urcu-master -o '!projects.lttng-ust' virt
 
 
 === Verbose output
