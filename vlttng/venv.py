@@ -82,6 +82,11 @@ def _patch_env(env, paths):
     ld_library_path = '{}:{}'.format(paths.lib, ld_library_path)
     env['LD_LIBRARY_PATH'] = ld_library_path
 
+    # PKG_CONFIG_PATH
+    pkg_config_path = env.get('PKG_CONFIG_PATH', '')
+    pkg_config_path = '{}:{}'.format(paths.pkgconfig, pkg_config_path)
+    env['PKG_CONFIG_PATH'] = pkg_config_path
+
     # PYTHONPATH
     if os.path.isdir(paths.lib):
         python_roots = []
@@ -235,6 +240,10 @@ class _Paths:
         return os.path.join(self.usr, 'lib')
 
     @property
+    def pkgconfig(self):
+        return os.path.join(self.lib, 'pkgconfig')
+
+    @property
     def include(self):
         return os.path.join(self.usr, 'include')
 
@@ -350,6 +359,7 @@ class VEnvCreator:
             'PATH',
             'LD_LIBRARY_PATH',
             'MANPATH',
+            'PKG_CONFIG_PATH',
             'PYTHONPATH',
             'LTTNG_HOME',
             'PS1',

@@ -67,6 +67,11 @@ _VLTTNG_OLD_MANPATH="$MANPATH"
 MANPATH="$VLTTNG/usr/share/man:$MANPATH"
 export MANPATH
 
+# Set new $PKG_CONFIG_PATH
+_VLTTNG_OLD_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
+PKG_CONFIG_PATH="$VLTTNG/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH
+
 # Add Python site packages $PYTHONPATH
 find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read python_root; do
     # Installed Python packages directory, if available
