@@ -72,6 +72,7 @@ The following standard profiles are shipped with the project:
     babeltrace-stable-1.2
     babeltrace-stable-1.3
     babeltrace-stable-1.4
+    elfutils-0.166
     glib-2.22.5
     glib-2.23.6
     glib-2.24.2
@@ -188,6 +189,7 @@ A few things to note here:
   the resulting virtual environment.
 * The available project names, as of this version, are:
 ** `babeltrace`
+** `elfutils`
 ** `glib`
 ** `libxml2`
 ** `lttng-analyses`

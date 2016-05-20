@@ -273,8 +273,14 @@ class VEnvCreator:
                 _pwarn('You should add the --enable-python-bindings configure option to the "babeltrace" project (needed by "lttng-analyses")')
 
         if 'babeltrace' in projects:
+            project = projects['babeltrace']
+
             if 'glib' not in projects:
                 _pwarn('The "babeltrace" project will use the system\'s GLib')
+
+            if '--enable-debug-info' in project.configure or '--disable-debug-info' not in project.configure:
+                if 'elfutils' not in projects:
+                    _pwarn('The "babeltrace" project will use the system\'s elfutils')
 
         if 'lttng-tools' in projects:
             if 'libxml2' not in projects:
@@ -317,6 +323,9 @@ class VEnvCreator:
 
         # build GLib
         self._build_project('glib', self._configure_make_install)
+
+        # build elfutils
+        self._build_project('elfutils', self._configure_make_install)
 
         # build Babeltrace
         self._build_project('babeltrace', self._configure_make_install)

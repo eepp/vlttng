@@ -232,6 +232,7 @@ def _project_from_project_node(name, project_node, base_build_env):
 def _validate_projects(projects):
     valid_project_names = (
         'babeltrace',
+        'elfutils',
         'glib',
         'libxml2',
         'lttng-analyses',
