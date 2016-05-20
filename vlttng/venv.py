@@ -183,9 +183,6 @@ class _Runner:
                                                               shlex.quote(output_name))
         self.run(cmd)
 
-    def bootstrap(self):
-        self.run('./bootstrap')
-
     def configure(self, args):
         cmd = './configure --prefix={} {}'.format(shlex.quote(self._paths.usr),
                                                   args)
@@ -238,6 +235,10 @@ class _Paths:
         return os.path.join(self.usr, 'lib')
 
     @property
+    def include(self):
+        return os.path.join(self.usr, 'include')
+
+    @property
     def opt(self):
         return os.path.join(self.usr, 'opt')
 
@@ -258,7 +259,26 @@ class VEnvCreator:
         self._src_paths = {}
         self._create()
 
+    def _validate_profile(self):
+        projects = self._profile.projects
+
+        if 'lttng-tools' in projects or 'lttng-ust' in projects:
+            if 'urcu' not in projects:
+                _pwarn('The "lttng-tools"/"lttng-ust" project will use the system\'s Userspace RCU')
+
+        if 'lttng-analyses' in projects:
+            if 'babeltrace' not in projects:
+                _pwarn('The "lttng-analyses" project will use the system\'s Babeltrace')
+            elif '--enable-python-bindings' not in projects['babeltrace'].configure:
+                _pwarn('You should add the --enable-python-bindings configure option to the "babeltrace" project (needed by "lttng-analyses")')
+
+        if 'babeltrace' in projects:
+            if 'glib' not in projects:
+                _pwarn('The "babeltrace" project will use the system\'s GLib')
+
     def _create(self):
+        self._validate_profile()
+
         _pinfo('Create LTTng virtual environment')
 
         # create virtual environment directory
@@ -269,6 +289,7 @@ class VEnvCreator:
         self._runner.mkdir_p(self._paths.home)
         self._runner.mkdir_p(self._paths.bin)
         self._runner.mkdir_p(self._paths.lib)
+        self._runner.mkdir_p(self._paths.include)
         self._runner.mkdir_p(self._paths.opt)
 
         # fetch sources and extract/checkout
@@ -286,6 +307,9 @@ class VEnvCreator:
 
         # build LTTng-modules
         self._build_lttng_modules()
+
+        # build GLib
+        self._build_project('glib', self._configure_make_install)
 
         # build Babeltrace
         self._build_project('babeltrace', self._configure_make_install)
@@ -371,11 +395,12 @@ class VEnvCreator:
 
     def _configure_make_install(self, project, add_args=None):
         # bootstrap?
-        bootstrap = os.path.join(self._paths.project_src(project.name),
-                                 'bootstrap')
+        for f in ('bootstrap', 'bootstrap.sh', 'autogen', 'autogen.sh',):
+            bootstrap = os.path.join(self._paths.project_src(project.name), f)
 
-        if os.path.isfile(bootstrap):
-            self._runner.bootstrap()
+            if os.path.isfile(bootstrap):
+                self._runner.run('./{}'.format(f))
+                break
 
         # configure
         args = project.configure
