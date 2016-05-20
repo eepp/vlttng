@@ -100,6 +100,12 @@ The following standard profiles are shipped with the project:
     glib-2.47.92
     glib-2.48.1
     glib-master
+    libxml2-2.8.0
+    libxml2-2.9.0
+    libxml2-2.9.1
+    libxml2-2.9.2
+    libxml2-2.9.3
+    libxml2-master
     lttng-analyses-0.3.0
     lttng-analyses-0.4.0
     lttng-analyses-0.4.1
@@ -144,7 +150,6 @@ The following standard profiles are shipped with the project:
     urcu-stable-0.8
     urcu-stable-0.9
 
-
 Profiles are written in YAML. Here is an example:
 
 [source,yaml]
@@ -184,6 +189,7 @@ A few things to note here:
 * The available project names, as of this version, are:
 ** `babeltrace`
 ** `glib`
+** `libxml2`
 ** `lttng-analyses`
 ** `lttng-modules`
 ** `lttng-tools`

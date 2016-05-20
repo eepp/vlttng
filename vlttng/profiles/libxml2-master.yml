@@ -1,0 +1,7 @@
+projects:
+  libxml2:
+    source: 'git://git.gnome.org/libxml2'
+    checkout: master
+    configure: --without-coverage --with-threads --without-python
+    build-env:
+      NOCONFIGURE: '1'

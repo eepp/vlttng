@@ -276,6 +276,10 @@ class VEnvCreator:
             if 'glib' not in projects:
                 _pwarn('The "babeltrace" project will use the system\'s GLib')
 
+        if 'lttng-tools' in projects:
+            if 'libxml2' not in projects:
+                _pwarn('The "lttng-tools" project will use the system\'s libxml2')
+
     def _create(self):
         self._validate_profile()
 
@@ -301,6 +305,9 @@ class VEnvCreator:
 
         # build LTTng-UST
         self._build_project('lttng-ust', self._configure_make_install)
+
+        # build libxml2
+        self._build_project('libxml2', self._configure_make_install)
 
         # build LTTng-tools
         self._build_lttng_tools()
