@@ -183,7 +183,7 @@ class Override:
 def _source_from_project_node(project_node):
     source = project_node['source']
 
-    if source.startswith('git://') or source.endswith('.git'):
+    if source.startswith('git://') or source.endswith('.git') or 'checkout' in project_node:
         checkout = 'master'
 
         if 'checkout' in project_node:
