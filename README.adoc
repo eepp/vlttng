@@ -30,6 +30,8 @@ The `vlttng` command does the following:
   packages to fetch and build.
 . It fetches and extracts the requested packages. Git, with a specific
   branch/tag/commit, as well as HTTP/FTP tarball sources are supported.
+  The Git clone URL can point to a local Git repository using the
+  `file://` protocol.
 . It builds one package at a time, setting some environment variables and
   configure options so that the dependencies of the packages
   are contained within the virtual environment.
@@ -202,9 +204,10 @@ A few things to note here:
   to be used only during the build stage of this project. A project-specific
   environment variable overrides a base build environment variable
   sharing its name.
-* When the `source` property contains a Git URL, the `checkout` property
-  indicates which branch, tag, or commit to check out. When it's not
-  specified, the `master` branch is checked out.
+* When the `source` property contains a Git URL, or when `checkout`
+  property is set, the `checkout` property indicates which branch, tag,
+  or commit to check out. When it's not specified, the `master` branch
+  is checked out.
 * The `configure` property specifies the options to pass to the
   `configure` script of a given project. Some options are handled by
   vlttng itself, like `--prefix` and `--without-lttng-ust`, to create a
