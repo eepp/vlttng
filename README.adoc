@@ -43,8 +43,8 @@ The `vlttng` command does the following:
   which virtual environment is active.
 +
 When the `activate` script is sourced, if the LTTng-modules project is
-part of the effective profile, it removes the currently loaded LTTng kernel
-modules and installs the ones of this virtual environment.
+part of the effective profile, it removes the currently loaded LTTng
+kernel modules and installs the ones of this virtual environment.
 
 Example:
 
@@ -347,9 +347,18 @@ can be used to alter its behaviour:
     Set to `1` to disable the installation of the LTTng kernel modules
     built within this virtual environment.
 
-`VLTTNG_NO_KILL`::
-    Set to `1` to disable sending the SIGKILL signal to all the processes
-    with a name containing `lttng` or `babeltrace`.
-
 `VLTTNG_NO_PROMPT`::
     Set to `1` to keep your current shell prompt after the activation.
+
+
+=== Using `sudo`
+
+If you use `sudo` when the virtual environment is activated, make sure
+to use its `--preserve-env` (`-E`) option, so that the virtual
+environment is preserved when it executes the command. For
+example, to start a root session daemon which loads the LTTng kernel
+modules installed in the virtual environment:
+
+----
+sudo -E lttng-sessiond
+----

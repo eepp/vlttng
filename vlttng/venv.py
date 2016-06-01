@@ -198,11 +198,14 @@ class _Runner:
                                                   args)
         self.run(cmd)
 
-    def make(self, target=None, sudo=False):
+    def make(self, target=None, args=None, sudo=False):
         cmd = 'make -j{} V=1'.format(self._jobs)
 
         if target is not None:
             cmd += ' ' + shlex.quote(target)
+
+        if args is not None:
+            cmd += ' ' + args
 
         if sudo:
             fn = self.sudo_run
@@ -370,6 +373,7 @@ class VEnvCreator:
             'PYTHONPATH',
             'LTTNG_HOME',
             'PS1',
+            'MODPROBE_OPTIONS',
         )
 
         for key in rm_keys:
@@ -382,8 +386,9 @@ class VEnvCreator:
 
         env_lines = '\n'.join(env_items)
         lttng_modules_src_path = self._src_paths.get('lttng-modules', '')
+        has_modules = '1' if 'lttng-modules' in self._profile.projects else '0'
         activate = activate_template.format(venv_path=shlex.quote(self._paths.venv),
-                                            lttng_modules_src_path=shlex.quote(lttng_modules_src_path),
+                                            has_modules=has_modules,
                                             env=env_lines)
         activate_path = os.path.join(self._paths.venv, 'activate')
         _pinfo('Create activation script "{}"'.format(activate_path))
@@ -486,6 +491,9 @@ class VEnvCreator:
     def _build_lttng_modules(self):
         def build(project):
             self._runner.make()
+            install_path = shlex.quote(self._paths.usr)
+            self._runner.make('modules_install', 'INSTALL_MOD_PATH={}'.format(install_path))
+            self._runner.run('depmod --all --basedir {}'.format(shlex.quote(self._paths.usr)))
 
         self._build_project('lttng-modules', build)
 

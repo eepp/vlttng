@@ -1,4 +1,5 @@
 projects:
   lttng-tools:
     source: 'git://git.lttng.org/lttng-tools.git'
+    configure: --disable-kmod
     checkout: stable-2.8
