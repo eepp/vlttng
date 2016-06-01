@@ -29,15 +29,21 @@ import platform
 import os.path
 import vlttng
 import re
+import os
+
+
+_PROFILES_DIRNAME = 'profiles'
 
 
 def _parse_args():
     ap = argparse.ArgumentParser()
-    ap.add_argument('-j', '--jobs', metavar='JOBS', action='store', type=int,
-                    default=1, help='number of make jobs to run simultaneously')
     ap.add_argument('-i', '--ignore-project', metavar='PROJECT',
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
+    ap.add_argument('-j', '--jobs', metavar='JOBS', action='store', type=int,
+                    default=1, help='number of make jobs to run simultaneously')
+    ap.add_argument('-l', '--list-default-profiles', action='store_true',
+                    help='list default profile names and exit')
     ap.add_argument('-o', '--override', metavar='PROP',
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
@@ -47,11 +53,14 @@ def _parse_args():
                     help='verbose output')
     ap.add_argument('-V', '--version', action='version',
                     version='%(prog)s {}'.format(vlttng.__version__))
-    ap.add_argument('path', metavar='PATH', action='store',
+    ap.add_argument('path', metavar='PATH', action='store', nargs='*',
                     help='virtual environment path')
 
     # parse args
     args = ap.parse_args()
+
+    if not args.list_default_profiles and len(args.path) == 0:
+        perror('No virtual environment path provided')
 
     if args.ignore_project is None:
         args.ignore_project = []
@@ -67,7 +76,7 @@ def _parse_args():
 
 def _find_profile(profile_name):
     try:
-        filename = os.path.join('profiles', '{}.yml'.format(profile_name))
+        filename = os.path.join(_PROFILES_DIRNAME, '{}.yml'.format(profile_name))
         filename = resource_filename(__name__, filename)
 
         if not os.path.isfile(filename):
@@ -159,9 +168,22 @@ def _register_sigint():
         signal.signal(signal.SIGINT, handler)
 
 
+def _list_default_profiles():
+    dirname = resource_filename(__name__, _PROFILES_DIRNAME)
+
+    for filename in sorted(os.listdir(dirname)):
+        if filename.endswith('.yml'):
+            print(filename[:-4])
+
+
 def run():
     _register_sigint()
     args = _parse_args()
+
+    if args.list_default_profiles:
+        _list_default_profiles()
+        return 0
+
     profile = _create_profile(args.profile, args.ignore_project, args.override,
                               args.verbose)
 

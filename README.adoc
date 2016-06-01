@@ -115,6 +115,8 @@ The following standard profiles are shipped with the project:
     lttng-analyses-0.4.2
     lttng-analyses-0.4.3
     lttng-analyses-0.4.4
+    lttng-analyses-0.5.0
+    lttng-analyses-0.5.1
     lttng-analyses-master
     lttng-master
     lttng-modules-master
