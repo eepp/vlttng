@@ -66,6 +66,11 @@ def _pwarn(msg):
 
 
 def _patch_env(env, paths):
+    # PATH
+    path = env.get('PATH', '')
+    path = '{}:{}'.format(paths.bin, path)
+    env['PATH'] = path
+
     # CFLAGS
     cflags = env.get('CFLAGS', '')
     include_dir = os.path.join(paths.usr, 'include')
@@ -357,6 +362,8 @@ class VEnvCreator:
         rm_keys = (
             'VLTTNG',
             'PATH',
+            'CFLAGS',
+            'LDFLAGS',
             'LD_LIBRARY_PATH',
             'MANPATH',
             'PKG_CONFIG_PATH',
