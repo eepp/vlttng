@@ -62,7 +62,7 @@ the virtual environment:
 Your prompt should start with `[virt]` after this.
 
 
-=== Profiles
+=== Write and use profiles
 
 A vlttng profile is a layer of configuration. Multiple profiles can be
 used to create an effective profile from multiple files.
@@ -266,7 +266,7 @@ projects:
 
 
 [[override]]
-=== Overriding profile properties
+=== Override a profile property
 
 You can replace, append to, and remove effective profile properties
 (after each `--profile`/`-p` option has been processed) with the
@@ -304,7 +304,7 @@ exist. This allows you to create projects on the command-line:
 Note that the overrides are applied in command line order.
 
 
-=== Ignoring projects
+=== Ignore a project
 
 Specific projects that exist in the effective profile can be ignored
 using the `--ignore-project` (`-i`) option of `vlttng`:
@@ -316,7 +316,7 @@ Another option is to simply <<override,remove the property>>:
     vlttng -p lttng-stable-2.7 -p urcu-master -o '!projects.lttng-ust' virt
 
 
-=== Verbose output
+=== Make the output verbose
 
 By default, `vlttng` hides the standard output and error of the commands
 it runs. In this mode, all the commands to run and the exported environment
@@ -328,7 +328,7 @@ The `--verbose` (`-v`) option can be used to also print the standard output
 and error of all the executed commands.
 
 
-=== Number of make jobs
+=== Define the number of make jobs
 
 The `--jobs` (`-j`) option of `vlttng` is given as is to the `make` commands
 executed by the tool.
@@ -351,7 +351,7 @@ can be used to alter its behaviour:
     Set to `1` to keep your current shell prompt after the activation.
 
 
-=== Using `sudo`
+=== Use `sudo`
 
 If you use `sudo` when the virtual environment is activated, make sure
 to use its `--preserve-env` (`-E`) option, so that the virtual
