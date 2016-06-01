@@ -155,6 +155,8 @@ The following standard profiles are shipped with the project:
     urcu-stable-0.8
     urcu-stable-0.9
 
+You can get this list using `vlttng --list-default-profiles`.
+
 Profiles are written in YAML. Here is an example:
 
 [source,yaml]
