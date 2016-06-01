@@ -62,7 +62,8 @@ def _parse_args():
     if not args.list_default_profiles and len(args.path) != 1:
         perror('Exactly one virtual environment path must be provided')
 
-    args.path = args.path[0]
+    if len(args.path) > 0:
+        args.path = args.path[0]
 
     if args.ignore_project is None:
         args.ignore_project = []
