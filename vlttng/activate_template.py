@@ -47,6 +47,7 @@ activate_template = '''# The MIT License (MIT)
 
 # Local options
 _has_modules={has_modules}
+_has_java={has_java}
 
 # Path to the virtual environment
 VLTTNG={venv_path}
@@ -71,6 +72,12 @@ export MANPATH
 _VLTTNG_OLD_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 PKG_CONFIG_PATH="$VLTTNG/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PKG_CONFIG_PATH
+
+# Set $VLTTNG_CLASSPATH
+if [ $_has_java = 1 ]; then
+    VLTTNG_CLASSPATH="$VLTTNG/usr/share/java/liblttng-ust-agent.jar:$VLTTNG/usr/share/java/log4j.jar"
+    export VLTTNG_CLASSPATH
+fi
 
 # Add Python site packages $PYTHONPATH
 find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read python_root; do
@@ -116,8 +123,6 @@ if [ $_has_modules = 1 -a "$VLTTNG_NO_RMMOD" != 1 ]; then
     export MODPROBE_OPTIONS="-d '$VLTTNG/usr'"
 fi
 
-unset _has_modules
-
 # Set the environment variables of this virtual environment
 {env}
 
@@ -132,4 +137,7 @@ fi
 if [ -n "${{BASH-}}" ] || [ -n "${{ZSH_VERSION-}}" ]; then
     hash -r 2>/dev/null
 fi
+
+unset _has_modules
+unset _has_java
 '''

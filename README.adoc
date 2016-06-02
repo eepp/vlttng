@@ -362,3 +362,27 @@ modules installed in the virtual environment:
 ----
 sudo -E lttng-sessiond
 ----
+
+
+=== Trace a Java application
+
+When the LTTng-UST project is built with a Java agent, the activation
+of the virtuale environment sets the `VLTTNG_CLASSPATH` environment
+variable to a Java class path to use when compiling and running
+Java applications.
+
+Example:
+
+----
+javac -cp $VLTTNG_CLASSPATH:. MyClass.java
+java -cp $VLTTNG_CLASSPATH:. MyClass
+----
+
+
+=== Trace a Python application
+
+If the LTTng-UST Python agent was built and installed, there's nothing
+special to do to trace a Python application: the `PYTHONPATH`
+environment variable contains the path to the LTTng-UST Python agent
+package in the virtual environment. You can import the `lttngust`
+package as usual.

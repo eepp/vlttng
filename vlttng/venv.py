@@ -140,6 +140,10 @@ class _Runner:
         self._jobs = jobs
         self._paths = paths
 
+    @property
+    def cwd(self):
+        return self._cwd
+
     def run(self, cmd):
         _pcmd(cmd)
         stdio = None if self._verbose else subprocess.DEVNULL
@@ -263,6 +267,14 @@ class _Paths:
     def src(self):
         return os.path.join(self._venv, 'src')
 
+    @property
+    def share(self):
+        return os.path.join(self.usr, 'share')
+
+    @property
+    def share_java(self):
+        return os.path.join(self.share, 'java')
+
     def project_src(self, name):
         return os.path.join(self.src, name)
 
@@ -318,6 +330,7 @@ class VEnvCreator:
         self._runner.mkdir_p(self._paths.lib)
         self._runner.mkdir_p(self._paths.include)
         self._runner.mkdir_p(self._paths.opt)
+        self._runner.mkdir_p(self._paths.share_java)
 
         # fetch sources and extract/checkout
         _pinfo('Fetch sources')
@@ -327,7 +340,7 @@ class VEnvCreator:
         self._build_project('urcu', self._configure_make_install)
 
         # build LTTng-UST
-        self._build_project('lttng-ust', self._configure_make_install)
+        self._build_lttng_ust()
 
         # build libxml2
         self._build_project('libxml2', self._configure_make_install)
@@ -387,8 +400,17 @@ class VEnvCreator:
         env_lines = '\n'.join(env_items)
         lttng_modules_src_path = self._src_paths.get('lttng-modules', '')
         has_modules = '1' if 'lttng-modules' in self._profile.projects else '0'
+        has_java = '0'
+
+        if 'lttng-ust' in self._profile.projects:
+            configure = self._profile.projects['lttng-ust'].configure
+
+            if '--enable-java-agent' in configure:
+                has_java = '1'
+
         activate = activate_template.format(venv_path=shlex.quote(self._paths.venv),
                                             has_modules=has_modules,
+                                            has_java=has_java,
                                             env=env_lines)
         activate_path = os.path.join(self._paths.venv, 'activate')
         _pinfo('Create activation script "{}"'.format(activate_path))
@@ -487,6 +509,47 @@ class VEnvCreator:
         build_fn = functools.partial(self._configure_make_install,
                                      add_args=add_args)
         self._build_project('lttng-tools', build_fn)
+
+    def _build_lttng_ust(self):
+        def build(project):
+            if '--enable-java-agent-all' in project.configure or '--enable-java-agent-log4j' in project.configure:
+                cwd = self._runner.cwd
+
+                # get Apache log4j 1.2
+                log4j_name = 'log4j-1.2.17'
+                log4j_tarball = '{}.tar.gz'.format(log4j_name)
+                log4j_jar = '{}.jar'.format(log4j_name)
+                log4j_installed_jar = os.path.join(self._paths.share_java, 'log4j.jar')
+                self._runner.cd(self._paths.src)
+                self._runner.wget('http://apache.mirror.gtcomm.net/logging/log4j/1.2.17/{}'.format(log4j_tarball),
+                                  log4j_tarball)
+
+                # extract
+                self._runner.mkdir_p(log4j_name)
+                self._runner.tar_x(log4j_tarball, log4j_name)
+
+                # install
+                self._runner.cp_rv(os.path.join(log4j_name, log4j_jar),
+                                   log4j_installed_jar)
+
+                # update $CLASSPATH
+                classpath = os.environ.get('CLASSPATH', '')
+                classpath = '{}:{}'.format(log4j_installed_jar, classpath)
+                self._runner.set_env({
+                    'CLASSPATH': classpath
+                })
+
+                self._runner.cd(cwd)
+
+            # build and install LTTng-UST
+            self._configure_make_install(project)
+
+        project = self._profile.projects.get('lttng-ust')
+
+        if project is None:
+            return
+
+        self._build_project('lttng-ust', build)
 
     def _build_lttng_modules(self):
         def build(project):
