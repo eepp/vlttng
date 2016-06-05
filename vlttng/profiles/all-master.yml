@@ -1,0 +1,40 @@
+projects:
+  babeltrace:
+    source: http://git.linuxfoundation.org/diamon/babeltrace.git
+    configure: --enable-python-bindings
+    checkout: master
+  elfutils:
+    source: 'https://fedorahosted.org/releases/e/l/elfutils/0.166/elfutils-0.166.tar.bz2'
+  glib:
+    source: 'git://git.gnome.org/glib'
+    checkout: master
+    configure: >
+      --with-pcre=internal --disable-xattr --disable-selinux
+      --disable-dtrace --disable-systemtap --disable-gtk-doc
+      --disable-man --disable-coverage
+  libxml2:
+    source: 'git://git.gnome.org/libxml2'
+    checkout: master
+    configure: --without-coverage --with-threads --without-python
+    build-env:
+      NOCONFIGURE: '1'
+  lttng-analyses:
+    source: 'https://github.com/lttng/lttng-analyses.git'
+    checkout: master
+  lttng-modules:
+    source: 'git://git.lttng.org/lttng-modules.git'
+    checkout: master
+  lttng-tools:
+    source: 'git://git.lttng.org/lttng-tools.git'
+    configure: --disable-kmod --enable-python-bindings
+    checkout: master
+  lttng-ust:
+    source: 'git://git.lttng.org/lttng-ust.git'
+    configure: --enable-java-agent-jul --enable-java-agent-log4j
+    checkout: master
+  tracecompass:
+    source: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
+    checkout: master
+  urcu:
+    source: 'git://git.liburcu.org/userspace-rcu.git'
+    checkout: master
