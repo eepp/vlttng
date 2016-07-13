@@ -46,8 +46,8 @@ activate_template = '''# The MIT License (MIT)
 # LTTng virtual environment.
 
 # Local options
-_has_modules={has_modules}
-_has_java={has_java}
+_vlttng_has_modules={has_modules}
+_vlttng_has_java={has_java}
 
 # Path to the virtual environment
 VLTTNG={venv_path}
@@ -84,51 +84,59 @@ PKG_CONFIG_PATH="$VLTTNG/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PKG_CONFIG_PATH
 
 # Set $VLTTNG_CLASSPATH
-if [ $_has_java = 1 ]; then
+if [ $_vlttng_has_java = 1 ]; then
     VLTTNG_CLASSPATH="$VLTTNG/usr/share/java/liblttng-ust-agent.jar:$VLTTNG/usr/share/java/log4j.jar"
     export VLTTNG_CLASSPATH
 fi
 
 # Add Python site packages $PYTHONPATH
-find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read python_root; do
+find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read _vlttng_python_root; do
     # Installed Python packages directory, if available
-    _vlttng_python_packages="$(find "$python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
+    _vlttng_python_packages="$(find "$_vlttng_python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
 
     if [ -n "$_vlttng_python_packages" ]; then
         # Set new $PYTHONPATH
         _VLTTNG_OLD_PYTHONPATH="$PYTHONPATH"
-        PYTHONPATH="$_vlttng_python_packages:$PYTHONPATH"
+
+        if [ -z "$PYTHONPATH" ]; then
+            PYTHONPATH="$_vlttng_python_packages"
+        else
+            PYTHONPATH="$_vlttng_python_packages:$PYTHONPATH"
+        fi
+
         export PYTHONPATH
     fi
 
     unset _vlttng_python_packages
 done
 
+unset _vlttng_python_root
+
 # Set new $LTTNG_HOME
 _VLTTNG_OLD_LTTNG_HOME="$LTTNG_HOME"
 LTTNG_HOME="$VLTTNG/home"
 export LTTNG_HOME
 
-if [ $_has_modules = 1 -a "$VLTTNG_NO_RMMOD" != 1 ]; then
-    _removed_all_modules=0
+if [ $_vlttng_has_modules = 1 -a "$VLTTNG_NO_RMMOD" != 1 ]; then
+    _vlttng_removed_all_modules=0
 
     # Try to remove all the LTTng kernel modules
-    while [ $_removed_all_modules -eq 0 ]; do
-        _one_module=0
+    while [ $_vlttng_removed_all_modules -eq 0 ]; do
+        _vlttng_one_module=0
 
-        for _module in $(cat /proc/modules | cut -d' ' -f1 | grep '^lttng'); do
-            _one_module=1
-            sudo rmmod $_module 2>/dev/null
+        for _vlttng_module in $(cat /proc/modules | cut -d' ' -f1 | grep '^lttng'); do
+            _vlttng_one_module=1
+            sudo rmmod $_vlttng_module 2>/dev/null
         done
 
-        if [ $_one_module -eq 0 ]; then
-            _removed_all_modules=1
+        if [ $_vlttng_one_module -eq 0 ]; then
+            _vlttng_removed_all_modules=1
         fi
     done
 
-    unset _removed_all_modules
-    unset _one_module
-    unset _module
+    unset _vlttng_removed_all_modules
+    unset _vlttng_one_module
+    unset _vlttng_module
 
     export MODPROBE_OPTIONS="-d '$VLTTNG/usr'"
 fi
@@ -148,6 +156,6 @@ if [ -n "${{BASH-}}" ] || [ -n "${{ZSH_VERSION-}}" ]; then
     hash -r 2>/dev/null
 fi
 
-unset _has_modules
-unset _has_java
+unset _vlttng_has_modules
+unset _vlttng_has_java
 '''
