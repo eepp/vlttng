@@ -71,11 +71,11 @@ def _patch_env(env, paths):
     path = '{}:{}'.format(paths.bin, path)
     env['PATH'] = path
 
-    # CFLAGS
-    cflags = env.get('CFLAGS', '')
+    # CPPFLAGS
+    cppflags = env.get('CPPFLAGS', '')
     include_dir = os.path.join(paths.usr, 'include')
-    cflags += ' -I{}'.format(shlex.quote(include_dir))
-    env['CFLAGS'] = cflags
+    cppflags += ' -I{}'.format(shlex.quote(include_dir))
+    env['CPPFLAGS'] = cppflags
 
     # LDFLAGS
     ldflags = env.get('LDFLAGS', '')
@@ -375,10 +375,13 @@ class VEnvCreator:
         env_items = []
         env = copy.deepcopy(self._profile.virt_env)
         _patch_env(env, self._paths)
+
+        # the activation template explicitly defines those environment
+        # variables, so they must not be overridden by the user or by us.
         rm_keys = (
             'VLTTNG',
             'PATH',
-            'CFLAGS',
+            'CPPFLAGS',
             'LDFLAGS',
             'LD_LIBRARY_PATH',
             'MANPATH',
