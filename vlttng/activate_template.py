@@ -90,7 +90,7 @@ if [ $_vlttng_has_java = 1 ]; then
 fi
 
 # Add Python site packages $PYTHONPATH
-find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read _vlttng_python_root; do
+while read _vlttng_python_root; do
     # Installed Python packages directory, if available
     _vlttng_python_packages="$(find "$_vlttng_python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
 
@@ -108,7 +108,7 @@ find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d | while read _vlt
     fi
 
     unset _vlttng_python_packages
-done
+done < <(find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d)
 
 unset _vlttng_python_root
 
