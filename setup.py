@@ -51,7 +51,8 @@ setup(name='vlttng',
       install_requires=['pyyaml', 'termcolor', 'setuptools'],
       entry_points={
           'console_scripts': [
-              'vlttng = vlttng.vlttng_cli:run'
+              'vlttng = vlttng.vlttng_cli:run',
+              'vlttng-quick = vlttng.vlttng_quick_cli:run',
           ]
       },
       classifiers=[
