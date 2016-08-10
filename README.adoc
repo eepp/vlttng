@@ -1,25 +1,36 @@
 vlttng
 ======
 
-**_vlttng_** is a tool which creates a virtual environment (a sandbox) for
-testing specific versions of the
+**_vlttng_** is a tool which creates a virtual environment (a sandbox)
+to test specific versions of the
 http://lttng.org/[LTTng] projects. The
 http://lttng.org/[Babeltrace],
 http://liburcu.org/[Userspace RCU],
-https://github.com/lttng/lttng-analyses[LTTng-analyses], and
+https://github.com/lttng/lttng-analyses[LTTng analyses], and
 http://tracecompass.org/[Trace Compass] projects are also supported,
 as well as some of the project dependencies.
 
 
 == Installing
 
-For the moment, make sure Python 3 and
-https://pypi.python.org/pypi/setuptools[setuptools] for Python 3 are
-installed, clone this repository, and do:
+Install on the system using pip:
 
-    sudo ./setup.py install
+    sudo pip3 install --upgrade vlttng
 
-A new command, `vlttng`, is available.
+You can also install vlttng in your home directory:
+
+    pip3 install --user --upgrade vlttng
+
+The commands are installed in `~/.local/bin`.
+
+Two new commands are available: `vlttng` and `vlttng-quick`.
+
+
+== Quickstart
+
+The easiest way to use vlttng is to use the `vlttng-quick` command. This
+commands interactively asks you a few questions to create a basic
+`vlttng` command line that you can use later or immediately after.
 
 
 == How does it work?
@@ -368,7 +379,7 @@ sudo -E lttng-sessiond
 === Trace a Java application
 
 When the LTTng-UST project is built with a Java agent, the activation
-of the virtuale environment sets the `VLTTNG_CLASSPATH` environment
+of the virtual environment sets the `VLTTNG_CLASSPATH` environment
 variable to a Java class path to use when compiling and running
 Java applications.
 
