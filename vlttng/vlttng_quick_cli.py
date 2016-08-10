@@ -26,6 +26,7 @@ from termcolor import colored
 import argparse
 import platform
 import vlttng
+import shlex
 import enum
 import re
 
@@ -214,7 +215,7 @@ class _Wizard:
             args += ['-o', 'build-env.PYTHON={}'.format(self._python_interpreter)]
             args += ['-o', 'build-env.PYTHON_CONFIG={}-config'.format(self._python_interpreter)]
 
-        args.append(self._path)
+        args.append(shlex.quote(self._path))
 
         return args
 
