@@ -248,9 +248,17 @@ the projects and features you need.
             print(_cquestion('How many make jobs would you like?'))
             print()
 
+            import multiprocessing
+
+            prompt_ext = ' [{}]'.format(multiprocessing.cpu_count())
+
             while True:
-                answer = self._input(suffix='')
+                answer = self._input(prompt_ext, '')
                 print()
+
+                if answer == '':
+                    ianswer = multiprocessing.cpu_count()
+                    break
 
                 try:
                     ianswer = int(answer.strip())
@@ -324,7 +332,7 @@ the projects and features you need.
 
         self._pchoices(choices)
         self._pmultiple_choices_info()
-        choices = self._get_choices(len(choices))
+        choices = self._get_choices(len(choices), True)
         print()
 
         if choices == -1:
@@ -536,10 +544,18 @@ the projects and features you need.
 
         return choice
 
-    def _try_get_choices(self, choice_max):
-        resp = self._input()
+    def _try_get_choices(self, choice_max, all_default):
+        prompt_ext = ''
 
-        if len(resp) == 0:
+        if all_default:
+            prompt_ext = ' [a]'
+
+        resp = self._input(prompt_ext)
+
+        if resp == '':
+            if all_default:
+                return -1
+
             self._pinvalid_choices()
             return
 
@@ -560,9 +576,9 @@ the projects and features you need.
 
         return sorted(list(choices))
 
-    def _get_choices(self, choice_max):
+    def _get_choices(self, choice_max, all_default=False):
         while True:
-            choices = self._try_get_choices(choice_max)
+            choices = self._try_get_choices(choice_max, all_default)
 
             if choices is not None:
                 return choices
@@ -570,7 +586,7 @@ the projects and features you need.
     def _try_get_choice(self, choice_max):
         resp = self._input(suffix='')
 
-        if len(resp) == 0:
+        if resp == '':
             self._pinvalid_choices(None, '')
             return
 
