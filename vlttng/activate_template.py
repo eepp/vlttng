@@ -64,7 +64,7 @@ LD_LIBRARY_PATH="$VLTTNG/usr/lib:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH
 
 # Set new $CPPFLAGS
-_VLTTNG_OLD_CFLAGS="$CPPFLAGS"
+_VLTTNG_OLD_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="-I$VLTTNG/usr/include $CPPFLAGS"
 export CPPFLAGS
 
@@ -89,6 +89,9 @@ if [ $_vlttng_has_java = 1 ]; then
     export VLTTNG_CLASSPATH
 fi
 
+# Save old $PYTHONPATH
+_VLTTNG_OLD_PYTHONPATH="$PYTHONPATH"
+
 # Add Python site packages $PYTHONPATH
 while read _vlttng_python_root; do
     # Installed Python packages directory, if available
@@ -96,8 +99,6 @@ while read _vlttng_python_root; do
 
     if [ -n "$_vlttng_python_packages" ]; then
         # Set new $PYTHONPATH
-        _VLTTNG_OLD_PYTHONPATH="$PYTHONPATH"
-
         if [ -z "$PYTHONPATH" ]; then
             PYTHONPATH="$_vlttng_python_packages"
         else
@@ -116,6 +117,9 @@ unset _vlttng_python_root
 _VLTTNG_OLD_LTTNG_HOME="$LTTNG_HOME"
 LTTNG_HOME="$VLTTNG/home"
 export LTTNG_HOME
+
+# Save old $MODPROBE_OPTIONS
+_VLTTNG_OLD_MODPROBE_OPTIONS="$MODPROBE_OPTIONS"
 
 if [ $_vlttng_has_modules = 1 -a "$VLTTNG_NO_RMMOD" != 1 ]; then
     _vlttng_removed_all_modules=0
@@ -144,9 +148,11 @@ fi
 # Set the environment variables of this virtual environment
 {env}
 
+# Save old $PS1
+_VLTTNG_OLD_PS1="$PS1"
+
 # Set new prompt
 if [ "$VLTTNG_NO_PROMPT" != 1 ]; then
-    _VLTTNG_OLD_PS1="$PS1"
     PS1="[$(basename "$VLTTNG")] $PS1"
     export PS1
 fi
@@ -158,4 +164,43 @@ fi
 
 unset _vlttng_has_modules
 unset _vlttng_has_java
+
+vlttng-deactivate() {{
+    unset VLTTNG
+    unset VLTTNG_CLASSPATH
+
+    PATH="$_VLTTNG_OLD_PATH"
+    unset _VLTTNG_OLD_PATH
+
+    LD_LIBRARY_PATH="$_VLTTNG_OLD_LD_LIBRARY_PATH"
+    unset _VLTTNG_OLD_LD_LIBRARY_PATH
+
+    CPPFLAGS="$_VLTTNG_OLD_CPPFLAGS"
+    unset _VLTTNG_OLD_CPPFLAGS
+
+    LDFLAGS="$_VLTTNG_OLD_LDFLAGS"
+    unset _VLTTNG_OLD_LDFLAGS
+
+    MANPATH="$_VLTTNG_OLD_MANPATH"
+    unset _VLTTNG_OLD_MANPATH
+
+    PKG_CONFIG_PATH="$_VLTTNG_OLD_PKG_CONFIG_PATH"
+    unset _VLTTNG_OLD_PKG_CONFIG_PATH
+
+    PYTHONPATH="$_VLTTNG_OLD_PYTHONPATH"
+    unset _VLTTNG_OLD_PYTHONPATH
+
+    LTTNG_HOME="$_VLTTNG_OLD_LTTNG_HOME"
+    unset _VLTTNG_OLD_LTTNG_HOME
+
+    MODPROBE_OPTIONS="$_VLTTNG_OLD_MODPROBE_OPTIONS"
+    unset _VLTTNG_OLD_MODPROBE_OPTIONS
+
+    PS1="$_VLTTNG_OLD_PS1"
+    unset _VLTTNG_OLD_PS1
+
+{unenv}
+
+    unset -f vlttng-deactivate
+}}
 '''

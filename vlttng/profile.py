@@ -87,6 +87,10 @@ class Project:
     def configure(self):
         return self._configure
 
+    @configure.setter
+    def configure(self, value):
+        self._configure = value
+
     @property
     def build_env(self):
         return self._build_env

@@ -303,7 +303,7 @@ class VEnvCreator:
                 configure = configure.replace('--disable-python-bindings', '')
                 configure = configure.replace('--enable-python-bindings=no', '')
                 configure += ' --enable-python-bindings'
-                projects['babeltrace'].configure += configure
+                projects['babeltrace'].configure = configure
 
         if 'babeltrace' in projects:
             project = projects['babeltrace']
@@ -377,6 +377,7 @@ class VEnvCreator:
         from vlttng.activate_template import activate_template
 
         env_items = []
+        unenv_items = []
         env = copy.deepcopy(self._profile.virt_env)
         _patch_env(env, self._paths)
 
@@ -400,11 +401,18 @@ class VEnvCreator:
             if key in env:
                 del env[key]
 
+        print(env)
+
         for key, val in env.items():
-            setenv = 'export {}={}'.format(key.strip(), shlex.quote(str(val)))
+            key = key.strip()
+            env_items.append('_VLTTNG_OLD_{e}="${e}"'.format(e=key))
+            setenv = 'export {}={}'.format(key, shlex.quote(str(val)))
             env_items.append(setenv)
+            unenv_items.append('    {e}="$_VLTTNG_OLD_{e}"'.format(e=key))
+            unenv_items.append('    unset _VLTTNG_OLD_{}'.format(key))
 
         env_lines = '\n'.join(env_items)
+        unenv_lines = '\n'.join(unenv_items)
         lttng_modules_src_path = self._src_paths.get('lttng-modules', '')
         has_modules = '1' if 'lttng-modules' in self._profile.projects else '0'
         has_java = '0'
@@ -418,7 +426,8 @@ class VEnvCreator:
         activate = activate_template.format(venv_path=shlex.quote(self._paths.venv),
                                             has_modules=has_modules,
                                             has_java=has_java,
-                                            env=env_lines)
+                                            env=env_lines,
+                                            unenv=unenv_lines)
         activate_path = os.path.join(self._paths.venv, 'activate')
         _pinfo('Create activation script "{}"'.format(activate_path))
 
