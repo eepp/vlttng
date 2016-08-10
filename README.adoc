@@ -78,6 +78,9 @@ the virtual environment:
 
 Your prompt should start with `[virt]` after this.
 
+You can "exit" the virtual environment with the `vlttng-deactivate`
+command. Your prompt should return to its previous value.
+
 
 === Write and use profiles
 
