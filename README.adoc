@@ -11,15 +11,15 @@ http://tracecompass.org/[Trace Compass] projects are also supported,
 as well as some of the project dependencies.
 
 
-== Installing
+== Install vlttng
 
-Install on the system using pip:
+To install vlttng on the system:
 
 ----
 sudo pip3 install --upgrade vlttng
 ----
 
-You can also install vlttng in your home directory:
+To install vlttng in your home directory:
 
 ----
 pip3 install --user --upgrade vlttng
