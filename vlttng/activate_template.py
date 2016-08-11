@@ -92,7 +92,7 @@ fi
 # Save old $PYTHONPATH
 _VLTTNG_OLD_PYTHONPATH="$PYTHONPATH"
 
-# Add Python site packages $PYTHONPATH
+# Add Python site packages to $PYTHONPATH
 while read _vlttng_python_root; do
     # Installed Python packages directory, if available
     _vlttng_python_packages="$(find "$_vlttng_python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
