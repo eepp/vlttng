@@ -437,8 +437,6 @@ class VEnvCreator:
             if key in env:
                 del env[key]
 
-        print(env)
-
         for key, val in env.items():
             key = key.strip()
             env_items.append('_VLTTNG_OLD_{e}="${e}"'.format(e=key))
