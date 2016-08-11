@@ -121,26 +121,28 @@ export LTTNG_HOME
 # Save old $MODPROBE_OPTIONS
 _VLTTNG_OLD_MODPROBE_OPTIONS="$MODPROBE_OPTIONS"
 
-if [ $_vlttng_has_modules = 1 -a "$VLTTNG_NO_RMMOD" != 1 ]; then
-    _vlttng_removed_all_modules=0
+if [ $_vlttng_has_modules = 1 ]; then
+    if [ "$VLTTNG_NO_RMMOD" != 1 ]; then
+        _vlttng_removed_all_modules=0
 
-    # Try to remove all the LTTng kernel modules
-    while [ $_vlttng_removed_all_modules -eq 0 ]; do
-        _vlttng_one_module=0
+        # Try to remove all the LTTng kernel modules
+        while [ $_vlttng_removed_all_modules -eq 0 ]; do
+            _vlttng_one_module=0
 
-        for _vlttng_module in $(cat /proc/modules | cut -d' ' -f1 | grep '^lttng'); do
-            _vlttng_one_module=1
-            sudo rmmod $_vlttng_module 2>/dev/null
+            for _vlttng_module in $(cat /proc/modules | cut -d' ' -f1 | grep '^lttng'); do
+                _vlttng_one_module=1
+                sudo rmmod $_vlttng_module 2>/dev/null
+            done
+
+            if [ $_vlttng_one_module -eq 0 ]; then
+                _vlttng_removed_all_modules=1
+            fi
         done
 
-        if [ $_vlttng_one_module -eq 0 ]; then
-            _vlttng_removed_all_modules=1
-        fi
-    done
-
-    unset _vlttng_removed_all_modules
-    unset _vlttng_one_module
-    unset _vlttng_module
+        unset _vlttng_removed_all_modules
+        unset _vlttng_one_module
+        unset _vlttng_module
+    fi
 
     export MODPROBE_OPTIONS="-d '$VLTTNG/usr'"
 fi
