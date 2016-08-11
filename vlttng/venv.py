@@ -133,8 +133,9 @@ def _get_full_env(env, paths):
 
 
 class _Runner:
-    def __init__(self, verbose, jobs, paths):
+    def __init__(self, verbose, hide_export, jobs, paths):
         self._verbose = verbose
+        self._hide_export = hide_export
         self._cwd = None
         self._env = None
         self._jobs = jobs
@@ -165,8 +166,9 @@ class _Runner:
     def set_env(self, env):
         self._env = _get_full_env(env, self._paths)
 
-        for key, val in self._env.items():
-            _psetenv(key, val)
+        if not self._hide_export:
+            for key, val in self._env.items():
+                _psetenv(key, val)
 
     def wget(self, url, output_path):
         cmd = 'wget {} -O {}'.format(shlex.quote(url), shlex.quote(output_path))
@@ -308,9 +310,9 @@ class _Paths:
 
 
 class VEnvCreator:
-    def __init__(self, path, profile, force, verbose, jobs):
+    def __init__(self, path, profile, force, verbose, jobs, hide_export):
         self._paths = _Paths(os.path.abspath(path))
-        self._runner = _Runner(verbose, jobs, self._paths)
+        self._runner = _Runner(verbose, hide_export, jobs, self._paths)
         self._profile = profile
         self._force = force
         self._verbose = verbose

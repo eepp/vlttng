@@ -39,6 +39,8 @@ def _parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument('-f', '--force', action='store_true',
                     help='force the virtual environment creation')
+    ap.add_argument('--hide-export', action='store_true',
+                    help='hide export lines')
     ap.add_argument('-i', '--ignore-project', metavar='PROJECT',
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
@@ -193,7 +195,8 @@ def run():
                               args.verbose)
 
     try:
-        vlttng.venv.VEnvCreator(args.path, profile, args.force, args.verbose, args.jobs)
+        vlttng.venv.VEnvCreator(args.path, profile, args.force, args.verbose,
+                                args.jobs, args.hide_export)
     except Exception as e:
         perror('Unexpected error: {}'.format(e))
 
