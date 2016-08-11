@@ -59,8 +59,8 @@ The `vlttng` command does the following:
 +
 When the `activate` script is sourced, if the LTTng-modules project is
 part of the effective profile, it removes the currently loaded LTTng
-kernel modules and sets the `MODPROBE_OPTIONS` variable so that the
-LTTng session daemon loads the virtual environment modules.
+kernel modules and sets the `MODPROBE_OPTIONS` environment variable so
+that the LTTng session daemon loads the virtual environment modules.
 
 Example:
 
@@ -343,7 +343,7 @@ Example:
 ----
 
 In replace and append modes, the property is created if it does not
-exist. This allows you to create projects on the command-line:
+exist. This allows you to create projects on the command line:
 
 ----
 -o projects.lttng-tools.source=https://github.com/lttng/lttng-tools.git \
