@@ -197,6 +197,34 @@ class _Runner:
                                                               shlex.quote(output_name))
         self.run(cmd)
 
+    def rm_rf(self, path):
+        # some basic protection
+        no_rm_dirs = (
+            os.path.expanduser('~'),
+            '/',
+            '/bin',
+            '/boot',
+            '/dev',
+            '/etc',
+            '/home',
+            '/lib',
+            '/lib64',
+            '/opt',
+            '/root',
+            '/run',
+            '/sbin',
+            '/usr',
+            '/var'
+        )
+        no_rm_dirs = [os.path.normpath(d) for d in no_rm_dirs]
+        norm_path = os.path.normpath(path)
+
+        if norm_path in no_rm_dirs:
+            perror('Not removing protected directory "{}"'.format(norm_path))
+
+        cmd = 'rm -rf {}'.format(shlex.quote(path))
+        self.run(cmd)
+
     def configure(self, args):
         cmd = './configure --prefix={} {}'.format(shlex.quote(self._paths.usr),
                                                   args)
@@ -280,10 +308,11 @@ class _Paths:
 
 
 class VEnvCreator:
-    def __init__(self, path, profile, verbose, jobs):
+    def __init__(self, path, profile, force, verbose, jobs):
         self._paths = _Paths(os.path.abspath(path))
         self._runner = _Runner(verbose, jobs, self._paths)
         self._profile = profile
+        self._force = force
         self._verbose = verbose
         self._src_paths = {}
         self._create()
@@ -327,7 +356,11 @@ class VEnvCreator:
 
         # create virtual environment directory
         if os.path.exists(self._paths.venv):
-            perror('Virtual environment path "{}" exists'.format(self._paths.venv))
+            if self._force:
+                _pwarn('Virtual environment path "{}" exists: removing directory'.format(self._paths.venv))
+                self._runner.rm_rf(self._paths.venv)
+            else:
+                perror('Virtual environment path "{}" exists'.format(self._paths.venv))
 
         self._runner.mkdir_p(self._paths.venv)
         self._runner.mkdir_p(self._paths.home)
