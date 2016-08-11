@@ -299,6 +299,7 @@ class VEnvCreator:
             if 'babeltrace' not in projects:
                 _pwarn('The "lttng-analyses" project will use the system\'s Babeltrace')
             elif '--enable-python-bindings' not in projects['babeltrace'].configure:
+                _pwarn('Configuring "babeltrace" project with "--enable-python-bindings" (caused by "lttng-analyses")')
                 configure = projects['babeltrace'].configure
                 configure = configure.replace('--disable-python-bindings', '')
                 configure = configure.replace('--enable-python-bindings=no', '')
