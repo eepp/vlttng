@@ -59,7 +59,8 @@ The `vlttng` command does the following:
 +
 When the `activate` script is sourced, if the LTTng-modules project is
 part of the effective profile, it removes the currently loaded LTTng
-kernel modules and installs the ones of this virtual environment.
+kernel modules and sets the `MODPROBE_OPTIONS` variable so that the
+LTTng session daemon loads the virtual environment modules.
 
 Example:
 
