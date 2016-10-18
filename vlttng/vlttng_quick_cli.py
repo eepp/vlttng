@@ -124,6 +124,7 @@ class _Wizard:
                 'stable-1.2',
                 'stable-1.3',
                 'stable-1.4',
+                'master',
             ),
             'glib': (
                 '2.22.5',
@@ -156,6 +157,7 @@ class _Wizard:
                 '2.48.2',
                 '2.49.7',
                 '2.50.1',
+                'master',
             ),
             'libxml2': (
                 '2.8.0',
@@ -164,6 +166,7 @@ class _Wizard:
                 '2.9.2',
                 '2.9.3',
                 '2.9.4',
+                'master',
             ),
             'lttng-analyses': (
                 '0.3.0',
@@ -176,32 +179,38 @@ class _Wizard:
                 '0.5.2',
                 '0.5.3',
                 '0.5.4',
+                'master',
             ),
             'lttng-modules': (
                 'stable-2.6',
                 'stable-2.7',
                 'stable-2.8',
+                'master',
             ),
             'lttng-tools': (
                 'stable-2.6',
                 'stable-2.7',
                 'stable-2.8',
+                'master',
             ),
             'lttng-ust': (
                 'stable-2.6',
                 'stable-2.7',
                 'stable-2.8',
+                'master',
             ),
             'tracecompass': (
                 '1.1.0',
                 '1.2.0',
                 '1.2.1',
                 '2.0.0',
+                'master',
             ),
             'urcu': (
                 'stable-0.7',
                 'stable-0.8',
                 'stable-0.9',
+                'master',
             ),
         }
 
