@@ -125,12 +125,16 @@ glib-2.45.8.yml
 glib-2.46.2.yml
 glib-2.47.92.yml
 glib-2.48.1.yml
+glib-2.48.2.yml
+glib-2.49.7.yml
+glib-2.50.1.yml
 glib-master.yml
 libxml2-2.8.0.yml
 libxml2-2.9.0.yml
 libxml2-2.9.1.yml
 libxml2-2.9.2.yml
 libxml2-2.9.3.yml
+libxml2-2.9.4.yml
 libxml2-master.yml
 lttng-analyses-0.3.0.yml
 lttng-analyses-0.4.0.yml
