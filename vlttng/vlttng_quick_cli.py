@@ -238,7 +238,7 @@ class _Wizard:
 
 This questionnaire will help you create a basic vlttng profile to build
 the projects and features you need.
-'''.format(_bold('..')))
+''')
 
         while self._state != _WizardState.END:
             self._handle_state()
@@ -324,7 +324,7 @@ the projects and features you need.
         choices = self._get_choices(len(choices))
         print()
 
-        if choices == -1:
+        if choices == 'a':
             self._projects = [project for project in choice_projects]
         else:
             for choice in choices:
@@ -344,11 +344,11 @@ the projects and features you need.
                 choice_projects.append(project)
 
         self._pchoices(choices)
-        self._pmultiple_choices_info()
+        self._pmultiple_choices_info(with_none=True)
         choices = self._get_choices(len(choices), True)
         print()
 
-        if choices == -1:
+        if choices == 'a':
             self._projects_versions = {p: 'master' for p in choice_projects}
         else:
             for choice in choices:
@@ -514,9 +514,16 @@ the projects and features you need.
     def _get_project_title(self, name):
         return self._project_name_to_title[name]
 
-    def _pmultiple_choices_info(self):
+    def _pmultiple_choices_info(self, with_none=False):
         print()
-        print('Enter a space-delimited list of choices, or {} to select all.'.format(_bold('a')))
+        print('Enter a space-delimited list of choices,', end='')
+
+        if with_none:
+            print(' {} to select all,'.format(_bold('a')))
+            print('or {} to select none.'.format(_bold('n')))
+        else:
+            print(' or {} to select all.'.format(_bold('a')))
+
         print()
 
     def _pchoices(self, choices):
@@ -561,23 +568,26 @@ the projects and features you need.
         prompt_ext = ''
 
         if all_default:
-            prompt_ext = ' [a]'
+            prompt_ext = ' ({} for none) [{}]'.format(_bold('n'), _bold('a'))
 
         resp = self._input(prompt_ext)
 
         if resp == '':
             if all_default:
-                return -1
+                return 'a'
 
             self._pinvalid_choices()
             return
+
+        if resp == 'n':
+            return set()
 
         raw_choices = re.split(r'\s+', resp)
         choices = set()
 
         for raw_choice in raw_choices:
             if raw_choice == 'a':
-                return -1
+                return 'a'
 
             choice = self._raw_choice_to_int(raw_choice, choice_max)
 
