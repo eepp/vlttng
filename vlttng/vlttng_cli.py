@@ -50,7 +50,7 @@ def _parse_args():
                     help='list default profile names and exit')
     ap.add_argument('-o', '--override', metavar='PROP',
                     action='append',
-                    help='ignore project PROJECT (may be repeated)')
+                    help='override property in the effective profile (may be repeated)')
     ap.add_argument('-p', '--profile', metavar='PROFILE', action='append',
                     help='profile name or path (may be repeated to patch)')
     ap.add_argument('-v', '--verbose', action='store_true',
