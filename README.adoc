@@ -455,3 +455,29 @@ environment, there's nothing special to do to trace a Python
 application: the `PYTHONPATH` environment variable contains the path to
 the LTTng-UST Python agent package in the virtual environment. You can
 import the `lttngust` package as usual.
+
+
+=== Update a project with a Git source
+
+When a project's source uses Git, `vlttng` generates the following
+scripts in the virtual environment's root directory (+__name__+ is
+the project name):
+
++conf-__name__.bash+::
+    Runs the configuration step of the project.
+
++build-__name__.bash+::
+    Runs the build step of the project.
+
++install-__name__.bash+::
+    Runs the install step of the project.
+
++update-__name__.bash+::
+    Fetches the project's configured Git remote, checks out the latest
+    version of the configured branch, and runs +conf-__name__.bash+,
+    +build-__name__.bash+, and +install-__name__.bash+.
+
+IMPORTANT: Use those scripts with caution. For a stable branch, they
+should work most of the time. For the `master` branch, some required
+implicit configuration and build command lines might be missing from the
+scripts.

@@ -23,6 +23,7 @@
 import re
 import os
 import sys
+import stat
 import copy
 import shlex
 import os.path
@@ -34,12 +35,16 @@ from vlttng.utils import perror
 from pathlib import PurePosixPath
 
 
+def _sq(t):
+    return shlex.quote(t)
+
+
 def _pcmd(cmd):
     print(colored(cmd, attrs=['bold']))
 
 
 def _psetenv(key, val):
-    setenv = 'export {}={}'.format(key.strip(), shlex.quote(str(val)))
+    setenv = 'export {}={}'.format(key.strip(), _sq(str(val)))
     print(colored(setenv, 'grey', attrs=['bold']))
 
 
@@ -74,12 +79,12 @@ def _patch_env(env, paths):
     # CPPFLAGS
     cppflags = env.get('CPPFLAGS', '')
     include_dir = os.path.join(paths.usr, 'include')
-    cppflags += ' -I{}'.format(shlex.quote(include_dir))
+    cppflags += ' -I{}'.format(_sq(include_dir))
     env['CPPFLAGS'] = cppflags
 
     # LDFLAGS
     ldflags = env.get('LDFLAGS', '')
-    ldflags += ' -L{}'.format(shlex.quote(paths.lib))
+    ldflags += ' -L{}'.format(_sq(paths.lib))
     env['LDFLAGS'] = ldflags
 
     # LD_LIBRARY_PATH
@@ -133,19 +138,18 @@ def _get_full_env(env, paths):
 
 
 class _Runner:
-    def __init__(self, verbose, hide_export, jobs, paths):
+    def __init__(self, verbose, hide_export, paths):
         self._verbose = verbose
         self._hide_export = hide_export
         self._cwd = None
         self._env = None
-        self._jobs = jobs
         self._paths = paths
 
     @property
     def cwd(self):
         return self._cwd
 
-    def run(self, cmd):
+    def _run_line(self, cmd):
         _pcmd(cmd)
         stdio = None if self._verbose else subprocess.DEVNULL
         popen = subprocess.Popen(cmd, stdin=None, stdout=stdio, stderr=stdio,
@@ -155,11 +159,15 @@ class _Runner:
         if popen.returncode != 0:
             perror('Command exited with status {}'.format(popen.returncode))
 
-    def sudo_run(self, cmd):
-        self.run('sudo {}'.format(cmd))
+    def run(self, cmd):
+        if type(cmd) is str:
+            self._run_line(cmd)
+        elif type(cmd) is list:
+            for line in cmd:
+                self._run_line(line)
 
     def cd(self, cwd):
-        msg = 'cd {}'.format(shlex.quote(cwd))
+        msg = 'cd {}'.format(_sq(cwd))
         print(colored(msg, 'cyan', attrs=['bold']))
         self._cwd = cwd
 
@@ -167,36 +175,36 @@ class _Runner:
         self._env = _get_full_env(env, self._paths)
 
         if not self._hide_export:
-            for key, val in self._env.items():
-                _psetenv(key, val)
+            for key in sorted(self._env):
+                _psetenv(key, self._env[key])
 
     def wget(self, url, output_path):
-        cmd = 'wget {} -O {}'.format(shlex.quote(url), shlex.quote(output_path))
+        cmd = 'wget {} -O {}'.format(_sq(url), _sq(output_path))
         self.run(cmd)
 
     def git_clone(self, clone_url, path):
-        cmd = 'git clone {} {}'.format(shlex.quote(clone_url), shlex.quote(path))
+        cmd = 'git clone {} {}'.format(_sq(clone_url), _sq(path))
         self.run(cmd)
 
     def git_checkout(self, treeish):
-        cmd = 'git checkout {}'.format(shlex.quote(treeish))
+        cmd = 'git checkout {}'.format(_sq(treeish))
         self.run(cmd)
 
     def mkdir_p(self, path):
-        cmd = 'mkdir --verbose -p {}'.format(shlex.quote(path))
+        cmd = 'mkdir --verbose -p {}'.format(_sq(path))
         self.run(cmd)
 
     def cp_rv(self, src, dst):
-        cmd = 'cp -rv {} {}'.format(shlex.quote(src), shlex.quote(dst))
+        cmd = 'cp -rv {} {}'.format(_sq(src), _sq(dst))
         self.run(cmd)
 
     def ln_s(self, target, link):
-        cmd = 'ln -s {} {}'.format(shlex.quote(target), shlex.quote(link))
+        cmd = 'ln -s {} {}'.format(_sq(target), _sq(link))
         self.run(cmd)
 
     def tar_x(self, path, output_name):
-        cmd = 'tar -xvf {} -C {} --strip-components=1'.format(shlex.quote(path),
-                                                              shlex.quote(output_name))
+        cmd = 'tar -xvf {} -C {} --strip-components=1'.format(_sq(path),
+                                                              _sq(output_name))
         self.run(cmd)
 
     def rm_rf(self, path):
@@ -224,36 +232,7 @@ class _Runner:
         if norm_path in no_rm_dirs:
             perror('Not removing protected directory "{}"'.format(norm_path))
 
-        cmd = 'rm -rf {}'.format(shlex.quote(path))
-        self.run(cmd)
-
-    def configure(self, args):
-        cmd = './configure --prefix={} {}'.format(shlex.quote(self._paths.usr),
-                                                  args)
-        self.run(cmd)
-
-    def make(self, target=None, args=None, sudo=False):
-        cmd = 'make -j{} V=1'.format(self._jobs)
-
-        if target is not None:
-            cmd += ' ' + shlex.quote(target)
-
-        if args is not None:
-            cmd += ' ' + args
-
-        if sudo:
-            fn = self.sudo_run
-        else:
-            fn = self.run
-
-        fn(cmd)
-
-    def setuppy_install(self):
-        cmd = './setup.py install --prefix={}'.format(shlex.quote(self._paths.usr))
-        self.run(cmd)
-
-    def maven(self, args):
-        cmd = 'mvn {}'.format(args)
+        cmd = 'rm -rf {}'.format(_sq(path))
         self.run(cmd)
 
 
@@ -305,19 +284,57 @@ class _Paths:
     def share_java(self):
         return os.path.join(self.share, 'java')
 
+    @property
+    def log4j_jar(self):
+        return os.path.join(self.share_java, 'log4j.jar')
+
     def project_src(self, name):
         return os.path.join(self.src, name)
 
 
+class _ProjectInstructions:
+    def __init__(self, project, add_env=None, conf_lines=None,
+                 build_lines=None, install_lines=None, uninstall_lines=None):
+        self._project = project
+        self.add_env = add_env
+        self.conf_lines = conf_lines
+        self.build_lines = build_lines
+        self.install_lines = install_lines
+        self.uninstall_lines = uninstall_lines
+
+    @property
+    def project(self):
+        return self._project
+
+
 class VEnvCreator:
+    _LOG4J_NAME = 'log4j-1.2.17'
+
     def __init__(self, path, profile, force, verbose, jobs, hide_export):
         self._paths = _Paths(os.path.abspath(path))
-        self._runner = _Runner(verbose, hide_export, jobs, self._paths)
+        self._runner = _Runner(verbose, hide_export, self._paths)
+        self._jobs = jobs
         self._profile = profile
         self._force = force
         self._verbose = verbose
         self._src_paths = {}
+        self._project_instructions = {}
+        self._create_project_instructions_cbs = {
+            'babeltrace': self._create_project_instructions_generic_autotools,
+            'elfutils': self._create_project_instructions_generic_autotools,
+            'glib': self._create_project_instructions_generic_autotools,
+            'libxml2': self._create_project_instructions_generic_autotools,
+            'lttng-analyses': self._create_project_instructions_lttng_analyses,
+            'lttng-modules': self._create_project_instructions_lttng_modules,
+            'lttng-tools': self._create_project_instructions_lttng_tools,
+            'lttng-ust': self._create_project_instructions_lttng_ust,
+            'tracecompass': self._create_project_instructions_tracecompass,
+            'urcu': self._create_project_instructions_generic_autotools,
+        }
         self._create()
+
+    def _get_make(self):
+        return 'make -j{} V=1'.format(self._jobs)
 
     def _validate_profile(self):
         projects = self._profile.projects
@@ -351,6 +368,116 @@ class VEnvCreator:
             if 'libxml2' not in projects:
                 _pwarn('The "lttng-tools" project will use the system\'s Libxml2')
 
+    def _create_project_instructions_lttng_tools(self, project):
+        if '--with-lttng-ust-prefix' in project.configure or '--without-lttng-ust' in project.configure:
+            msg = 'I would not pass the --with-lttng-ust-prefix/--without-lttng-ust configure option if I were you: they are handled by vlttng'
+            _pwarn(msg)
+
+        if 'lttng-ust' in self._profile.projects:
+            add_args = '--with-lttng-ust-prefix={}'.format(_sq(self._paths.usr))
+        else:
+            add_args = '--without-lttng-ust'
+
+        return self._create_project_instructions_generic_autotools(project, add_args)
+
+    def _create_project_instructions_lttng_ust(self, project):
+        instructions = self._create_project_instructions_generic_autotools(project)
+        instructions.add_env = {
+            'CLASSPATH': self._paths.log4j_jar,
+        }
+
+        return instructions
+
+    def _create_project_instructions_lttng_modules(self, project):
+        build_lines = [
+            self._get_make(),
+        ]
+        install_path = _sq(self._paths.usr)
+        install_lines = [
+            'make modules_install INSTALL_MOD_PATH={}'.format(install_path),
+            'depmod --all --basedir={}'.format(install_path),
+        ]
+
+        return _ProjectInstructions(project, build_lines=build_lines,
+                                    install_lines=install_lines)
+
+    def _create_project_instructions_lttng_analyses(self, project):
+        build_lines = [
+            './setup.py build',
+        ]
+        install_lines = [
+            './setup.py install --prefix={}'.format(_sq(self._paths.usr))
+        ]
+
+        return _ProjectInstructions(project, build_lines=build_lines,
+                                    install_lines=install_lines)
+
+    def _create_project_instructions_tracecompass(self, project):
+        dst = os.path.join(self._paths.opt, 'tracecompass')
+        install_lines = []
+
+        if type(project.source) is vlttng.profile.HttpFtpSource:
+            src = self._paths.project_src('tracecompass')
+        else:
+            install_lines = [
+                'mvn clean install -Dmaven.test.skip=true',
+            ]
+            src = os.path.join('rcp',
+                               'org.eclipse.tracecompass.rcp.product',
+                               'target',
+                               'products',
+                               'org.eclipse.tracecompass.rcp',
+                               'linux',
+                               'gtk',
+                               'x86_64',
+                               'trace-compass')
+
+        link = os.path.join(self._paths.bin, 'tracecompass')
+        install_lines += [
+            'cp -rv {} {}'.format(_sq(src), _sq(dst)),
+            'ln -s {} {}'.format(os.path.join(dst, 'tracecompass'),
+                                 _sq(link)),
+        ]
+
+        return _ProjectInstructions(project, install_lines=install_lines)
+
+    def _create_project_instructions_generic_autotools(self, project, add_conf_args=None):
+        conf_lines = []
+        build_lines = [self._get_make()]
+        install_lines = ['make install']
+        uninstall_lines = ['make uninstall']
+
+        # bootstrap?
+        for f in ('bootstrap', 'bootstrap.sh', 'autogen', 'autogen.sh',):
+            bootstrap = os.path.join(self._paths.project_src(project.name), f)
+
+            if os.path.isfile(bootstrap):
+                conf_lines.append('./{}'.format(f))
+                break
+
+        # configure
+        conf_args = project.configure
+
+        if '--prefix' in project.configure:
+            fmt = 'Project "{}": I would not pass the --prefix configure option if I were you: it is handled by vlttng'
+            _pwarn(fmt.format(project.name))
+
+        if add_conf_args is not None:
+            conf_args += ' ' + add_conf_args
+
+        conf_line = './configure --prefix={} {}'.format(_sq(self._paths.usr),
+                                                        conf_args)
+        conf_lines.append(conf_line)
+
+        return _ProjectInstructions(project, conf_lines=conf_lines,
+                                    build_lines=build_lines,
+                                    install_lines=install_lines,
+                                    uninstall_lines=uninstall_lines)
+
+    def _create_project_instructions(self):
+        for name, project in self._profile.projects.items():
+            self._project_instructions[name] = self._create_project_instructions_cbs[name](project)
+
     def _create(self):
         self._validate_profile()
 
@@ -376,35 +503,20 @@ class VEnvCreator:
         _pinfo('Fetch sources')
         self._fetch_sources()
 
-        # build URCU first
-        self._build_project('urcu', self._configure_make_install)
+        # create build instructions for projects to build
+        self._create_project_instructions()
 
-        # build LTTng-UST
+        # build projects in this order
+        self._build_project('urcu')
         self._build_lttng_ust()
-
-        # build libxml2
-        self._build_project('libxml2', self._configure_make_install)
-
-        # build LTTng-tools
-        self._build_lttng_tools()
-
-        # build LTTng-modules
-        self._build_lttng_modules()
-
-        # build GLib
-        self._build_project('glib', self._configure_make_install)
-
-        # build elfutils
-        self._build_project('elfutils', self._configure_make_install)
-
-        # build Babeltrace
-        self._build_project('babeltrace', self._configure_make_install)
-
-        # build LTTng-analyses
-        self._build_lttng_analyses()
-
-        # build Trace Compass
-        self._build_tracecompass()
+        self._build_project('libxml2')
+        self._build_project('lttng-tools')
+        self._build_project('lttng-modules')
+        self._build_project('glib')
+        self._build_project('elfutils')
+        self._build_project('babeltrace')
+        self._build_project('lttng-analyses')
+        self._build_project('tracecompass')
 
         # create activate script
         self._create_activate()
@@ -440,7 +552,7 @@ class VEnvCreator:
         for key, val in env.items():
             key = key.strip()
             env_items.append('_VLTTNG_OLD_{e}="${e}"'.format(e=key))
-            setenv = 'export {}={}'.format(key, shlex.quote(str(val)))
+            setenv = 'export {}={}'.format(key, _sq(str(val)))
             env_items.append(setenv)
             unenv_items.append('    {e}="$_VLTTNG_OLD_{e}"'.format(e=key))
             unenv_items.append('    unset _VLTTNG_OLD_{}'.format(key))
@@ -457,7 +569,7 @@ class VEnvCreator:
             if '--enable-java-agent' in configure:
                 has_java = '1'
 
-        activate = activate_template.format(venv_path=shlex.quote(self._paths.venv),
+        activate = activate_template.format(venv_path=_sq(self._paths.venv),
                                             has_modules=has_modules,
                                             has_java=has_java,
                                             env=env_lines,
@@ -503,150 +615,143 @@ class VEnvCreator:
                 src_path = self._paths.project_src(src_path)
                 self._src_paths[project.name] = src_path
 
-    def _configure_make_install(self, project, add_args=None):
-        # bootstrap?
-        for f in ('bootstrap', 'bootstrap.sh', 'autogen', 'autogen.sh',):
-            bootstrap = os.path.join(self._paths.project_src(project.name), f)
-
-            if os.path.isfile(bootstrap):
-                self._runner.run('./{}'.format(f))
-                break
-
-        # configure
-        args = project.configure
-
-        if '--prefix' in project.configure:
-            fmt = 'Project "{}": I would not pass the --prefix configure option if I were you: it is handled by vlttng'
-            _pwarn(fmt.format(project.name))
-
-        if add_args is not None:
-            args += ' ' + add_args
-
-        self._runner.configure(args)
-
-        # make
-        self._runner.make()
-
-        # make install
-        self._runner.make('install')
-
-    def _build_project(self, name, build_fn, configure_add_args=None):
-        project = self._profile.projects.get(name)
-
-        if project is None:
-            return
-
-        _pinfo('Build and install {}'.format(name))
-        self._runner.cd(self._src_paths[project.name])
-        self._runner.set_env(project.build_env)
-        build_fn(project)
-
-    def _build_lttng_tools(self):
-        project = self._profile.projects.get('lttng-tools')
-
-        if project is None:
-            return
-
-        if '--with-lttng-ust-prefix' in project.configure or '--without-lttng-ust' in project.configure:
-            msg = 'I would not pass the --with-lttng-ust-prefix/--without-lttng-ust configure option if I were you: they are handled by vlttng'
-            _pwarn(msg)
-
-        if 'lttng-ust' in self._profile.projects:
-            add_args = '--with-lttng-ust-prefix={}'.format(shlex.quote(self._paths.usr))
-        else:
-            add_args = '--without-lttng-ust'
-
-        build_fn = functools.partial(self._configure_make_install,
-                                     add_args=add_args)
-        self._build_project('lttng-tools', build_fn)
-
     def _build_lttng_ust(self):
-        def build(project):
-            if '--enable-java-agent-all' in project.configure or '--enable-java-agent-log4j' in project.configure:
-                cwd = self._runner.cwd
-
-                # get Apache log4j 1.2
-                log4j_name = 'log4j-1.2.17'
-                log4j_tarball = '{}.tar.gz'.format(log4j_name)
-                log4j_jar = '{}.jar'.format(log4j_name)
-                log4j_installed_jar = os.path.join(self._paths.share_java, 'log4j.jar')
-                self._runner.cd(self._paths.src)
-                self._runner.wget('http://apache.mirror.gtcomm.net/logging/log4j/1.2.17/{}'.format(log4j_tarball),
-                                  log4j_tarball)
-
-                # extract
-                self._runner.mkdir_p(log4j_name)
-                self._runner.tar_x(log4j_tarball, log4j_name)
-
-                # install
-                self._runner.cp_rv(os.path.join(log4j_name, log4j_jar),
-                                   log4j_installed_jar)
-
-                # update $CLASSPATH
-                classpath = os.environ.get('CLASSPATH', '')
-                classpath = '{}:{}'.format(log4j_installed_jar, classpath)
-                self._runner.set_env({
-                    'CLASSPATH': classpath
-                })
-
-                self._runner.cd(cwd)
-
-            # build and install LTTng-UST
-            self._configure_make_install(project)
-
         project = self._profile.projects.get('lttng-ust')
 
         if project is None:
             return
 
-        self._build_project('lttng-ust', build)
+        if '--enable-java-agent-all' in project.configure or '--enable-java-agent-log4j' in project.configure:
+            # get Apache log4j 1.2
+            log4j_name = 'log4j-1.2.17'
+            log4j_tarball = '{}.tar.gz'.format(log4j_name)
+            log4j_jar = '{}.jar'.format(log4j_name)
+            _pinfo('Download Apache log4j')
+            self._runner.cd(self._paths.src)
+            self._runner.wget('http://apache.mirror.gtcomm.net/logging/log4j/1.2.17/{}'.format(log4j_tarball),
+                              log4j_tarball)
 
-    def _build_lttng_modules(self):
-        def build(project):
-            self._runner.make()
-            install_path = shlex.quote(self._paths.usr)
-            self._runner.make('modules_install', 'INSTALL_MOD_PATH={}'.format(install_path))
-            self._runner.run('depmod --all --basedir {}'.format(shlex.quote(self._paths.usr)))
+            # extract
+            self._runner.mkdir_p(log4j_name)
+            self._runner.tar_x(log4j_tarball, log4j_name)
 
-        self._build_project('lttng-modules', build)
+            # install
+            self._runner.cp_rv(os.path.join(log4j_name, log4j_jar),
+                               self._paths.log4j_jar)
 
-    def _build_lttng_analyses(self):
-        def build(project):
-            self._runner.setuppy_install()
+        self._build_project('lttng-ust')
 
-        self._build_project('lttng-analyses', build)
+    def _get_build_env_from_instructions(self, instructions):
+        build_env = copy.deepcopy(self._profile.build_env)
+        build_env.update(instructions.project.build_env)
 
-    def _build_tracecompass(self):
-        def finalize(src):
-            dst = os.path.join(self._paths.opt, 'tracecompass')
-            self._runner.cp_rv(src, dst)
-            link = os.path.join(self._paths.bin, 'tracecompass')
-            self._runner.ln_s(os.path.join(dst, 'tracecompass'), link)
+        if instructions.add_env is not None:
+            build_env.update(instructions.add_env)
 
-        def build_from_tarball(project):
-            finalize(self._paths.project_src('tracecompass'))
+        return build_env
 
-        def build_from_git(project):
-            self._runner.maven('clean install -Dmaven.test.skip=true')
-            src = os.path.join('rcp',
-                               'org.eclipse.tracecompass.rcp.product',
-                               'target',
-                               'products',
-                               'org.eclipse.tracecompass.rcp',
-                               'linux',
-                               'gtk',
-                               'x86_64',
-                               'trace-compass')
-            finalize(src)
+    def _build_project(self, name):
+        instructions = self._project_instructions.get(name)
 
-        project = self._profile.projects.get('tracecompass')
-
-        if project is None:
+        if instructions is None:
             return
 
-        if type(project.source) is vlttng.profile.HttpFtpSource:
-            build_fn = build_from_tarball
-        else:
-            build_fn = build_from_git
+        build_env = self._get_build_env_from_instructions(instructions)
+        self._runner.set_env(build_env)
+        self._runner.cd(self._src_paths[instructions.project.name])
 
-        self._build_project('tracecompass', build_fn)
+        if instructions.conf_lines is not None:
+            _pinfo('Configure {}'.format(name))
+            self._runner.run(instructions.conf_lines)
+
+        if instructions.build_lines is not None:
+            _pinfo('Build {}'.format(name))
+            self._runner.run(instructions.build_lines)
+
+        if instructions.install_lines is not None:
+            _pinfo('Install {}'.format(name))
+            self._runner.run(instructions.install_lines)
+
+        self._create_scripts(instructions)
+
+    def _create_executable_script(self, script_name, content):
+        script_path = os.path.join(self._paths.venv,
+                                   '{}.bash'.format(script_name))
+
+        with open(script_path, 'w') as f:
+            f.write(content)
+
+        st = os.stat(script_path)
+        os.chmod(script_path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+    def _create_conf_script(self, instructions, name, exports, src_path):
+        from vlttng.conf_template import conf_template as tmpl
+
+        conf_lines = ''
+
+        if instructions.conf_lines is not None:
+            conf_lines = '\n'.join(instructions.conf_lines)
+
+        conf = tmpl.format(name=name, src_path=_sq(src_path),
+                           conf_lines=conf_lines, exports=exports)
+        self._create_executable_script('conf-{}'.format(name), conf)
+
+    def _create_build_script(self, instructions, name, exports, src_path):
+        from vlttng.build_template import build_template as tmpl
+
+        build_lines = ''
+
+        if instructions.build_lines is not None:
+            build_lines = '\n'.join(instructions.build_lines)
+
+        build = tmpl.format(name=name, src_path=_sq(src_path),
+                            build_lines=build_lines, exports=exports)
+        self._create_executable_script('build-{}'.format(name), build)
+
+    def _create_install_script(self, instructions, name, exports, src_path):
+        from vlttng.install_template import install_template as tmpl
+
+        install_lines = ''
+
+        if instructions.install_lines is not None:
+            install_lines = '\n'.join(instructions.install_lines)
+
+        install = tmpl.format(name=name, src_path=_sq(src_path),
+                              install_lines=install_lines, exports=exports)
+        self._create_executable_script('install-{}'.format(name), install)
+
+    def _create_update_script(self, instructions, name, exports, src_path):
+        from vlttng.update_template import update_template as tmpl
+
+        gitref = instructions.project.source.checkout
+        uninstall_lines = ''
+
+        if instructions.uninstall_lines is not None:
+            uninstall_lines = '\n'.join(instructions.uninstall_lines)
+
+        update = tmpl.format(name=name, src_path=_sq(src_path),
+                             uninstall_lines=uninstall_lines, gitref=gitref,
+                             exports=exports)
+        self._create_executable_script('update-{}'.format(name), update)
+
+    def _create_scripts(self, instructions):
+        if type(instructions.project.source) is not vlttng.profile.GitSource:
+            return
+
+        name = instructions.project.name
+        src_path = self._src_paths[name]
+        gitref = instructions.project.source.checkout
+        build_env = self._get_build_env_from_instructions(instructions)
+        build_env = _get_full_env(build_env, self._paths)
+        export_lines = []
+
+        for key in sorted(build_env):
+            value = build_env[key]
+            export_lines.append('export {}={}'.format(key, _sq(value)))
+
+        exports = '\n'.join(export_lines)
+
+        self._create_conf_script(instructions, name, exports, src_path)
+        self._create_build_script(instructions, name, exports, src_path)
+        self._create_install_script(instructions, name, exports, src_path)
+        self._create_update_script(instructions, name, exports, src_path)
