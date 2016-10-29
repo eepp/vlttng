@@ -392,10 +392,10 @@ class VEnvCreator:
         build_lines = [
             self._get_make(),
         ]
-        install_path = _sq(self._paths.usr)
+        sq_install_path = _sq(self._paths.usr)
         install_lines = [
-            'make modules_install INSTALL_MOD_PATH={}'.format(install_path),
-            'depmod --all --basedir={}'.format(install_path),
+            'make modules_install INSTALL_MOD_PATH={}'.format(sq_install_path),
+            'depmod --all --basedir={}'.format(sq_install_path),
         ]
 
         return _ProjectInstructions(project, build_lines=build_lines,
@@ -435,7 +435,7 @@ class VEnvCreator:
         link = os.path.join(self._paths.bin, 'tracecompass')
         install_lines += [
             'cp -rv {} {}'.format(_sq(src), _sq(dst)),
-            'ln -s {} {}'.format(os.path.join(dst, 'tracecompass'),
+            'ln -s {} {}'.format(_sq(os.path.join(dst, 'tracecompass')),
                                  _sq(link)),
         ]
 
