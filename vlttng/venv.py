@@ -349,7 +349,7 @@ class VEnvCreator:
 
         if 'lttng-tools' in projects:
             if 'libxml2' not in projects:
-                _pwarn('The "lttng-tools" project will use the system\'s libxml2')
+                _pwarn('The "lttng-tools" project will use the system\'s Libxml2')
 
     def _create(self):
         self._validate_profile()
