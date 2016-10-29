@@ -40,7 +40,7 @@ import vlttng
 
 setup(name='vlttng',
       version=vlttng.__version__,
-      description='Virtual LTTng environment',
+      description='Generator of LTTng virtual environment',
       author='Philippe Proulx',
       author_email='eeppeliteloop@gmail.com',
       url='https://github.com/eepp/vlttng',
