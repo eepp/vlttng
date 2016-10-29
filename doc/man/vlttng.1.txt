@@ -408,5 +408,5 @@ https://github.com/eepp/vlttng/blob/master/LICENSE[MIT License].
 
 AUTHORS
 -------
-barectf was originally written by and is maintained by, as of this
-version, mailto:eeppeliteloop@gmail.com[Philippe Proulx].
+vlttng was originally written by and is maintained by, as of vlttng
+{vlttng_version}, mailto:eeppeliteloop@gmail.com[Philippe Proulx].

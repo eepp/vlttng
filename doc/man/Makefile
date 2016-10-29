@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 # source
-SRC = vlttng
+MAN1 = vlttng.1 vlttng-quick.1
 
 # config
 ASCIIDOC_CONF = asciidoc.conf
@@ -42,15 +42,15 @@ XTO = $(XMLTO) -m $(firstword $(XSL_SRC_FILES)) man
 # recipes
 .PHONY: all
 
-all: $(SRC).1
+all: $(MAN1)
 
-$(SRC).1.xml: $(SRC).1.txt $(ASCIIDOC_CONF)
+%.1.xml: %.1.txt $(ASCIIDOC_CONF)
 	$(ADOC_DOCBOOK) -o $@ $<
 
-$(SRC).1: $(SRC).1.xml $(XSL_SRC_FILES)
+%.1: %.1.xml $(XSL_SRC_FILES)
 	$(XTO) $<
 
 .PHONY: clean
 
 clean:
-	rm -f $(SRC).1 $(SRC).1.xml
+	rm -f $(MAN1) $(addsuffix .xml,$(MAN1))

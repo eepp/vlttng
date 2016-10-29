@@ -1,0 +1,73 @@
+vlttng(1)
+=========
+
+
+NAME
+----
+vlttng-quick - generate a vlttng command line
+
+
+SYNOPSIS
+--------
+[verse]
+*vlttng-quick*
+
+
+DESCRIPTION
+-----------
+`vlttng-quick` is an interactive command-line tool which generates a
+man:vlttng(1) command line after asking you a few questions to create
+an LTTng virtual environment.
+
+`vlttng-quick` can also run the generated command line immediately
+after you complete the questionnaire.
+
+Just run it and answer the questions.
+
+
+OPTIONS
+-------
+opt:-h, opt:--help::
+    Show the command's help.
+
+opt:-V, opt:--version::
+    Show the command's version.
+
+
+EXIT STATUS
+-----------
+*0*::
+    Success
+
+*Not 0*::
+    Error
+
+
+BUGS
+----
+Please report any bug or usability issue as a
+https://github.com/eepp/vlttng/issues[GitHub issue].
+
+
+RESOURCES
+---------
+* https://github.com/eepp/vlttng[GitHub repository]
+* http://lists.lttng.org[Mailing list] for support and
+  development: `lttng-dev@lists.lttng.org` (prefix the subject message
+  with `[vlttng]`)
+* irc://irc.oftc.net/lttng[IRC channel]: `#lttng` on `irc.oftc.net`
+  (`eepp` is vlttng's author and maintainer)
+
+
+COPYRIGHT
+---------
+Copyright (c) 2016 mailto:eeppeliteloop@gmail.com[Philippe Proulx].
+
+vlttng is distributed under the
+https://github.com/eepp/vlttng/blob/master/LICENSE[MIT License].
+
+
+AUTHORS
+-------
+vlttng was originally written by and is maintained by, as of vlttng
+{vlttng_version}, mailto:eeppeliteloop@gmail.com[Philippe Proulx].
