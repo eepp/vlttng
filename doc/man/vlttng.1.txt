@@ -309,6 +309,10 @@ opt:-f, opt:--force::
     Force the creation of the virtual environment. This removes any
     existing 'VPATH' directory first.
 
+opt:--hide-export::
+    Hide the environment variable export lines from the command's
+    output.
+
 opt:-i 'PROJECT', opt:--ignore-project='PROJECT'::
     Completely remove the project named 'PROJECT' from the effective
     profile.
