@@ -94,7 +94,7 @@ You can ``exit'' the virtual environment with the `vlttng-deactivate`
 command. Your prompt should return to its previous value.
 
 
-=== Write and use profiles
+== Write and use profiles
 
 A vlttng profile is a layer of configuration. You can use multiple
 profiles to create an _effective profile_.
@@ -317,7 +317,7 @@ projects:
 
 
 [[override]]
-=== Override a profile property
+== Override a profile property
 
 You can replace, append to, and remove effective profile properties
 (after `vlttng` has merged all the profiles given with the `--profile`
@@ -372,7 +372,7 @@ not exist. This allows you to create projects on the command line:
 Note that the overrides are applied in command line order.
 
 
-=== Ignore a project
+== Ignore a project
 
 You can ignore specific projects that exist in the effective profile
 using the `--ignore-project` (`-i`) option:
@@ -387,7 +387,7 @@ vlttng -p lttng-stable-2.7 -p urcu-master -o '!projects.lttng-ust' virt
 ----
 
 
-=== Make the output verbose
+== Make the output verbose
 
 By default, `vlttng` hides the standard output and error of the commands
 it runs. In this mode, `vlttng` prints all the commands to run and the
@@ -401,12 +401,12 @@ output and error of all the executed commands, and the effective profile
 used to create the virtual environment.
 
 
-=== Define the number of make jobs
+== Define the number of make jobs
 
 `vlttng` passes its `--jobs` (`-j`) option as is to `make`.
 
 
-=== `activate` script options
+== `activate` script options
 
 When you source the `activate` script, you can use the following
 environment variables to alter its behaviour:
@@ -419,7 +419,7 @@ environment variables to alter its behaviour:
     Set to `1` to keep your current shell prompt after the activation.
 
 
-=== Use `sudo`
+== Use `sudo`
 
 If you use `sudo` when the virtual environment is activated, make sure
 to use its `--preserve-env` (`-E`) option, so that the virtual
@@ -433,7 +433,7 @@ sudo --preserve-env lttng-sessiond --daemonize
 ----
 
 
-=== Trace a Java application
+== Trace a Java application
 
 When the LTTng-UST project is built with a Java agent, the activation
 of the virtual environment sets the `VLTTNG_CLASSPATH` environment
@@ -448,7 +448,7 @@ java -cp $VLTTNG_CLASSPATH:. MyClass
 ----
 
 
-=== Trace a Python application
+== Trace a Python application
 
 If the LTTng-UST Python agent is built and installed in the virtual
 environment, there's nothing special to do to trace a Python
@@ -457,7 +457,7 @@ the LTTng-UST Python agent package in the virtual environment. You can
 import the `lttngust` package as usual.
 
 
-=== Update a project with a Git source
+== Update a project with a Git source
 
 When a project's source uses Git, `vlttng` generates the following
 scripts in the virtual environment's root directory (+__name__+ is
