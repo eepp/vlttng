@@ -369,14 +369,20 @@ class VEnvCreator:
                 _pwarn('The "lttng-tools" project will use the system\'s Libxml2')
 
     def _create_project_instructions_lttng_tools(self, project):
-        if '--with-lttng-ust-prefix' in project.configure or '--without-lttng-ust' in project.configure:
-            msg = 'I would not pass the --with-lttng-ust-prefix/--without-lttng-ust configure option if I were you: they are handled by vlttng'
-            _pwarn(msg)
+        lttng_ust_opts = ('--with-lttng-ust-prefix', '--without-lttng-ust', '--disable-lttng-ust', '--enable-lttng-ust')
+
+        for ust_opt in lttng_ust_opts:
+            if ust_opt in project.configure:
+                msg = 'I would not pass the '+ust_opt+' configure option if I were you: they are handled by vlttng'
+                _pwarn(msg)
 
         if 'lttng-ust' in self._profile.projects:
             add_args = '--with-lttng-ust-prefix={}'.format(_sq(self._paths.usr))
         else:
-            add_args = '--without-lttng-ust'
+            # LTTng-Tools prior to v2.8 was using a different flag to turn off
+            # UST support. We add both to the configure script arguments since the
+            # unsupported one will be ignored.
+            add_args = '--without-lttng-ust --disable-lttng-ust'
 
         return self._create_project_instructions_generic_autotools(project, add_args)
 
