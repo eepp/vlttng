@@ -127,6 +127,10 @@ class _Wizard:
                 'stable-1.4',
                 'master',
             ),
+            'elfutils': (
+                '0.166',
+                '0.167',
+            ),
             'glib': (
                 '2.22.5',
                 '2.23.6',
@@ -359,9 +363,6 @@ the projects and features you need.
         else:
             for choice in choices:
                 self._projects_versions[choice_projects[choice - 1]] = 'master'
-
-        if 'elfutils' in self._projects:
-            self._projects_versions['elfutils'] = '0.166'
 
         self._state = _WizardState.ASK_VERSIONS
 
