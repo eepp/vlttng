@@ -2,12 +2,12 @@
 .\"     Title: vlttng
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 10/29/2016
+.\"      Date: 10/31/2016
 .\"    Manual: vlttng manual
 .\"    Source: vlttng 0.4.0
 .\"  Language: English
 .\"
-.TH "VLTTNG" "1" "10/29/2016" "vlttng 0\&.4\&.0" "vlttng manual"
+.TH "VLTTNG" "1" "10/31/2016" "vlttng 0\&.4\&.0" "vlttng manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -133,6 +133,17 @@ List the default profile names:
 .IP \(bu 2.3
 .\}
 \fBlttng-ust\fR: LTTng\-UST
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBpopt\fR: popt (dependency of LTTng\-tools and Babeltrace)
 .RE
 .sp
 .RS 4
@@ -569,7 +580,7 @@ java \-cp $VLTTNG_CLASSPATH:\&. MyClass
 If the LTTng\-UST Python agent is built and installed in the virtual environment, there\(cqs nothing special to do to trace a Python application: the \fBPYTHONPATH\fR environment variable contains the path to the LTTng\-UST Python agent package in the virtual environment\&. You can import the \fBlttngust\fR package as usual\&.
 .SS "Update a project with a Git source"
 .sp
-When a project\(cqs source uses Git, \fBvlttng\fR generates the following scripts in the virtual environment\(cqs root directory (\fBNAME\fR is the project name):
+\fBvlttng\fR generates the following scripts in the virtual environment\(cqs root directory (\fBNAME\fR is the project name):
 .PP
 \fBconf-NAME.bash\fR
 .RS 4
@@ -586,7 +597,7 @@ Runs the build step of the project\&.
 Runs the install step of the project\&.
 .RE
 .PP
-\fBupdate-NAME.bash\fR
+\fBupdate-NAME.bash\fR (only with a Git source)
 .RS 4
 Fetches the project\(cqs configured Git remote, checks out the latest version of the configured branch, and runs
 \fBconf-NAME.bash\fR,

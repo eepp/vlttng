@@ -36,7 +36,7 @@ are:
 * `lttng-modules`: LTTng-modules
 * `lttng-tools`: LTTng-tools
 * `lttng-ust`: LTTng-UST
-* `popt`: popt
+* `popt`: popt (dependency of LTTng-tools and Babeltrace)
 * `tracecompass`: Trace Compass
 * `urcu`: Userspace RCU (dependency of LTTng-tools and LTTng-UST)
 
