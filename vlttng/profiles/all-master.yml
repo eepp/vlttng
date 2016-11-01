@@ -30,7 +30,7 @@ projects:
     checkout: master
   lttng-ust:
     source: 'git://git.lttng.org/lttng-ust.git'
-    configure: --enable-java-agent-jul --enable-java-agent-log4j
+    configure: --enable-java-agent-jul --enable-java-agent-log4j --enable-python-agent
     checkout: master
   popt:
     source: 'http://rpm5.org/files/popt/popt-1.16.tar.gz'
