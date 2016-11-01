@@ -1,0 +1,3 @@
+projects:
+  babeltrace:
+    configure: --enable-debug-info

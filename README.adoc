@@ -103,6 +103,7 @@ The following default profiles are shipped with the project:
 
 ----
 all-master.yml
+babeltrace-debug-info.yml
 babeltrace-master.yml
 babeltrace-python.yml
 babeltrace-stable-1.2.yml
