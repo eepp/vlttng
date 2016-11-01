@@ -747,12 +747,8 @@ class VEnvCreator:
         self._create_executable_script('update-{}'.format(name), update)
 
     def _create_scripts(self, instructions):
-        if type(instructions.project.source) is not vlttng.profile.GitSource:
-            return
-
         name = instructions.project.name
         src_path = self._src_paths[name]
-        gitref = instructions.project.source.checkout
         build_env = self._get_build_env_from_instructions(instructions)
         build_env = _get_full_env(build_env, self._paths)
         export_lines = []
@@ -763,7 +759,11 @@ class VEnvCreator:
 
         exports = '\n'.join(export_lines)
 
+        # always generate those
         self._create_conf_script(instructions, name, exports, src_path)
         self._create_build_script(instructions, name, exports, src_path)
         self._create_install_script(instructions, name, exports, src_path)
-        self._create_update_script(instructions, name, exports, src_path)
+
+        if type(instructions.project.source) is vlttng.profile.GitSource:
+            # only generate update script if it's a Git source
+            self._create_update_script(instructions, name, exports, src_path)
