@@ -1,6 +1,6 @@
 projects:
   babeltrace:
-    source: http://git.linuxfoundation.org/diamon/babeltrace.git
+    source: 'git://git.efficios.com/babeltrace.git'
     configure: --enable-python-bindings --enable-debug-info
     checkout: master
   elfutils:
@@ -14,7 +14,7 @@ projects:
       --disable-dtrace --disable-systemtap --disable-gtk-doc
       --disable-man --disable-coverage
   libxml2:
-    source: 'git://git.gnome.org/libxml2'
+    source: 'https://git.gnome.org/browse/libxml2'
     checkout: master
     configure: --without-coverage --with-threads --without-python
     build-env:
