@@ -1,4 +1,3 @@
 projects:
   lttng-modules:
     source: 'git://git.lttng.org/lttng-modules.git'
-    checkout: master

@@ -1,4 +1,3 @@
 projects:
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
-    checkout: master

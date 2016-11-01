@@ -1,4 +1,3 @@
 projects:
   babeltrace:
     source: git://git.efficios.com/babeltrace.git
-    checkout: master

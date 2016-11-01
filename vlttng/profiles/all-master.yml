@@ -2,13 +2,11 @@ projects:
   babeltrace:
     source: 'git://git.efficios.com/babeltrace.git'
     configure: --enable-python-bindings --enable-debug-info
-    checkout: master
   elfutils:
     source: 'https://fedorahosted.org/releases/e/l/elfutils/0.166/elfutils-0.166.tar.bz2'
     configure: --with-zlib --without-bzlib --with-lzma
   glib:
     source: 'git://git.gnome.org/glib'
-    checkout: master
     configure: >
       --with-pcre=internal --disable-xattr --disable-selinux
       --disable-dtrace --disable-systemtap --disable-gtk-doc
@@ -24,21 +22,16 @@ projects:
     checkout: master
   lttng-modules:
     source: 'git://git.lttng.org/lttng-modules.git'
-    checkout: master
   lttng-tools:
     source: 'git://git.lttng.org/lttng-tools.git'
     configure: --enable-python-bindings
-    checkout: master
   lttng-ust:
     source: 'git://git.lttng.org/lttng-ust.git'
     configure: --enable-java-agent-jul --enable-java-agent-log4j --enable-python-agent
-    checkout: master
   popt:
     source: 'http://rpm5.org/files/popt/popt-1.16.tar.gz'
     configure: --without-libiconv-prefix --without-libintl-prefix
   tracecompass:
     source: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
-    checkout: master
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
-    checkout: master

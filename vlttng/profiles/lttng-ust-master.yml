@@ -1,4 +1,3 @@
 projects:
   lttng-ust:
     source: 'git://git.lttng.org/lttng-ust.git'
-    checkout: master

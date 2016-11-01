@@ -1,7 +1,6 @@
 projects:
   glib:
     source: 'git://git.gnome.org/glib'
-    checkout: master
     configure: >
       --with-pcre=internal --disable-xattr --disable-selinux
       --disable-dtrace --disable-systemtap --disable-gtk-doc
