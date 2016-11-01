@@ -1,0 +1,3 @@
+build-env:
+  CC: ccache gcc
+  CXX: ccache g++

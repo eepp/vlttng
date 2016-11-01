@@ -196,6 +196,7 @@ urcu-master.yml
 urcu-stable-0.7.yml
 urcu-stable-0.8.yml
 urcu-stable-0.9.yml
+use-ccache-gcc.yml
 ----
 
 You can get this list using `vlttng --list-default-profiles`.
