@@ -3,7 +3,7 @@ projects:
     source: 'git://git.efficios.com/babeltrace.git'
     configure: --enable-python-bindings --enable-debug-info
   elfutils:
-    source: 'https://fedorahosted.org/releases/e/l/elfutils/0.166/elfutils-0.166.tar.bz2'
+    source: 'https://fedorahosted.org/releases/e/l/elfutils/0.167/elfutils-0.167.tar.bz2'
     configure: --with-zlib --without-bzlib --with-lzma
   glib:
     source: 'git://git.gnome.org/glib'
