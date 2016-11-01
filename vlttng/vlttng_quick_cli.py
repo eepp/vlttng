@@ -116,8 +116,9 @@ class _Wizard:
             'lttng-modules': ('LTTng-modules',),
             'lttng-tools': ('LTTng-tools',),
             'lttng-ust': ('LTTng-UST',),
+            'popt': ('popt', 'dependency of Babeltrace and LTTng-tools'),
             'tracecompass': ('Trace Compass',),
-            'urcu': ('Userspace RCU',),
+            'urcu': ('Userspace RCU', 'dependency of LTTng-tools and LTTng-UST'),
         }
         self._project_name_to_versions = {
             'babeltrace': (
@@ -198,6 +199,9 @@ class _Wizard:
                 'stable-2.7',
                 'stable-2.8',
                 'master',
+            ),
+            'popt': (
+                '1.16',
             ),
             'tracecompass': (
                 '1.1.0',
@@ -304,6 +308,7 @@ the projects and features you need.
             self._get_project_title('lttng-modules'),
             self._get_project_title('lttng-tools'),
             self._get_project_title('lttng-ust'),
+            self._get_project_title('popt'),
             self._get_project_title('tracecompass'),
             self._get_project_title('urcu'),
         )
@@ -316,6 +321,7 @@ the projects and features you need.
             'lttng-modules',
             'lttng-tools',
             'lttng-ust',
+            'popt',
             'tracecompass',
             'urcu',
         )
@@ -339,7 +345,7 @@ the projects and features you need.
         choice_projects = []
 
         for project in self._projects:
-            if project != 'elfutils':
+            if project not in ('elfutils', 'popt'):
                 choices.append(self._get_project_title(project))
                 choice_projects.append(project)
 

@@ -186,6 +186,7 @@ lttng-ust-python-agent.yml
 lttng-ust-stable-2.6.yml
 lttng-ust-stable-2.7.yml
 lttng-ust-stable-2.8.yml
+popt-1.16.yml
 tracecompass-1.1.0.yml
 tracecompass-1.2.0.yml
 tracecompass-1.2.1.yml
@@ -249,6 +250,7 @@ CC=clang CFLAGS='-O0 -g3' vlttng ...
 ** `lttng-modules`
 ** `lttng-tools`
 ** `lttng-ust`
+** `popt`
 ** `tracecompass`
 ** `urcu`
 * The `build-env` property of a specific project defines environment

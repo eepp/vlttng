@@ -243,6 +243,7 @@ def _validate_projects(projects):
         'lttng-modules',
         'lttng-tools',
         'lttng-ust',
+        'popt',
         'tracecompass',
         'urcu',
     )

@@ -1,0 +1,4 @@
+projects:
+  popt:
+    source: 'http://rpm5.org/files/popt/popt-1.16.tar.gz'
+    configure: --without-libiconv-prefix --without-libintl-prefix

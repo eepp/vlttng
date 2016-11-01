@@ -328,6 +328,7 @@ class VEnvCreator:
             'lttng-modules': self._create_project_instructions_lttng_modules,
             'lttng-tools': self._create_project_instructions_lttng_tools,
             'lttng-ust': self._create_project_instructions_lttng_ust,
+            'popt': self._create_project_instructions_generic_autotools,
             'tracecompass': self._create_project_instructions_tracecompass,
             'urcu': self._create_project_instructions_generic_autotools,
         }
@@ -337,16 +338,21 @@ class VEnvCreator:
         return 'make -j{} V=1'.format(self._jobs)
 
     def _validate_profile(self):
-        projects = self._profile.projects
+        def check_dep(project_name, dep_name):
+            if project_name in projects and dep_name not in projects:
+                _pwarn('The "{}" project will use the system\'s "{}"'.format(project_name, dep_name))
 
-        if 'lttng-tools' in projects or 'lttng-ust' in projects:
-            if 'urcu' not in projects:
-                _pwarn('The "lttng-tools"/"lttng-ust" project will use the system\'s Userspace RCU')
+        projects = self._profile.projects
+        check_dep('lttng-tools', 'urcu')
+        check_dep('lttng-ust', 'urcu')
+        check_dep('lttng-analyses', 'babeltrace')
+        check_dep('babeltrace', 'glib')
+        check_dep('lttng-tools', 'libxml2')
+        check_dep('lttng-tools', 'popt')
+        check_dep('babeltrace', 'popt')
 
         if 'lttng-analyses' in projects:
-            if 'babeltrace' not in projects:
-                _pwarn('The "lttng-analyses" project will use the system\'s Babeltrace')
-            elif '--enable-python-bindings' not in projects['babeltrace'].configure:
+            if 'babeltrace' in projects and '--enable-python-bindings' not in projects['babeltrace'].configure:
                 _pwarn('Configuring "babeltrace" project with "--enable-python-bindings" (caused by "lttng-analyses")')
                 configure = projects['babeltrace'].configure
                 configure = configure.replace('--disable-python-bindings', '')
@@ -357,16 +363,8 @@ class VEnvCreator:
         if 'babeltrace' in projects:
             project = projects['babeltrace']
 
-            if 'glib' not in projects:
-                _pwarn('The "babeltrace" project will use the system\'s GLib')
-
             if '--enable-debug-info' in project.configure or '--disable-debug-info' not in project.configure:
-                if 'elfutils' not in projects:
-                    _pwarn('The "babeltrace" project will use the system\'s elfutils')
-
-        if 'lttng-tools' in projects:
-            if 'libxml2' not in projects:
-                _pwarn('The "lttng-tools" project will use the system\'s Libxml2')
+                check_dep('babeltrace', 'elfutils')
 
     def _create_project_instructions_lttng_tools(self, project):
         lttng_ust_opts = (
@@ -460,12 +458,15 @@ class VEnvCreator:
         uninstall_lines = ['make uninstall']
 
         # bootstrap?
-        for f in ('bootstrap', 'bootstrap.sh', 'autogen', 'autogen.sh',):
-            bootstrap = os.path.join(self._paths.project_src(project.name), f)
+        project_src = self._paths.project_src(project.name)
 
-            if os.path.isfile(bootstrap):
-                conf_lines.append('./{}'.format(f))
-                break
+        if not os.path.isfile(os.path.join(project_src, 'configure')):
+            for f in ('bootstrap', 'bootstrap.sh', 'autogen', 'autogen.sh',):
+                bootstrap = os.path.join(project_src, f)
+
+                if os.path.isfile(bootstrap):
+                    conf_lines.append('./{}'.format(f))
+                    break
 
         # configure
         conf_args = project.configure
@@ -520,6 +521,7 @@ class VEnvCreator:
 
         # build projects in this order
         self._build_project('urcu')
+        self._build_project('popt')
         self._build_lttng_ust()
         self._build_project('libxml2')
         self._build_project('lttng-tools')
