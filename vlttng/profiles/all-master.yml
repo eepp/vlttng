@@ -27,7 +27,7 @@ projects:
     checkout: master
   lttng-tools:
     source: 'git://git.lttng.org/lttng-tools.git'
-    configure: --disable-kmod --enable-python-bindings
+    configure: --enable-python-bindings
     checkout: master
   lttng-ust:
     source: 'git://git.lttng.org/lttng-ust.git'

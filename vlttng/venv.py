@@ -388,6 +388,8 @@ class VEnvCreator:
             # arguments: the unsupported one will be ignored.
             add_args = '--without-lttng-ust --disable-lttng-ust'
 
+        add_args += ' --disable-kmod'
+
         return self._create_project_instructions_generic_autotools(project, add_args)
 
     def _create_project_instructions_lttng_ust(self, project):
