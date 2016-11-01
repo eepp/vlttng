@@ -5,6 +5,7 @@ projects:
     checkout: master
   elfutils:
     source: 'https://fedorahosted.org/releases/e/l/elfutils/0.166/elfutils-0.166.tar.bz2'
+    configure: --with-zlib --without-bzlib --with-lzma
   glib:
     source: 'git://git.gnome.org/glib'
     checkout: master
