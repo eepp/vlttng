@@ -306,9 +306,8 @@ import the `lttngust` package as usual.
 
 Update a project with a Git source
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When a project's source uses Git, `vlttng` generates the following
-scripts in the virtual environment's root directory (`NAME` is the
-project name):
+`vlttng` generates the following scripts in the virtual environment's
+root directory (`NAME` is the project name):
 
 `conf-NAME.bash`::
     Runs the configuration step of the project.
@@ -319,7 +318,7 @@ project name):
 `install-NAME.bash`::
     Runs the install step of the project.
 
-`update-NAME.bash`::
+`update-NAME.bash` (only with a Git source)::
     Fetches the project's configured Git remote, checks out the latest
     version of the configured branch, and runs `conf-NAME.bash`,
     `build-NAME.bash`, and `install-NAME.bash`.
