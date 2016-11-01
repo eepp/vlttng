@@ -109,7 +109,7 @@ class _Wizard:
         }
         self._project_name_to_title = {
             'babeltrace': ('Babeltrace',),
-            'elfutils': ('elfutils', 'dependency of Babeltrace'),
+            'elfutils': ('elfutils', 'optional dependency of Babeltrace'),
             'glib': ('GLib', 'dependency of Babeltrace'),
             'libxml2': ('libxml2', 'dependency of LTTng-tools'),
             'lttng-analyses': ('LTTng analyses',),
