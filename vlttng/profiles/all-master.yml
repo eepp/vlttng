@@ -1,7 +1,7 @@
 projects:
   babeltrace:
     source: http://git.linuxfoundation.org/diamon/babeltrace.git
-    configure: --enable-python-bindings
+    configure: --enable-python-bindings --enable-debug-info
     checkout: master
   elfutils:
     source: 'https://fedorahosted.org/releases/e/l/elfutils/0.166/elfutils-0.166.tar.bz2'
