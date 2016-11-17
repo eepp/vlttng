@@ -44,7 +44,7 @@ def _parse_args():
     ap.add_argument('-i', '--ignore-project', metavar='PROJECT',
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
-    ap.add_argument('-j', '--jobs', metavar='JOBS', action='store', type=int,
+    ap.add_argument('-j', '--jobs', nargs='?', const=None, metavar='JOBS', action='store', type=int,
                     default=1, help='number of make jobs to run simultaneously')
     ap.add_argument('-l', '--list-default-profiles', action='store_true',
                     help='list default profile names and exit')

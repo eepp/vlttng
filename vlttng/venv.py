@@ -335,7 +335,7 @@ class VEnvCreator:
         self._create()
 
     def _get_make(self):
-        return 'make -j{} V=1'.format(self._jobs)
+        return 'make -j{} V=1'.format(self._jobs if self._jobs is not None else '')
 
     def _validate_profile(self):
         def check_dep(project_name, dep_name):
