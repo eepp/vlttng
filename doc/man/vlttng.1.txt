@@ -347,8 +347,8 @@ You can repeat this option. `vlttng` ignores projects once
 it has processed the override (opt:--override) and the profile
 (opt:--profile) options.
 
-opt:-j 'JOBS', opt:--jobs='JOBS'::
-    Use 'JOBS' jobs (commands) at the same time when building a
+opt:-j ['JOBS'], opt:--jobs[='JOBS']::
+		Run 'JOBS' commands simultaneously when building each
     project. `vlttng` passes this option as is to `make`.
 
 opt:--list-default-profiles::
