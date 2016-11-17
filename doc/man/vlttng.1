@@ -2,12 +2,12 @@
 .\"     Title: vlttng
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 10/31/2016
+.\"      Date: 11/17/2016
 .\"    Manual: vlttng manual
-.\"    Source: vlttng 0.4.0
+.\"    Source: vlttng 0.5.0
 .\"  Language: English
 .\"
-.TH "VLTTNG" "1" "10/31/2016" "vlttng 0\&.4\&.0" "vlttng manual"
+.TH "VLTTNG" "1" "11/17/2016" "vlttng 0\&.5\&.0" "vlttng manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -35,7 +35,7 @@ Generate an LTTng virtual environment:
 .sp
 .nf
 \fBvlttng\fR [\fB--force\fR] [\fB--ignore\fR=\fIPROJECT\fR]\&... [\fB--override\fR=\fIORIDE\fR]\&...
-       [\fB--profile\fR=\fIPROFILE\fR]\&... [\fB--jobs\fR=\fIJOBS\fR] [\fB--verbose\fR] \fIVPATH\fR
+       [\fB--profile\fR=\fIPROFILE\fR]\&... [\fB--jobs\fR[=\fIJOBS\fR]] [\fB--verbose\fR] \fIVPATH\fR
 .fi
 .sp
 List the default profile names:
@@ -45,7 +45,7 @@ List the default profile names:
 .fi
 .SH "DESCRIPTION"
 .sp
-\fBvlttng\fR is a command\-line tool which generates a virtual environment (a sandbox) in which a specific set of LTTng <http://lttng.org/> packages are installed\&. The recognized projects, as of \fBvlttng\fR 0\&.4\&.0, are:
+\fBvlttng\fR is a command\-line tool which generates a virtual environment (a sandbox) in which a specific set of LTTng <http://lttng.org/> packages are installed\&. The recognized projects, as of \fBvlttng\fR 0\&.5\&.0, are:
 .sp
 .RS 4
 .ie n \{\
@@ -645,11 +645,11 @@ You can repeat this option\&.
 ignores projects once it has processed the override (\fB--override\fR) and the profile (\fB--profile\fR) options\&.
 .RE
 .PP
-\fB-j\fR \fIJOBS\fR, \fB--jobs\fR=\fIJOBS\fR
+\fB-j\fR [\fIJOBS\fR], \fB--jobs\fR[=\fIJOBS\fR]
 .RS 4
-Use
+Run
 \fIJOBS\fR
-jobs (commands) at the same time when building a project\&.
+commands simultaneously when building each project\&.
 \fBvlttng\fR
 passes this option as is to
 \fBmake\fR\&.
@@ -801,4 +801,4 @@ Copyright (c) 2016 Philippe Proulx <mailto:eeppeliteloop@gmail.com>\&.
 vlttng is distributed under the MIT License <https://github.com/eepp/vlttng/blob/master/LICENSE>\&.
 .SH "AUTHORS"
 .sp
-vlttng was originally written by and is maintained by, as of vlttng 0\&.4\&.0, Philippe Proulx <mailto:eeppeliteloop@gmail.com>\&.
+vlttng was originally written by and is maintained by, as of vlttng 0\&.5\&.0, Philippe Proulx <mailto:eeppeliteloop@gmail.com>\&.
