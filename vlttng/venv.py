@@ -567,11 +567,10 @@ class VEnvCreator:
 
         for key, val in env.items():
             key = key.strip()
-            env_items.append('_VLTTNG_OLD_{e}="${e}"'.format(e=key))
+            env_items.append('vlttng-save-env {}'.format(key))
             setenv = 'export {}={}'.format(key, _sq(str(val)))
             env_items.append(setenv)
-            unenv_items.append('    {e}="$_VLTTNG_OLD_{e}"'.format(e=key))
-            unenv_items.append('    unset _VLTTNG_OLD_{}'.format(key))
+            unenv_items.append('    vlttng-restore-env {}'.format(key))
 
         env_lines = '\n'.join(env_items)
         unenv_lines = '\n'.join(unenv_items)

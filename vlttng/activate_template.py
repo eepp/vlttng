@@ -42,8 +42,18 @@ activate_template = '''# The MIT License (MIT)
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# Source this file from your shell (`source activate`) to activate this
+# Source this file from Bash or Zsh (`source activate`) to activate this
 # LTTng virtual environment.
+
+vlttng-save-env() {{
+    local varname="$1"
+    local issetvarname="_VLTTNG_${{varname}}_SET"
+    local oldvarname="_VLTTNG_OLD_$varname"
+    eval local issetvalue="\${{$varname+set}}"
+    eval local varvalue="\$$varname"
+    eval "$issetvarname"='$issetvalue'
+    eval "$oldvarname"='$varvalue'
+}}
 
 # Local options
 _vlttng_has_modules={has_modules}
@@ -54,32 +64,32 @@ VLTTNG={venv_path}
 export VLTTNG
 
 # Set new $PATH
-_VLTTNG_OLD_PATH="$PATH"
+vlttng-save-env PATH
 PATH="$VLTTNG/usr/bin:$PATH"
 export PATH
 
 # Set new $LD_LIBRARY_PATH
-_VLTTNG_OLD_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+vlttng-save-env LD_LIBRARY_PATH
 LD_LIBRARY_PATH="$VLTTNG/usr/lib:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH
 
 # Set new $CPPFLAGS
-_VLTTNG_OLD_CPPFLAGS="$CPPFLAGS"
+vlttng-save-env CPPFLAGS
 CPPFLAGS="-I$VLTTNG/usr/include $CPPFLAGS"
 export CPPFLAGS
 
 # Set new $LDFLAGS
-_VLTTNG_OLD_LDFLAGS="$LDFLAGS"
+vlttng-save-env LDFLAGS
 LDFLAGS="-L$VLTTNG/usr/lib $LDFLAGS"
 export LDFLAGS
 
 # Set new $MANPATH
-_VLTTNG_OLD_MANPATH="$MANPATH"
+vlttng-save-env MANPATH
 MANPATH="$VLTTNG/usr/share/man:$MANPATH"
 export MANPATH
 
 # Set new $PKG_CONFIG_PATH
-_VLTTNG_OLD_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
+vlttng-save-env PKG_CONFIG_PATH
 PKG_CONFIG_PATH="$VLTTNG/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PKG_CONFIG_PATH
 
@@ -90,7 +100,7 @@ if [ $_vlttng_has_java = 1 ]; then
 fi
 
 # Save old $PYTHONPATH
-_VLTTNG_OLD_PYTHONPATH="$PYTHONPATH"
+vlttng-save-env PYTHONPATH
 
 # Add Python site packages to $PYTHONPATH
 while read _vlttng_python_root; do
@@ -114,12 +124,12 @@ done < <(find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d)
 unset _vlttng_python_root
 
 # Set new $LTTNG_HOME
-_VLTTNG_OLD_LTTNG_HOME="$LTTNG_HOME"
+vlttng-save-env LTTNG_HOME
 LTTNG_HOME="$VLTTNG/home"
 export LTTNG_HOME
 
 # Save old $MODPROBE_OPTIONS
-_VLTTNG_OLD_MODPROBE_OPTIONS="$MODPROBE_OPTIONS"
+vlttng-save-env MODPROBE_OPTIONS
 
 if [ $_vlttng_has_modules = 1 ]; then
     if [ "$VLTTNG_NO_RMMOD" != 1 ]; then
@@ -151,7 +161,7 @@ fi
 {env}
 
 # Save old $PS1
-_VLTTNG_OLD_PS1="$PS1"
+vlttng-save-env PS1
 
 # Set new prompt
 if [ "$VLTTNG_NO_PROMPT" != 1 ]; then
@@ -167,42 +177,42 @@ fi
 unset _vlttng_has_modules
 unset _vlttng_has_java
 
+vlttng-restore-env() {{
+    local varname="$1"
+    local issetvarname="_VLTTNG_${{varname}}_SET"
+    local oldvarname="_VLTTNG_OLD_$varname"
+    eval local issetvalue="\$$issetvarname"
+    eval local oldvarvalue="\$$oldvarname"
+
+    if [ "$issetvalue" = 'set' ]; then
+        eval "$varname"='$oldvarvalue'
+    else
+        eval unset "$varname"
+    fi
+
+    eval unset "$issetvarname"
+    eval unset "$oldvarname"
+}}
+
 vlttng-deactivate() {{
     unset VLTTNG
     unset VLTTNG_CLASSPATH
 
-    PATH="$_VLTTNG_OLD_PATH"
-    unset _VLTTNG_OLD_PATH
-
-    LD_LIBRARY_PATH="$_VLTTNG_OLD_LD_LIBRARY_PATH"
-    unset _VLTTNG_OLD_LD_LIBRARY_PATH
-
-    CPPFLAGS="$_VLTTNG_OLD_CPPFLAGS"
-    unset _VLTTNG_OLD_CPPFLAGS
-
-    LDFLAGS="$_VLTTNG_OLD_LDFLAGS"
-    unset _VLTTNG_OLD_LDFLAGS
-
-    MANPATH="$_VLTTNG_OLD_MANPATH"
-    unset _VLTTNG_OLD_MANPATH
-
-    PKG_CONFIG_PATH="$_VLTTNG_OLD_PKG_CONFIG_PATH"
-    unset _VLTTNG_OLD_PKG_CONFIG_PATH
-
-    PYTHONPATH="$_VLTTNG_OLD_PYTHONPATH"
-    unset _VLTTNG_OLD_PYTHONPATH
-
-    LTTNG_HOME="$_VLTTNG_OLD_LTTNG_HOME"
-    unset _VLTTNG_OLD_LTTNG_HOME
-
-    MODPROBE_OPTIONS="$_VLTTNG_OLD_MODPROBE_OPTIONS"
-    unset _VLTTNG_OLD_MODPROBE_OPTIONS
-
-    PS1="$_VLTTNG_OLD_PS1"
-    unset _VLTTNG_OLD_PS1
+    vlttng-restore-env PATH
+    vlttng-restore-env LD_LIBRARY_PATH
+    vlttng-restore-env CPPFLAGS
+    vlttng-restore-env LDFLAGS
+    vlttng-restore-env MANPATH
+    vlttng-restore-env PKG_CONFIG_PATH
+    vlttng-restore-env PYTHONPATH
+    vlttng-restore-env LTTNG_HOME
+    vlttng-restore-env MODPROBE_OPTIONS
+    vlttng-restore-env PS1
 
 {unenv}
 
     unset -f vlttng-deactivate
+    unset -f vlttng-save-env
+    unset -f vlttng-restore-env
 }}
 '''
