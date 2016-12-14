@@ -1,0 +1,3 @@
+build-env:
+  CFLAGS: -O0 -g3
+  CXXFLAGS: -O0 -g3
