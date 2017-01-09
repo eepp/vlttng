@@ -125,6 +125,7 @@ class _Wizard:
                 'stable-1.2',
                 'stable-1.3',
                 'stable-1.4',
+                'stable-1.5',
                 'master',
             ),
             'elfutils': (
@@ -190,18 +191,21 @@ class _Wizard:
                 'stable-2.6',
                 'stable-2.7',
                 'stable-2.8',
+                'stable-2.9',
                 'master',
             ),
             'lttng-tools': (
                 'stable-2.6',
                 'stable-2.7',
                 'stable-2.8',
+                'stable-2.9',
                 'master',
             ),
             'lttng-ust': (
                 'stable-2.6',
                 'stable-2.7',
                 'stable-2.8',
+                'stable-2.9',
                 'master',
             ),
             'popt': (
