@@ -191,7 +191,7 @@ class _Runner:
         self.run(cmd)
 
     def mkdir_p(self, path):
-        cmd = 'mkdir --verbose -p {}'.format(_sq(path))
+        cmd = 'mkdir -v -p {}'.format(_sq(path))
         self.run(cmd)
 
     def cp_rv(self, src, dst):
