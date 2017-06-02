@@ -1,4 +1,4 @@
 projects:
   elfutils:
-    source: 'https://fedorahosted.org/releases/e/l/elfutils/0.166/elfutils-0.166.tar.bz2'
+    source: 'https://sourceware.org/elfutils/ftp/0.166/elfutils-0.166.tar.bz2'
     configure: --with-zlib --without-bzlib --with-lzma

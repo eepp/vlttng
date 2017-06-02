@@ -1,0 +1,3 @@
+projects:
+  tracecompass:
+    source: 'http://mirror.csclub.uwaterloo.ca/eclipse/tracecompass/releases/1.1.0/rcp/trace-compass-1.1.0-20150921-1806-macosx.cocoa.x86_64.tar.gz'
