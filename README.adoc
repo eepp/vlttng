@@ -1,6 +1,8 @@
 vlttng
 ======
 
+image:https://img.shields.io/pypi/v/vlttng.svg?label=Latest%20version[link="https://pypi.python.org/pypi/vlttng"]
+
 **_vlttng_** is a tool which creates a virtual environment (a sandbox)
 to run specific versions of the http://lttng.org/[LTTng] packages. The
 http://lttng.org/[Babeltrace], http://liburcu.org/[Userspace RCU],
