@@ -131,6 +131,8 @@ class _Wizard:
             'elfutils': (
                 '0.166',
                 '0.167',
+                '0.168',
+                '0.169',
             ),
             'glib': (
                 '2.22.5',
@@ -163,6 +165,9 @@ class _Wizard:
                 '2.48.2',
                 '2.49.7',
                 '2.50.1',
+                '2.51.5',
+                '2.52.2',
+                '2.53.2',
                 'master',
             ),
             'libxml2': (
@@ -185,6 +190,8 @@ class _Wizard:
                 '0.5.2',
                 '0.5.3',
                 '0.5.4',
+                '0.6.0',
+                '0.6.1',
                 'master',
             ),
             'lttng-modules': (
@@ -192,6 +199,7 @@ class _Wizard:
                 'stable-2.7',
                 'stable-2.8',
                 'stable-2.9',
+                'stable-2.10',
                 'master',
             ),
             'lttng-tools': (
@@ -199,6 +207,7 @@ class _Wizard:
                 'stable-2.7',
                 'stable-2.8',
                 'stable-2.9',
+                'stable-2.10',
                 'master',
             ),
             'lttng-ust': (
@@ -206,16 +215,29 @@ class _Wizard:
                 'stable-2.7',
                 'stable-2.8',
                 'stable-2.9',
+                'stable-2.10',
                 'master',
             ),
             'popt': (
                 '1.16',
             ),
             'tracecompass': (
-                '1.1.0',
-                '1.2.0',
-                '1.2.1',
-                '2.0.0',
+                'linux-x86-64-1.1.0',
+                'linux-x86-64-1.2.0',
+                'linux-x86-64-1.2.1',
+                'linux-x86-64-2.0.0',
+                'linux-x86-64-2.0.1',
+                'linux-x86-64-2.1.0',
+                'linux-x86-64-2.2.0',
+                'linux-x86-64-2.3.0',
+                'macos-x86-64-1.1.0',
+                'macos-x86-64-1.2.0',
+                'macos-x86-64-1.2.1',
+                'macos-x86-64-2.0.0',
+                'macos-x86-64-2.0.1',
+                'macos-x86-64-2.1.0',
+                'macos-x86-64-2.2.0',
+                'macos-x86-64-2.3.0',
                 'master',
             ),
             'urcu': (

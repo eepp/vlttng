@@ -1,0 +1,4 @@
+projects:
+  lttng-analyses:
+    source: 'https://github.com/lttng/lttng-analyses.git'
+    checkout: v0.6.1
