@@ -244,6 +244,7 @@ class _Wizard:
                 'stable-0.7',
                 'stable-0.8',
                 'stable-0.9',
+                'stable-0.10',
                 'master',
             ),
         }
