@@ -337,6 +337,36 @@ class VEnvCreator:
     def _get_make(self):
         return 'make -j{} V=1'.format(self._jobs if self._jobs is not None else '')
 
+    def _check_man_pages(self, name, project):
+        if type(project.source) is not vlttng.profile.GitSource:
+            return
+
+        disable_man_pages = False
+
+        if '--enable-man-pages=no' not in project.configure and '--disable-man-pages' not in project.configure:
+            try:
+                subprocess.check_call('asciidoc --version', shell=True,
+                                      stdin=subprocess.DEVNULL,
+                                      stdout=subprocess.DEVNULL,
+                                      stderr=subprocess.DEVNULL,
+                                      timeout=1)
+
+                try:
+                    subprocess.check_call('xmlto --version', shell=True,
+                                          stdin=subprocess.DEVNULL,
+                                          stdout=subprocess.DEVNULL,
+                                          stderr=subprocess.DEVNULL,
+                                          timeout=1)
+                except:
+                    _pwarn('{} man pages will not be built because vlttng cannot find and execute `xmlto`'.format(name))
+                    disable_man_pages = True
+            except:
+                _pwarn('{} man pages will not be built because vlttng cannot find and execute `asciidoc`'.format(name))
+                disable_man_pages = True
+
+        if disable_man_pages:
+            project.configure += ' --disable-man-pages'
+
     def _validate_profile(self):
         def check_dep(project_name, dep_name):
             if project_name in projects and dep_name not in projects:
@@ -365,6 +395,12 @@ class VEnvCreator:
 
             if '--enable-debug-info' in project.configure or '--disable-debug-info' not in project.configure:
                 check_dep('babeltrace', 'elfutils')
+
+        if 'lttng-tools' in projects:
+            self._check_man_pages('LTTng-tools', projects['lttng-tools'])
+
+        if 'lttng-ust' in projects:
+            self._check_man_pages('LTTng-UST', projects['lttng-ust'])
 
     def _create_project_instructions_lttng_tools(self, project):
         lttng_ust_opts = (
