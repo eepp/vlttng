@@ -416,10 +416,10 @@ class VEnvCreator:
                 msg = fmt.format(ust_opt)
                 _pwarn(msg)
 
-        if 'lttng-ust' in self._profile.projects:
-            add_args = '--with-lttng-ust-prefix={}'.format(_sq(self._paths.usr))
-        else:
-            # LTTng-Tools prior to v2.8 uses a different flag to turn
+        add_args = ''
+
+        if 'lttng-ust' not in self._profile.projects:
+            # LTTng-tools prior to v2.8 uses a different flag to turn
             # off LTTng-UST support. We add both to the configure script
             # arguments: the unsupported one will be ignored.
             add_args = '--without-lttng-ust --disable-lttng-ust'
