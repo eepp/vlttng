@@ -5,8 +5,8 @@ image:https://img.shields.io/pypi/v/vlttng.svg?label=Latest%20version[link="http
 
 **_vlttng_** is a tool which creates a virtual environment (a sandbox)
 to run specific versions of the http://lttng.org/[LTTng] packages. The
-http://lttng.org/[Babeltrace], http://liburcu.org/[Userspace RCU],
-https://github.com/lttng/lttng-analyses[LTTng analyses], and
+http://diamon.org/babeltrace[Babeltrace], http://liburcu.org/[Userspace
+RCU], https://github.com/lttng/lttng-analyses[LTTng analyses], and
 http://tracecompass.org/[Trace Compass] projects are also supported, as
 well as some of the project dependencies.
 
