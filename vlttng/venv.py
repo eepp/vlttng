@@ -540,7 +540,7 @@ class VEnvCreator:
                 _pwarn('Virtual environment path "{}" exists: removing directory'.format(self._paths.venv))
                 self._runner.rm_rf(self._paths.venv)
             else:
-                perror('Virtual environment path "{}" exists'.format(self._paths.venv))
+                perror('Virtual environment path "{}" exists (use --force to overwrite)'.format(self._paths.venv))
 
         self._runner.mkdir_p(self._paths.venv)
         self._runner.mkdir_p(self._paths.home)
