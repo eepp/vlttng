@@ -1,0 +1,3 @@
+projects:
+  lttng-ust:
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.6.5.tar.bz2'

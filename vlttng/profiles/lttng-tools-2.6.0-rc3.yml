@@ -1,0 +1,3 @@
+projects:
+  lttng-tools:
+    source: 'http://lttng.org/files/lttng-tools/lttng-tools-2.6.0-rc3.tar.bz2'

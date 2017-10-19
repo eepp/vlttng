@@ -1,0 +1,3 @@
+projects:
+  lttng-modules:
+    source: 'http://lttng.org/files/lttng-modules/lttng-modules-2.9.4.tar.bz2'
