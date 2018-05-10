@@ -58,6 +58,7 @@ vlttng-save-env() {{
 # Local options
 _vlttng_has_modules={has_modules}
 _vlttng_has_java={has_java}
+_vlttng_has_lttng_scope={has_lttng_scope}
 
 # Path to the virtual environment
 VLTTNG={venv_path}
@@ -157,6 +158,13 @@ if [ $_vlttng_has_modules = 1 ]; then
     export MODPROBE_OPTIONS="-d '$VLTTNG/usr'"
 fi
 
+# Define the lttng-scope function to launch the JAR
+if [ $_vlttng_has_lttng_scope = 1 ]; then
+    lttng-scope() {{
+        java -jar "$VLTTNG/usr/opt/lttng-scope.jar" $@
+    }}
+fi
+
 # Set the environment variables of this virtual environment
 {env}
 
@@ -176,6 +184,7 @@ fi
 
 unset _vlttng_has_modules
 unset _vlttng_has_java
+unset _vlttng_has_lttng_scope
 
 vlttng-restore-env() {{
     local varname="$1"
@@ -214,5 +223,6 @@ vlttng-deactivate() {{
     unset -f vlttng-deactivate
     unset -f vlttng-save-env
     unset -f vlttng-restore-env
+    unset -f lttng-scope 2>/dev/null
 }}
 '''

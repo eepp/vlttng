@@ -245,6 +245,7 @@ def _validate_projects(projects):
         'lttng-ust',
         'popt',
         'tracecompass',
+        'lttng-scope',
         'urcu',
     )
 

@@ -1,6 +1,6 @@
 vlttng(1)
 =========
-:revdate: 17 November 2016
+:revdate: 10 May 2018
 
 
 NAME
@@ -39,6 +39,7 @@ are:
 * `lttng-ust`: LTTng-UST
 * `popt`: popt (dependency of LTTng-tools and Babeltrace)
 * `tracecompass`: Trace Compass
+* `lttng-scope`: LTTng scope
 * `urcu`: Userspace RCU (dependency of LTTng-tools and LTTng-UST)
 
 Have a look at man:vlttng-quick(1), which creates a `vlttng` command

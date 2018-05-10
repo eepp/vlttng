@@ -1,0 +1,3 @@
+projects:
+  lttng-scope:
+    source: 'https://github.com/lttng/lttng-scope.git'

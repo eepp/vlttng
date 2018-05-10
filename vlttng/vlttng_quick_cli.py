@@ -120,6 +120,7 @@ class _Wizard:
             'lttng-ust': ('LTTng-UST',),
             'popt': ('popt', 'dependency of Babeltrace and LTTng-tools'),
             'tracecompass': ('Trace Compass',),
+            'lttng-scope': ('LTTng Scope',),
             'urcu': ('Userspace RCU', 'dependency of LTTng-tools and LTTng-UST'),
         }
         self._project_name_to_versions = {
@@ -133,6 +134,7 @@ class _Wizard:
             'lttng-ust': [],
             'popt': [],
             'tracecompass': [],
+            'lttng-scope': [],
             'urcu': [],
         }
 
@@ -243,6 +245,7 @@ the projects and features you need.
             self._get_project_title('lttng-ust'),
             self._get_project_title('popt'),
             self._get_project_title('tracecompass'),
+            self._get_project_title('lttng-scope'),
             self._get_project_title('urcu'),
         )
         choice_projects = (
@@ -256,6 +259,7 @@ the projects and features you need.
             'lttng-ust',
             'popt',
             'tracecompass',
+            'lttng-scope',
             'urcu',
         )
         self._pchoices(choices)

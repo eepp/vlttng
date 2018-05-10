@@ -330,6 +330,7 @@ class VEnvCreator:
             'lttng-ust': self._create_project_instructions_lttng_ust,
             'popt': self._create_project_instructions_generic_autotools,
             'tracecompass': self._create_project_instructions_tracecompass,
+            'lttng-scope': self._create_project_instructions_lttng_scope,
             'urcu': self._create_project_instructions_generic_autotools,
         }
         self._create()
@@ -489,6 +490,17 @@ class VEnvCreator:
 
         return _ProjectInstructions(project, install_lines=install_lines)
 
+    def _create_project_instructions_lttng_scope(self, project):
+        jar_dst = os.path.join(self._paths.opt, 'lttng-scope.jar')
+        jar_dir = os.path.join('lttng-scope', 'target')
+        install_lines = [
+            'mvn clean install -Dmaven.test.skip=true -DskipTests',
+            'cp -rv {}/*with-dependencies.jar {}'.format(_sq(jar_dir),
+                                                         _sq(jar_dst)),
+        ]
+
+        return _ProjectInstructions(project, install_lines=install_lines)
+
     def _create_project_instructions_generic_autotools(self, project, add_conf_args=None):
         conf_lines = []
         build_lines = [self._get_make()]
@@ -569,6 +581,7 @@ class VEnvCreator:
         self._build_project('babeltrace')
         self._build_project('lttng-analyses')
         self._build_project('tracecompass')
+        self._build_project('lttng-scope')
 
         # create activate script
         self._create_activate()
@@ -612,6 +625,7 @@ class VEnvCreator:
         unenv_lines = '\n'.join(unenv_items)
         lttng_modules_src_path = self._src_paths.get('lttng-modules', '')
         has_modules = '1' if 'lttng-modules' in self._profile.projects else '0'
+        has_lttng_scope = '1' if 'lttng-scope' in self._profile.projects else '0'
         has_java = '0'
 
         if 'lttng-ust' in self._profile.projects:
@@ -623,6 +637,7 @@ class VEnvCreator:
         activate = activate_template.format(venv_path=_sq(self._paths.venv),
                                             has_modules=has_modules,
                                             has_java=has_java,
+                                            has_lttng_scope=has_lttng_scope,
                                             env=env_lines,
                                             unenv=unenv_lines)
         activate_path = os.path.join(self._paths.venv, 'activate')
