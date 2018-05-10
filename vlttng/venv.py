@@ -370,7 +370,7 @@ class VEnvCreator:
     def _validate_profile(self):
         def check_dep(project_name, dep_name):
             if project_name in projects and dep_name not in projects:
-                _pwarn('The "{}" project will use the system\'s "{}"'.format(project_name, dep_name))
+                _pwarn('The "{}" project will use an external "{}"'.format(project_name, dep_name))
 
         projects = self._profile.projects
         check_dep('lttng-tools', 'urcu')
