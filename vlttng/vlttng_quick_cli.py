@@ -282,6 +282,10 @@ the projects and features you need.
                 choices.append(self._get_project_title(project))
                 choice_projects.append(project)
 
+        if len(choice_projects) == 0:
+            self._state = _WizardState.ASK_VERSIONS
+            return
+
         self._pchoices(choices)
         self._pmultiple_choices_info(with_none=True)
         choices = self._get_choices(len(choices), True)
