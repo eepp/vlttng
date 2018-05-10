@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from pkg_resources import resource_filename
 from vlttng.utils import perror
 import vlttng.profile
+import pkg_resources
 import vlttng.venv
 import argparse
 import platform
@@ -30,9 +30,6 @@ import os.path
 import vlttng
 import re
 import os
-
-
-_PROFILES_DIRNAME = 'profiles'
 
 
 def _parse_args():
@@ -84,8 +81,9 @@ def _parse_args():
 
 def _find_profile(profile_name):
     try:
-        filename = os.path.join(_PROFILES_DIRNAME, '{}.yml'.format(profile_name))
-        filename = resource_filename(__name__, filename)
+        filename = os.path.join(vlttng._PROFILES_DIRNAME,
+                                '{}.yml'.format(profile_name))
+        filename = pkg_resources.resource_filename(__name__, filename)
 
         if not os.path.isfile(filename):
             filename = profile_name
@@ -177,7 +175,8 @@ def _register_sigint():
 
 
 def _list_default_profiles():
-    dirname = resource_filename(__name__, _PROFILES_DIRNAME)
+    dirname = pkg_resources.resource_filename(__name__,
+                                              vlttng._PROFILES_DIRNAME)
 
     for filename in sorted(os.listdir(dirname)):
         if filename.endswith('.yml'):

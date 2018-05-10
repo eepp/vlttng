@@ -21,3 +21,4 @@
 # THE SOFTWARE.
 
 __version__ = '0.7.0'
+_PROFILES_DIRNAME = 'profiles'
