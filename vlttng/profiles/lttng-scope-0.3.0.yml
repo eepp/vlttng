@@ -1,0 +1,3 @@
+projects:
+  lttng-scope:
+    source: 'https://lttng.org/files/lttng-scope/lttng-scope-0.3.0-jar-with-dependencies.jar'
