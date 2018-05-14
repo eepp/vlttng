@@ -492,12 +492,19 @@ class VEnvCreator:
 
     def _create_project_instructions_lttng_scope(self, project):
         jar_dst = os.path.join(self._paths.opt, 'lttng-scope.jar')
-        jar_dir = os.path.join('lttng-scope', 'target')
-        install_lines = [
-            'mvn clean install -Dmaven.test.skip=true -DskipTests',
-            'cp -rv {}/*with-dependencies.jar {}'.format(_sq(jar_dir),
-                                                         _sq(jar_dst)),
-        ]
+
+        if type(project.source) is vlttng.profile.HttpFtpSource:
+            jar_src = os.path.join(self._paths.src, 'lttng-scope.jar')
+            install_lines = [
+                'cp -v {} {}'.format(_sq(jar_src), _sq(jar_dst)),
+            ]
+        else:
+            jar_dir = os.path.join('lttng-scope', 'target')
+            install_lines = [
+                'mvn clean install -Dmaven.test.skip=true -DskipTests',
+                'cp -v {}/*with-dependencies.jar {}'.format(_sq(jar_dir),
+                                                             _sq(jar_dst)),
+            ]
 
         return _ProjectInstructions(project, install_lines=install_lines)
 
@@ -655,16 +662,22 @@ class VEnvCreator:
             src_path = None
 
             if type(source) is vlttng.profile.HttpFtpSource:
-                src_path = project.name
-
                 # download
                 posix_path = PurePosixPath(source.url)
-                filename = posix_path.name
+
+                if project.name == 'lttng-scope':
+                    src_path = self._paths.src
+                    filename = 'lttng-scope.jar'
+                else:
+                    src_path = project.name
+                    filename = posix_path.name
+
                 self._runner.wget(source.url, filename)
 
                 # extract
-                self._runner.mkdir_p(self._paths.project_src(project.name))
-                self._runner.tar_x(filename, project.name)
+                if not filename.endswith('.jar'):
+                    self._runner.mkdir_p(self._paths.project_src(project.name))
+                    self._runner.tar_x(filename, project.name)
             elif type(source) is vlttng.profile.GitSource:
                 src_path = project.name
 
