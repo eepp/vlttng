@@ -33,5 +33,7 @@ projects:
     configure: --without-libiconv-prefix --without-libintl-prefix
   tracecompass:
     source: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
+  lttng-scope:
+    source: 'https://github.com/lttng/lttng-scope.git'
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
