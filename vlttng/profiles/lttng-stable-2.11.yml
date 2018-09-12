@@ -1,0 +1,10 @@
+projects:
+  lttng-tools:
+    source: 'git://git.lttng.org/lttng-tools.git'
+    checkout: stable-2.11
+  lttng-ust:
+    source: 'git://git.lttng.org/lttng-ust.git'
+    checkout: stable-2.11
+  lttng-modules:
+    source: 'git://git.lttng.org/lttng-modules.git'
+    checkout: stable-2.11

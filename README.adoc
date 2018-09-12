@@ -195,6 +195,7 @@ lttng-modules-2.10.3
 lttng-modules-2.10.4
 lttng-modules-2.10.5
 lttng-modules-2.10.6
+lttng-modules-2.10.7
 lttng-modules-2.11.0-rc1
 lttng-modules-2.6.0-rc1
 lttng-modules-2.6.0-rc2
@@ -243,6 +244,7 @@ lttng-modules-stable-2.9
 lttng-scope-0.3.0
 lttng-scope-master
 lttng-stable-2.10
+lttng-stable-2.11
 lttng-stable-2.6
 lttng-stable-2.7
 lttng-stable-2.8
@@ -255,7 +257,6 @@ lttng-tools-2.10.2
 lttng-tools-2.10.3
 lttng-tools-2.10.4
 lttng-tools-2.10.5
-lttng-tools-2.10.6
 lttng-tools-2.11.0-rc1
 lttng-tools-2.6.0-rc1
 lttng-tools-2.6.0-rc2
@@ -312,6 +313,7 @@ lttng-ust-2.10.0-rc1
 lttng-ust-2.10.0-rc2
 lttng-ust-2.10.0
 lttng-ust-2.10.1
+lttng-ust-2.10.2
 lttng-ust-2.11.0-rc1
 lttng-ust-2.6.0-rc1
 lttng-ust-2.6.0-rc2
