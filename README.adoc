@@ -1,5 +1,8 @@
-vlttng
-======
+// Render with Asciidoctor
+
+= vlttng
+Philippe Proulx <https://eepp.ca/>
+
 
 image:https://img.shields.io/pypi/v/vlttng.svg?label=Latest%20version[link="https://pypi.python.org/pypi/vlttng"]
 
@@ -63,7 +66,7 @@ The `vlttng` command does the following:
   contained within the virtual environment.
 
 . It creates an `activate` script which you can _source_ from your
-  Bash/Zsh prompt to ``enter'' the virtual environment. This script sets
+  Bash/Zsh prompt to "`enter`" the virtual environment. This script sets
   a few environment variables, like `PATH`, `LD_LIBRARY_PATH`, and
   `PYTHONPATH`, to achieve this. By default, it also prepends the name
   of the virtual environment directory to your shell prompt for you to
@@ -93,7 +96,7 @@ the virtual environment:
 Your prompt should start with `[virt]` after this (the name of the
 virtual environment directory).
 
-You can ``exit'' the virtual environment with the `vlttng-deactivate`
+You can "`exit`" the virtual environment with the `vlttng-deactivate`
 command. Your prompt should return to its previous value.
 
 
@@ -428,6 +431,7 @@ You can get this list using `vlttng --list-default-profiles`.
 Profiles are written in YAML. Here is an example:
 
 [source,yaml]
+----
 build-env:
   CFLAGS: -O0 -g3
 virt-env:
@@ -448,6 +452,7 @@ projects:
     checkout: stable-2.7
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
+----
 
 A few things to note here:
 
@@ -456,11 +461,9 @@ A few things to note here:
   passes exported shell variables to the executed programs, so you can
   do:
 +
---
 ----
 CC=clang CFLAGS='-O0 -g3' vlttng ...
 ----
---
 
 * The root `virt-env` property defines the virtual environment variables,
   which are set when activating the virtual environment. Exported
@@ -500,12 +503,13 @@ vlttng -p my-profile.yml virt
 ----
 
 When you give multiple profiles to `vlttng`, the first profile is
-``patched'' with the second, which is then patched with the third, and
+"`patched`" with the second, which is then patched with the third, and
 so on. Nonexistent properties are created; existing ones are replaced
 recursively. The `configure` properties are _joined_. For example, let's
 add the following profile (call it `more.yaml`) to the example above:
 
 [source,yaml]
+----
 build-env:
   CFLAGS: -O0
   SOMEVAR: ok
@@ -514,6 +518,7 @@ projects:
     source: 'https://github.com/lttng/lttng-tools.git'
   lttng-ust:
     configure: --enable-java-agent-jul
+----
 
 With this command:
 
@@ -524,6 +529,7 @@ vlttng -p my-profile.yml -p more.yaml virt
 the effective profile is:
 
 [source,yaml]
+----
 build-env:
   CFLAGS: -O0
   SOMEVAR: ok
@@ -542,6 +548,7 @@ projects:
     checkout: stable-2.7
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
+----
 
 
 [[override]]
@@ -605,7 +612,9 @@ Note that the overrides are applied in command line order.
 You can ignore specific projects that exist in the effective profile
 using the `--ignore-project` (`-i`) option:
 
-    vlttng -p lttng-stable-2.7 -p urcu-master -i lttng-ust virt
+----
+vlttng -p lttng-stable-2.7 -p urcu-master -i lttng-ust virt
+----
 
 This is the equivalent of removing the project's property with an
 <<override,override>>:
@@ -620,7 +629,7 @@ vlttng -p lttng-stable-2.7 -p urcu-master -o '!projects.lttng-ust' virt
 By default, `vlttng` hides the standard output and error of the commands
 it runs. In this mode, `vlttng` prints all the commands to run and the
 exported environment variables along with comments, so that you can
-``replay'' the entire output as is to create the same virtual
+"`replay`" the entire output as is to create the same virtual
 environment (except for the `activate` script which would not be
 generated).
 
@@ -688,21 +697,21 @@ import the `lttngust` package as usual.
 == Update a project with a Git source
 
 `vlttng` generates the following scripts in the virtual environment's
-root directory (+__name__+ is the project name):
+root directory (`_name_` is the project name):
 
-+conf-__name__.bash+::
+`conf-_name_.bash`::
     Runs the configuration step of the project.
 
-+build-__name__.bash+::
+`build-_name_.bash`::
     Runs the build step of the project.
 
-+install-__name__.bash+::
+`install-_name_.bash`::
     Runs the install step of the project.
 
-+update-__name__.bash+ (only with a Git source)::
+`update-_name_.bash` (only with a Git source)::
     Fetches the project's configured Git remote, checks out the latest
-    version of the configured branch, and runs +conf-__name__.bash+,
-    +build-__name__.bash+, and +install-__name__.bash+.
+    version of the configured branch, and runs `conf-_name_.bash`,
+    `build-_name_.bash`, and `install-_name_.bash`.
 
 IMPORTANT: Use those scripts with caution. For a stable branch, they
 should work most of the time. For the `master` branch, some required
