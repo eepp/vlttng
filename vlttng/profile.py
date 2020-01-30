@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Philippe Proulx <eepp.ca>
+# Copyright (c) 2016-2020 Philippe Proulx <eepp.ca>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -236,16 +236,17 @@ def _project_from_project_node(name, project_node, base_build_env):
 def _validate_projects(projects):
     valid_project_names = (
         'babeltrace',
+        'babeltrace2',
         'elfutils',
         'glib',
         'libxml2',
         'lttng-analyses',
         'lttng-modules',
+        'lttng-scope',
         'lttng-tools',
         'lttng-ust',
         'popt',
         'tracecompass',
-        'lttng-scope',
         'urcu',
     )
 
@@ -274,7 +275,7 @@ def _from_yaml_files(paths, ignored_projects, overrides, verbose):
 
     for path in paths:
         with open(path) as f:
-            patch_root_node = yaml.load(f)
+            patch_root_node = yaml.load(f, Loader=yaml.FullLoader)
             _merge_nodes(root_node, patch_root_node)
 
     for override in overrides:

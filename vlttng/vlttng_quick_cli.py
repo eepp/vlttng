@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016-2017 Philippe Proulx <eepp.ca>
+# Copyright (c) 2016-2020 Philippe Proulx <eepp.ca>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -80,13 +80,14 @@ class _WizardState(enum.Enum):
     ASK_VERSIONS = 3
     ASK_FEATURE = 4
     ASK_BT_PYTHON = 5
-    ASK_LTTNG_TOOLS_PYTHON = 6
-    ASK_LTTNG_UST_JUL_AGENT = 7
-    ASK_LTTNG_UST_LOG4J_AGENT = 8
-    ASK_LTTNG_UST_PYTHON_AGENT = 9
-    ASK_PYTHON_INTERPRETER = 10
-    ASK_PATH = 11
-    END = 12
+    ASK_BT2_PYTHON = 6
+    ASK_LTTNG_TOOLS_PYTHON = 7
+    ASK_LTTNG_UST_JUL_AGENT = 8
+    ASK_LTTNG_UST_LOG4J_AGENT = 9
+    ASK_LTTNG_UST_PYTHON_AGENT = 10
+    ASK_PYTHON_INTERPRETER = 11
+    ASK_PATH = 12
+    END = 13
 
 
 class _Wizard:
@@ -102,6 +103,7 @@ class _Wizard:
             _WizardState.ASK_VERSIONS: self._state_ask_versions,
             _WizardState.ASK_FEATURE: self._state_ask_feature,
             _WizardState.ASK_BT_PYTHON: self._state_ask_bt_python,
+            _WizardState.ASK_BT2_PYTHON: self._state_ask_bt2_python,
             _WizardState.ASK_LTTNG_TOOLS_PYTHON: self._state_ask_lttng_tools_python,
             _WizardState.ASK_LTTNG_UST_JUL_AGENT: self._state_ask_lttng_ust_jul_agent,
             _WizardState.ASK_LTTNG_UST_LOG4J_AGENT: self._state_ask_lttng_ust_log4j_agent,
@@ -110,31 +112,33 @@ class _Wizard:
             _WizardState.ASK_PATH: self._state_ask_path,
         }
         self._project_name_to_title = {
-            'babeltrace': ('Babeltrace',),
-            'elfutils': ('elfutils', 'optional dependency of Babeltrace'),
-            'glib': ('GLib', 'dependency of Babeltrace'),
+            'babeltrace': ('Babeltrace 1',),
+            'babeltrace2': ('Babeltrace 2',),
+            'elfutils': ('elfutils', 'optional dependency of Babeltrace (1 and 2)'),
+            'glib': ('GLib', 'dependency of Babeltrace (1 and 2)'),
             'libxml2': ('libxml2', 'dependency of LTTng-tools'),
             'lttng-analyses': ('LTTng analyses',),
             'lttng-modules': ('LTTng-modules',),
+            'lttng-scope': ('LTTng Scope',),
             'lttng-tools': ('LTTng-tools',),
             'lttng-ust': ('LTTng-UST',),
-            'popt': ('popt', 'dependency of Babeltrace and LTTng-tools'),
+            'popt': ('popt', 'dependency of Babeltrace 1 and LTTng-tools'),
             'tracecompass': ('Trace Compass',),
-            'lttng-scope': ('LTTng Scope',),
             'urcu': ('Userspace RCU', 'dependency of LTTng-tools and LTTng-UST'),
         }
         self._project_name_to_versions = {
             'babeltrace': [],
+            'babeltrace2': [],
             'elfutils': [],
             'glib': [],
             'libxml2': [],
             'lttng-analyses': [],
             'lttng-modules': [],
+            'lttng-scope': [],
             'lttng-tools': [],
             'lttng-ust': [],
             'popt': [],
             'tracecompass': [],
-            'lttng-scope': [],
             'urcu': [],
         }
 
@@ -149,7 +153,7 @@ class _Wizard:
                     continue
 
                 for project_name in self._project_name_to_versions:
-                    if profile.startswith(project_name):
+                    if profile.startswith(project_name + '-'):
                         profile_suffix = profile[len(project_name) + 1:]
                         self._project_name_to_versions[project_name].append(profile_suffix)
 
@@ -236,30 +240,32 @@ the projects and features you need.
         print()
         choices = (
             self._get_project_title('babeltrace'),
+            self._get_project_title('babeltrace2'),
             self._get_project_title('elfutils'),
             self._get_project_title('glib'),
             self._get_project_title('libxml2'),
             self._get_project_title('lttng-analyses'),
             self._get_project_title('lttng-modules'),
+            self._get_project_title('lttng-scope'),
             self._get_project_title('lttng-tools'),
             self._get_project_title('lttng-ust'),
             self._get_project_title('popt'),
             self._get_project_title('tracecompass'),
-            self._get_project_title('lttng-scope'),
             self._get_project_title('urcu'),
         )
         choice_projects = (
             'babeltrace',
+            'babeltrace2',
             'elfutils',
             'glib',
             'libxml2',
             'lttng-analyses',
             'lttng-modules',
+            'lttng-scope',
             'lttng-tools',
             'lttng-ust',
             'popt',
             'tracecompass',
-            'lttng-scope',
             'urcu',
         )
         self._pchoices(choices)
@@ -282,7 +288,7 @@ the projects and features you need.
         choice_projects = []
 
         for project in self._projects:
-            if project not in ('elfutils', 'popt'):
+            if project not in ('babeltrace', 'elfutils', 'popt'):
                 choices.append(self._get_project_title(project))
                 choice_projects.append(project)
 
@@ -338,23 +344,41 @@ the projects and features you need.
         self._state = _WizardState.ASK_BT_PYTHON
 
     def _state_ask_bt_python(self):
+        next_state = _WizardState.ASK_BT2_PYTHON
+
         if 'babeltrace' not in self._projects:
-            self._state = _WizardState.ASK_LTTNG_TOOLS_PYTHON
+            self._state = next_state
             return
 
         if 'lttng-analyses' in self._projects:
             self._profiles.append('babeltrace-python')
-            self._state = _WizardState.ASK_LTTNG_TOOLS_PYTHON
+            self._state = next_state
             return
 
-        print(_cquestion('Would you like to build the Babeltrace Python bindings?'))
+        print(_cquestion('Would you like to build the Babeltrace 1 Python bindings?'))
         print()
 
         if self._get_yes_no(False):
             self._profiles.append('babeltrace-python')
 
         print()
-        self._state = _WizardState.ASK_LTTNG_TOOLS_PYTHON
+        self._state = next_state
+
+    def _state_ask_bt2_python(self):
+        next_state = _WizardState.ASK_LTTNG_TOOLS_PYTHON
+
+        if 'babeltrace2' not in self._projects:
+            self._state = next_state
+            return
+
+        print(_cquestion('Would you like to build the Babeltrace 2 Python bindings?'))
+        print()
+
+        if self._get_yes_no(False):
+            self._profiles.append('babeltrace2-python')
+
+        print()
+        self._state = next_state
 
     def _state_ask_lttng_tools_python(self):
         if 'lttng-tools' not in self._projects:

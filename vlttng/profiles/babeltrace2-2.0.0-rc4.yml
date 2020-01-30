@@ -1,0 +1,3 @@
+projects:
+  babeltrace2:
+    source: 'https://www.efficios.com/files/babeltrace/babeltrace-2.0.0-rc4.tar.bz2'

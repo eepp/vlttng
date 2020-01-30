@@ -37,10 +37,10 @@ opt:-V, opt:--version::
 
 EXIT STATUS
 -----------
-*0*::
+0::
     Success
 
-*Not 0*::
+Not 0::
     Error
 
 
@@ -62,7 +62,7 @@ RESOURCES
 
 COPYRIGHT
 ---------
-Copyright (c) 2016 mailto:eeppeliteloop@gmail.com[Philippe Proulx].
+Copyright (c) 2016-2020 mailto:eeppeliteloop@gmail.com[Philippe Proulx].
 
 vlttng is distributed under the
 https://github.com/eepp/vlttng/blob/master/LICENSE[MIT License].

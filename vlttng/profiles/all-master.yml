@@ -1,5 +1,5 @@
 projects:
-  babeltrace:
+  babeltrace2:
     source: 'git://git.efficios.com/babeltrace.git'
     configure: --enable-python-bindings --enable-debug-info
   elfutils:

@@ -2,12 +2,12 @@
 .\"     Title: vlttng
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 10 May 2018
+.\"      Date: 30 January 2020
 .\"    Manual: vlttng manual
 .\"    Source: vlttng 0.9.4
 .\"  Language: English
 .\"
-.TH "VLTTNG" "1" "10 May 2018" "vlttng 0\&.9\&.4" "vlttng manual"
+.TH "VLTTNG" "1" "30 January 2020" "vlttng 0\&.9\&.4" "vlttng manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -45,142 +45,75 @@ List the default profile names:
 .fi
 .SH "DESCRIPTION"
 .sp
-\fBvlttng\fR is a command\-line tool which generates a virtual environment (a sandbox) in which a specific set of LTTng <http://lttng.org/> packages are installed\&. The recognized projects, as of \fBvlttng\fR 0\&.9\&.4, are:
-.sp
+\fBvlttng\fR is a command\-line tool which generates a virtual environment (a sandbox) in which a specific set of LTTng <https://lttng.org/> packages are installed\&. The recognized projects, as of \fBvlttng\fR\ \&0\&.9\&.4, are:
+.PP
+\fBbabeltrace\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBbabeltrace\fR: Babeltrace (trace converter and viewer)
+Babeltrace 1 (deprecated trace converter and viewer)
 .RE
-.sp
+.PP
+\fBbabeltrace2\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBelfutils\fR: elfutils (optional dependency of Babeltrace)
+Babeltrace 2 (trace converter and viewer)
 .RE
-.sp
+.PP
+\fBelfutils\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBglib\fR: GLib 2 (dependency of Babeltrace)
+elfutils (optional dependency of Babeltrace\ \&1 and\ \&2)
 .RE
-.sp
+.PP
+\fBglib\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBlibxml2\fR: Libxml2 (dependency of LTTng\-tools)
+GLib 2 (dependency of Babeltrace\ \&1 and\ \&2)
 .RE
-.sp
+.PP
+\fBlibxml2\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBlttng-analyses\fR: LTTng analyses
+Libxml2 (dependency of LTTng\-tools)
 .RE
-.sp
+.PP
+\fBlttng-analyses\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBlttng-modules\fR: LTTng\-modules
+LTTng analyses
 .RE
-.sp
+.PP
+\fBlttng-modules\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBlttng-tools\fR: LTTng\-tools
+LTTng\-modules
 .RE
-.sp
+.PP
+\fBlttng-scope\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBlttng-ust\fR: LTTng\-UST
+LTTng Scope
 .RE
-.sp
+.PP
+\fBlttng-tools\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBpopt\fR: popt (dependency of LTTng\-tools and Babeltrace)
+LTTng\-tools
 .RE
-.sp
+.PP
+\fBlttng-ust\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBtracecompass\fR: Trace Compass
+LTTng\-UST
 .RE
-.sp
+.PP
+\fBpopt\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBlttng-scope\fR: LTTng scope
+popt (dependency of LTTng\-tools and Babeltrace\ \&1)
 .RE
-.sp
+.PP
+\fBtracecompass\fR
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBurcu\fR: Userspace RCU (dependency of LTTng\-tools and LTTng\-UST)
+Trace Compass
+.RE
+.PP
+\fBurcu\fR
+.RS 4
+Userspace RCU (dependency of LTTng\-tools and LTTng\-UST)
 .RE
 .sp
 Have a look at \fBvlttng-quick\fR(1), which creates a \fBvlttng\fR command line after asking you a few questions interactively\&.
-.SS "How does it work?"
+.SS "How does vlttng work?"
 .sp
 The \fBvlttng\fR command does the following:
 .sp
@@ -192,10 +125,9 @@ The \fBvlttng\fR command does the following:
 .sp -1
 .IP "  1." 4.2
 .\}
-It reads one or more
+Reads one or more
 \fIprofiles\fR
-you give on the command line to know which packages to fetch and build\&. It merges those profiles as an
-\fIeffective profile\fR\&.
+that you give on the command line to know which packages to fetch and build\&.
 .RE
 .sp
 .RS 4
@@ -206,7 +138,9 @@ you give on the command line to know which packages to fetch and build\&. It mer
 .sp -1
 .IP "  2." 4.2
 .\}
-It fetches and extracts the requested packages\&. Git, with a specific branch/tag/commit, as well as HTTP/FTP tarball sources are supported\&. The Git clone URL can point to a local Git repository using the
+Fetches and extracts the requested packages\&.
+.sp
+vlttng supports Git with a specific branch/tag/commit as well as HTTP/FTP tarball sources\&. The Git clone URL can point to a local Git repository using the
 \fBfile://\fR
 protocol\&.
 .RE
@@ -219,7 +153,7 @@ protocol\&.
 .sp -1
 .IP "  3." 4.2
 .\}
-It builds one package at a time, setting some environment variables and configure options so that the dependencies of the packages are contained within the virtual environment\&.
+Builds one package at a time, setting some environment variables and configure options so that the dependencies of the packages are contained within the virtual environment\&.
 .RE
 .sp
 .RS 4
@@ -230,16 +164,18 @@ It builds one package at a time, setting some environment variables and configur
 .sp -1
 .IP "  4." 4.2
 .\}
-It creates an
+Creates an
 \fBactivate\fR
 script which you can
 \fIsource\fR
-from your Bash/Zsh prompt to \(lqenter\(rq the virtual environment\&. This script sets a few environment variables, like
+from your Bash/Zsh prompt to \(lqenter\(rq the virtual environment\&.
+.sp
+This script sets a few environment variables, like
 \fBPATH\fR,
 \fBLD_LIBRARY_PATH\fR, and
 \fBPYTHONPATH\fR, to achieve this\&. By default, it also prepends the name of the virtual environment directory to your shell prompt for you to know which virtual environment is active\&.
 .sp
-When you source the generated
+When you source the
 \fBactivate\fR
 script, if the LTTng\-modules project is part of the effective profile,
 \fBvlttng\fR
@@ -254,34 +190,34 @@ Example:
 .RS 4
 .\}
 .nf
-vlttng \-p lttng\-stable\-2\&.8 \-p babeltrace\-master \e
-       \-p babeltrace\-python \-p lttng\-tools\-no\-lttng\-relayd \e
-       \-p urcu\-stable\-0\&.9 virt
+$ vlttng \-p lttng\-stable\-2\&.8 \-p babeltrace\-master \e
+         \-p babeltrace\-python \-p lttng\-tools\-no\-lttng\-relayd \e
+         \-p urcu\-stable\-0\&.9 virt
 .fi
 .if n \{\
 .RE
 .\}
 .sp
-Here, five profiles are used to create a virtual environment in the \fBvirt\fR directory\&. You can source the \fBactivate\fR script to enter the virtual environment:
+Here, we\(cqre using five profiles to create a virtual environment in the \fBvirt\fR directory\&. Source the generated \fBactivate\fR script to enter the virtual environment:
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-\&. \&./virt/activate
+$ \&. \&./virt/activate
 .fi
 .if n \{\
 .RE
 .\}
 .sp
-Your prompt should start with \fB[virt]\fR after this (the name of the virtual environment directory)\&.
+Your prompt starts with \fB[virt]\fR after this (the name of the virtual environment directory)\&.
 .sp
-You can \(lqexit\(rq the virtual environment with the \fBvlttng-deactivate\fR command\&. Your prompt should return to its previous value\&.
+\(lqExit\(rq the virtual environment with the \fBvlttng-deactivate\fR command\&. Your prompt will return to its previous value\&.
 .SS "Write and use profiles"
 .sp
 A vlttng profile is a layer of configuration\&. You can use multiple profiles to create an \fIeffective profile\fR\&.
 .sp
-The project ships with default, built\-in profiles\&. You can get the full list with the \fB--list-default-profiles\fR option\&.
+The project ships with default, built\-in profiles\&. Get the full list with the \fB--list-default-profiles\fR option\&.
 .sp
 Profiles are written in YAML\&. Here is an example:
 .sp
@@ -297,16 +233,16 @@ virt\-env:
 projects:
   lttng\-tools:
     source: \*(Aqgit://git\&.lttng\&.org/lttng\-tools\&.git\*(Aq
-    checkout: stable\-2\&.7
+    checkout: stable\-2\&.11
     build\-env:
       CC: clang
       CFLAGS: \*(Aq\*(Aq
   lttng\-ust:
-    source: \*(Aqhttp://lttng\&.org/files/lttng\-ust/lttng\-ust\-2\&.7\&.2\&.tar\&.bz2\*(Aq
+    source: \*(Aqhttp://lttng\&.org/files/lttng\-ust/lttng\-ust\-2\&.11\&.0\&.tar\&.bz2\*(Aq
     configure: \-\-enable\-python\-agent
   lttng\-modules:
     source: \*(Aqgit://git\&.lttng\&.org/lttng\-modules\&.git\*(Aq
-    checkout: stable\-2\&.7
+    checkout: stable\-2\&.11
   urcu:
     source: \*(Aqgit://git\&.liburcu\&.org/userspace\-rcu\&.git\*(Aq
 .fi
@@ -334,7 +270,7 @@ also passes exported shell variables to the executed programs, so you can do:
 .RS 4
 .\}
 .nf
-CC=clang CFLAGS=\*(Aq\-O0 \-g3\*(Aq vlttng \&.\&.\&.
+$ CC=clang CFLAGS=\*(Aq\-O0 \-g3\*(Aq vlttng \&.\&.\&.
 .fi
 .if n \{\
 .RE
@@ -351,8 +287,11 @@ CC=clang CFLAGS=\*(Aq\-O0 \-g3\*(Aq vlttng \&.\&.\&.
 .\}
 The root
 \fBvirt-env\fR
-property defines the virtual environment variables which are set when you active the virtual environment\&. Exported shell variables, when invoking
-\fBvlttng\fR, are NOT set when you activate the resulting virtual environment\&.
+property defines the virtual environment variables, which are set when you activate the virtual environment\&. Exported shell variables when you run
+\fBvlttng\fR
+are
+\fInot\fR
+set when you activate the resulting virtual environment\&.
 .RE
 .sp
 .RS 4
@@ -403,25 +342,63 @@ property specifies the options to pass to the
 \fBconfigure\fR
 script of a given project\&.
 \fBvlttng\fR
-handles some options itself, like
+takes care of some options itself, like
 \fB--prefix\fR
 and
 \fB--without-lttng-ust\fR, to create a working virtual environment\&.
 .RE
 .sp
-The profile above can be saved to a file, for example \fBmy-profile.yml\fR, and you can create a virtual environment out of it:
+You can save the profile above to a file, for example \fBmy-profile.yml\fR, and then you can create a virtual environment out of it:
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-vlttng \-p my\-profile\&.yml virt
+$ vlttng \-p my\-profile\&.yml virt
 .fi
 .if n \{\
 .RE
 .\}
 .sp
-When you give multiple profiles to \fBvlttng\fR, the first profile is \(lqpatched\(rq with the second, which is then patched with the third, and so on\&. Nonexistent properties are created; existing ones are replaced recursively\&. The \fBconfigure\fR properties are \fIjoined\fR\&. For example, let\(cqs add the following profile (call it \fBmore.yaml\fR) to the example above:
+When you give multiple profiles to \fBvlttng\fR, the first profile is \(lqpatched\(rq with the second, which is then patched with the third, and so on, as such:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Nonexistent properties are created\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Existing properties are replaced recursively\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The
+\fBconfigure\fR
+properties are
+\fIjoined\fR\&.
+.RE
+.sp
+For example, let\(cqs add the following profile (call it \fBmore.yaml\fR) to the example above:
 .sp
 .if n \{\
 .RS 4
@@ -464,16 +441,16 @@ build\-env:
 projects:
   lttng\-tools:
     source: \*(Aqhttps://github\&.com/lttng/lttng\-tools\&.git\*(Aq
-    checkout: stable\-2\&.7
+    checkout: stable\-2\&.11
     build\-env:
       CC: clang
       CFLAGS: \*(Aq\*(Aq
   lttng\-ust:
-    source: \*(Aqhttp://lttng\&.org/files/lttng\-ust/lttng\-ust\-2\&.7\&.2\&.tar\&.bz2\*(Aq
+    source: \*(Aqhttp://lttng\&.org/files/lttng\-ust/lttng\-ust\-2\&.11\&.0\&.tar\&.bz2\*(Aq
     configure: \-\-enable\-python\-agent \-\-enable\-java\-agent\-jul
   lttng\-modules:
     source: \*(Aqgit://git\&.lttng\&.org/lttng\-modules\&.git\*(Aq
-    checkout: stable\-2\&.7
+    checkout: stable\-2\&.11
   urcu:
     source: \*(Aqgit://git\&.liburcu\&.org/userspace\-rcu\&.git\*(Aq
 .fi
@@ -482,7 +459,7 @@ projects:
 .\}
 .SS "Override a profile property"
 .sp
-You can replace, append to, and remove effective profile properties (after \fBvlttng\fR has merged all the profiles given with the \fB--profile\fR option as an effective profile) with the \fB--override\fR option\&.
+Replace, append to, and remove effective profile properties (after \fBvlttng\fR has merged all the profiles given with the \fB--profile\fR option as an effective profile) with the \fB--override\fR option\&.
 .sp
 Example:
 .sp
@@ -505,23 +482,23 @@ In replace and append modes, \fBvlttng\fR creates the property if it does not ex
 .\}
 .nf
 \-o projects\&.lttng\-tools\&.source=https://github\&.com/lttng/lttng\-tools\&.git \e
-\-o projects\&.lttng\-tools\&.checkout=v2\&.7\&.1 \e
+\-o projects\&.lttng\-tools\&.checkout=v2\&.11\&.0 \e
 \-o projects\&.lttng\-tools\&.configure=\*(Aq\-\-disable\-bin\-lttng \-\-disable\-man\-pages\*(Aq
 .fi
 .if n \{\
 .RE
 .\}
 .sp
-Note that the overrides are applied in command line order\&.
+\fBvlttng\fR applies the overrides in command line order\&.
 .SS "Ignore a project"
 .sp
-You can ignore specific projects that exist in the effective profile using the \fB--ignore-project\fR (\fB-i\fR) option:
+Ignore specific projects that exist in the effective profile with the \fB--ignore-project\fR (\fB-i\fR) option:
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-vlttng \-p lttng\-stable\-2\&.7 \-p urcu\-master \-i lttng\-ust virt
+$ vlttng \-p lttng\-stable\-2\&.11 \-p urcu\-master \-i lttng\-ust virt
 .fi
 .if n \{\
 .RE
@@ -533,14 +510,14 @@ This is the equivalent of removing the project\(cqs property with an \fIoverride
 .RS 4
 .\}
 .nf
-vlttng \-p lttng\-stable\-2\&.7 \-p urcu\-master \-o \*(Aq!projects\&.lttng\-ust\*(Aq virt
+$ vlttng \-p lttng\-stable\-2\&.11 \-p urcu\-master \-o \*(Aq!projects\&.lttng\-ust\*(Aq virt
 .fi
 .if n \{\
 .RE
 .\}
 .SS "Activation script options"
 .sp
-When sourcing the generated \fBactivate\fR script, you can use the following environment variables to alter its behaviour:
+When you source the \fBactivate\fR script, use the following environment variables to alter its behaviour:
 .PP
 \fBVLTTNG_NO_RMMOD\fR
 .RS 4
@@ -557,15 +534,15 @@ to keep your current shell prompt after the activation\&.
 .RE
 .SS "Use \fBsudo\fR"
 .sp
-If you use \fBsudo\fR when the virtual environment is activated, make sure to use its \fB--preserve-env\fR (\fB-E\fR) option, so that the virtual environment is preserved when it executes the command\&.
+If you use \fBsudo\fR when the virtual environment is activated, make sure to use its \fB--preserve-env\fR (\fB-E\fR) option so that the virtual environment is preserved when it executes the command\&.
 .sp
-For example, to start a root session daemon which loads the LTTng kernel modules installed in the virtual environment:
+For example, to start a root LTTng session daemon which loads the LTTng kernel modules installed in the virtual environment:
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-sudo \-\-preserve\-env lttng\-sessiond \-\-daemonize
+$ sudo \-\-preserve\-env lttng\-sessiond \-\-daemonize
 .fi
 .if n \{\
 .RE
@@ -586,9 +563,11 @@ java \-cp $VLTTNG_CLASSPATH:\&. MyClass
 .if n \{\
 .RE
 .\}
-.SS "Trace a Python application"
+.SS "Use the virtual environment\(cqs Python packages"
 .sp
 If the LTTng\-UST Python agent is built and installed in the virtual environment, there\(cqs nothing special to do to trace a Python application: the \fBPYTHONPATH\fR environment variable contains the path to the LTTng\-UST Python agent package in the virtual environment\&. You can import the \fBlttngust\fR package as usual\&.
+.sp
+As such, you can import the \fBbabeltrace\fR and \fBbt2\fR Python\ \&3 packages directly\&.
 .SS "Update a project with a Git source"
 .sp
 \fBvlttng\fR generates the following scripts in the virtual environment\(cqs root directory (\fBNAME\fR is the project name):
@@ -628,7 +607,7 @@ Fetches the project\(cqs configured Git remote, checks out the latest version of
 .ps -1
 .br
 .sp
-Use those scripts with caution\&. For a stable branch, they should work most of the time\&. For the \fBmaster\fR branch, some required implicit configuration and build command lines might be missing from the scripts\&.
+Use those scripts with caution\&. For a stable branch, they \fIshould\fR work most of the time\&. For the \fBmaster\fR branch, some required implicit configuration and build command lines might be missing from the scripts when you use the update script\&.
 .sp .5v
 .RE
 .SH "OPTIONS"
@@ -653,7 +632,7 @@ from the effective profile\&.
 .sp
 You can repeat this option\&.
 \fBvlttng\fR
-ignores projects once it has processed the override (\fB--override\fR) and the profile (\fB--profile\fR) options\&.
+ignores projects once it has processed the (\fB--override\fR) and (\fB--profile\fR) options\&.
 .RE
 .PP
 \fB-j\fR [\fIJOBS\fR], \fB--jobs\fR[=\fIJOBS\fR]
@@ -663,7 +642,7 @@ Run
 commands simultaneously when building each project\&.
 \fBvlttng\fR
 passes this option as is to
-\fBmake\fR\&.
+\fBmake\fR(1)\&.
 .RE
 .PP
 \fB--list-default-profiles\fR
@@ -750,12 +729,12 @@ Show the command\(cqs version\&.
 .RE
 .SH "EXIT STATUS"
 .PP
-\fB0\fR
+0
 .RS 4
 Success
 .RE
 .PP
-\fBNot 0\fR
+Not 0
 .RS 4
 Error
 .RE
@@ -807,7 +786,7 @@ is vlttng\(cqs author and maintainer)
 .RE
 .SH "COPYRIGHT"
 .sp
-Copyright (c) 2016 Philippe Proulx <mailto:eeppeliteloop@gmail.com>\&.
+Copyright (c) 2016\-2020 Philippe Proulx <mailto:eeppeliteloop@gmail.com>\&.
 .sp
 vlttng is distributed under the MIT License <https://github.com/eepp/vlttng/blob/master/LICENSE>\&.
 .SH "AUTHORS"

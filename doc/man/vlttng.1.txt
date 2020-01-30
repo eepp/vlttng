@@ -1,6 +1,6 @@
 vlttng(1)
 =========
-:revdate: 10 May 2018
+:revdate: 30 January 2020
 
 
 NAME
@@ -25,78 +25,105 @@ List the default profile names:
 DESCRIPTION
 -----------
 `vlttng` is a command-line tool which generates a virtual environment (a
-sandbox) in which a specific set of http://lttng.org/[LTTng] packages
-are installed. The recognized projects, as of `vlttng` {vlttng_version},
-are:
+sandbox) in which a specific set of https://lttng.org/[LTTng] packages
+are installed. The recognized projects, as of
+`vlttng`{nbsp}{vlttng_version}, are:
 
-* `babeltrace`: Babeltrace (trace converter and viewer)
-* `elfutils`: elfutils (optional dependency of Babeltrace)
-* `glib`: GLib 2 (dependency of Babeltrace)
-* `libxml2`: Libxml2 (dependency of LTTng-tools)
-* `lttng-analyses`: LTTng analyses
-* `lttng-modules`: LTTng-modules
-* `lttng-tools`: LTTng-tools
-* `lttng-ust`: LTTng-UST
-* `popt`: popt (dependency of LTTng-tools and Babeltrace)
-* `tracecompass`: Trace Compass
-* `lttng-scope`: LTTng scope
-* `urcu`: Userspace RCU (dependency of LTTng-tools and LTTng-UST)
+`babeltrace`::
+    Babeltrace 1 (deprecated trace converter and viewer)
+
+`babeltrace2`::
+    Babeltrace 2 (trace converter and viewer)
+
+`elfutils`::
+    elfutils (optional dependency of Babeltrace{nbsp}1 and{nbsp}2)
+
+`glib`::
+    GLib 2 (dependency of Babeltrace{nbsp}1 and{nbsp}2)
+
+`libxml2`::
+    Libxml2 (dependency of LTTng-tools)
+
+`lttng-analyses`::
+    LTTng analyses
+
+`lttng-modules`::
+    LTTng-modules
+
+`lttng-scope`::
+    LTTng Scope
+
+`lttng-tools`::
+    LTTng-tools
+
+`lttng-ust`::
+    LTTng-UST
+
+`popt`::
+    popt (dependency of LTTng-tools and Babeltrace{nbsp}1)
+
+`tracecompass`::
+    Trace Compass
+
+`urcu`::
+    Userspace RCU (dependency of LTTng-tools and LTTng-UST)
 
 Have a look at man:vlttng-quick(1), which creates a `vlttng` command
 line after asking you a few questions interactively.
 
 
-How does it work?
-~~~~~~~~~~~~~~~~~
+How does vlttng work?
+~~~~~~~~~~~~~~~~~~~~~
 The `vlttng` command does the following:
 
-. It reads one or more _profiles_ you give on the command line to know
-  which packages to fetch and build. It merges those profiles as an
-  _effective profile_.
+. Reads one or more _profiles_ that you give on the command line to know
+  which packages to fetch and build.
 
-. It fetches and extracts the requested packages. Git, with a specific
-  branch/tag/commit, as well as HTTP/FTP tarball sources are supported.
-  The Git clone URL can point to a local Git repository using the
-  `file://` protocol.
+. Fetches and extracts the requested packages.
++
+vlttng supports Git with a specific branch/tag/commit as well as
+HTTP/FTP tarball sources. The Git clone URL can point to a local Git
+repository using the `file://` protocol.
 
-. It builds one package at a time, setting some environment variables
-  and configure options so that the dependencies of the packages are
+. Builds one package at a time, setting some environment variables and
+  configure options so that the dependencies of the packages are
   contained within the virtual environment.
 
-. It creates an `activate` script which you can _source_ from your
-  Bash/Zsh prompt to ``enter'' the virtual environment. This script sets
-  a few environment variables, like `PATH`, `LD_LIBRARY_PATH`, and
-  `PYTHONPATH`, to achieve this. By default, it also prepends the name
-  of the virtual environment directory to your shell prompt for you to
-  know which virtual environment is active.
+. Creates an `activate` script which you can _source_ from your
+  Bash/Zsh prompt to ``enter'' the virtual environment.
 +
-When you source the generated `activate` script, if the LTTng-modules
-project is part of the effective profile, `vlttng` removes the currently
-loaded LTTng kernel modules and sets the `MODPROBE_OPTIONS` environment
+This script sets a few environment variables, like `PATH`,
+`LD_LIBRARY_PATH`, and `PYTHONPATH`, to achieve this. By default, it
+also prepends the name of the virtual environment directory to your
+shell prompt for you to know which virtual environment is active.
++
+When you source the `activate` script, if the LTTng-modules project is
+part of the effective profile, `vlttng` removes the currently loaded
+LTTng kernel modules and sets the `MODPROBE_OPTIONS` environment
 variable so that the LTTng session daemon loads the virtual environment
 modules.
 
 Example:
 
 ----
-vlttng -p lttng-stable-2.8 -p babeltrace-master \
-       -p babeltrace-python -p lttng-tools-no-lttng-relayd \
-       -p urcu-stable-0.9 virt
+$ vlttng -p lttng-stable-2.8 -p babeltrace-master \
+         -p babeltrace-python -p lttng-tools-no-lttng-relayd \
+         -p urcu-stable-0.9 virt
 ----
 
-Here, five profiles are used to create a virtual environment in the
-`virt` directory. You can source the `activate` script to enter
-the virtual environment:
+Here, we're using five profiles to create a virtual environment in the
+`virt` directory. Source the generated `activate` script to enter the
+virtual environment:
 
 ----
-. ./virt/activate
+$ . ./virt/activate
 ----
 
-Your prompt should start with `[virt]` after this (the name of the
-virtual environment directory).
+Your prompt starts with `[virt]` after this (the name of the virtual
+environment directory).
 
-You can ``exit'' the virtual environment with the `vlttng-deactivate`
-command. Your prompt should return to its previous value.
+``Exit'' the virtual environment with the `vlttng-deactivate` command.
+Your prompt will return to its previous value.
 
 
 Write and use profiles
@@ -104,8 +131,8 @@ Write and use profiles
 A vlttng profile is a layer of configuration. You can use multiple
 profiles to create an _effective profile_.
 
-The project ships with default, built-in profiles. You can get the full
-list with the opt:--list-default-profiles option.
+The project ships with default, built-in profiles. Get the full list
+with the opt:--list-default-profiles option.
 
 Profiles are written in YAML. Here is an example:
 
@@ -118,61 +145,68 @@ virt-env:
 projects:
   lttng-tools:
     source: 'git://git.lttng.org/lttng-tools.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
     build-env:
       CC: clang
       CFLAGS: ''
   lttng-ust:
-    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.7.2.tar.bz2'
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.11.0.tar.bz2'
     configure: --enable-python-agent
   lttng-modules:
     source: 'git://git.lttng.org/lttng-modules.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
 
 A few things to note here:
+
 
 * The root `build-env` property defines the base build environment
   variables. They are set when building the projects. `vlttng` also
   passes exported shell variables to the executed programs, so you can
   do:
 +
---
 ----
-CC=clang CFLAGS='-O0 -g3' vlttng ...
+$ CC=clang CFLAGS='-O0 -g3' vlttng ...
 ----
---
 
-* The root `virt-env` property defines the virtual environment variables
-  which are set when you active the virtual environment. Exported shell
-  variables, when invoking `vlttng`, are :not: set when you activate the
-  resulting virtual environment.
+* The root `virt-env` property defines the virtual environment
+  variables, which are set when you activate the virtual environment.
+  Exported shell variables when you run `vlttng` are _not_ set when
+  you activate the resulting virtual environment.
+
 * The `build-env` property of a specific project defines environment
   variables to be used only during the build stage of this project. A
   project-specific build-time environment variable overrides a base
   build-time environment variable sharing its name.
+
 * When the `source` property contains a Git URL, or when the `checkout`
   property is set, the `checkout` property indicates which branch, tag,
   or commit to check out. When it's not specified, `vlttng` checks out
   the `master` branch.
-* The `configure` property specifies the options to pass to the
-  `configure` script of a given project. `vlttng` handles some options
-  itself, like `--prefix` and `--without-lttng-ust`, to create a working
-  virtual environment.
 
-The profile above can be saved to a file, for example `my-profile.yml`,
-and you can create a virtual environment out of it:
+* The `configure` property specifies the options to pass to the
+  `configure` script of a given project. `vlttng` takes care of some
+  options itself, like `--prefix` and `--without-lttng-ust`, to create a
+  working virtual environment.
+
+You can save the profile above to a file, for example `my-profile.yml`,
+and then you can create a virtual environment out of it:
 
 ----
-vlttng -p my-profile.yml virt
+$ vlttng -p my-profile.yml virt
 ----
 
 When you give multiple profiles to `vlttng`, the first profile is
 ``patched'' with the second, which is then patched with the third, and
-so on. Nonexistent properties are created; existing ones are replaced
-recursively. The `configure` properties are _joined_. For example, let's
-add the following profile (call it `more.yaml`) to the example above:
+so on, as such:
+
+* Nonexistent properties are created.
+* Existing properties are replaced recursively.
+* The `configure` properties are _joined_.
+
+For example, let's add the following profile (call it `more.yaml`) to
+the example above:
 
 [source,yaml]
 build-env:
@@ -199,16 +233,16 @@ build-env:
 projects:
   lttng-tools:
     source: 'https://github.com/lttng/lttng-tools.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
     build-env:
       CC: clang
       CFLAGS: ''
   lttng-ust:
-    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.7.2.tar.bz2'
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.11.0.tar.bz2'
     configure: --enable-python-agent --enable-java-agent-jul
   lttng-modules:
     source: 'git://git.lttng.org/lttng-modules.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
 
@@ -216,9 +250,9 @@ projects:
 [[override]]
 Override a profile property
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-You can replace, append to, and remove effective profile properties
-(after `vlttng` has merged all the profiles given with the opt:--profile
-option as an effective profile) with the opt:--override option.
+Replace, append to, and remove effective profile properties (after
+`vlttng` has merged all the profiles given with the opt:--profile option
+as an effective profile) with the opt:--override option.
 
 Example:
 
@@ -233,32 +267,34 @@ not exist. This allows you to create projects on the command line:
 
 ----
 -o projects.lttng-tools.source=https://github.com/lttng/lttng-tools.git \
--o projects.lttng-tools.checkout=v2.7.1 \
+-o projects.lttng-tools.checkout=v2.11.0 \
 -o projects.lttng-tools.configure='--disable-bin-lttng --disable-man-pages'
 ----
 
-Note that the overrides are applied in command line order.
+`vlttng` applies the overrides in command line order.
 
 
 Ignore a project
 ~~~~~~~~~~~~~~~~
-You can ignore specific projects that exist in the effective profile
-using the opt:--ignore-project (opt:-i) option:
+Ignore specific projects that exist in the effective profile with the
+`--ignore-project` (`-i`) option:
 
-    vlttng -p lttng-stable-2.7 -p urcu-master -i lttng-ust virt
+----
+$ vlttng -p lttng-stable-2.11 -p urcu-master -i lttng-ust virt
+----
 
 This is the equivalent of removing the project's property with an
 <<override,override>>:
 
 ----
-vlttng -p lttng-stable-2.7 -p urcu-master -o '!projects.lttng-ust' virt
+$ vlttng -p lttng-stable-2.11 -p urcu-master -o '!projects.lttng-ust' virt
 ----
 
 
 Activation script options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-When sourcing the generated `activate` script, you can use the following
-environment variables to alter its behaviour:
+When you source the `activate` script, use the following environment
+variables to alter its behaviour:
 
 `VLTTNG_NO_RMMOD`::
     Set to `1` to disable the unloading of the currently loaded LTTng
@@ -271,14 +307,14 @@ environment variables to alter its behaviour:
 Use `sudo`
 ~~~~~~~~~~
 If you use `sudo` when the virtual environment is activated, make sure
-to use its `--preserve-env` (`-E`) option, so that the virtual
+to use its `--preserve-env` (`-E`) option so that the virtual
 environment is preserved when it executes the command.
 
-For example, to start a root session daemon which loads the LTTng kernel
-modules installed in the virtual environment:
+For example, to start a root LTTng session daemon which loads the LTTng
+kernel modules installed in the virtual environment:
 
 ----
-sudo --preserve-env lttng-sessiond --daemonize
+$ sudo --preserve-env lttng-sessiond --daemonize
 ----
 
 
@@ -297,13 +333,16 @@ java -cp $VLTTNG_CLASSPATH:. MyClass
 ----
 
 
-Trace a Python application
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use the virtual environment's Python packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If the LTTng-UST Python agent is built and installed in the virtual
 environment, there's nothing special to do to trace a Python
 application: the `PYTHONPATH` environment variable contains the path to
 the LTTng-UST Python agent package in the virtual environment. You can
 import the `lttngust` package as usual.
+
+As such, you can import the `babeltrace` and `bt2` Python{nbsp}3
+packages directly.
 
 
 Update a project with a Git source
@@ -326,9 +365,9 @@ root directory (`NAME` is the project name):
     `build-NAME.bash`, and `install-NAME.bash`.
 
 IMPORTANT: Use those scripts with caution. For a stable branch, they
-should work most of the time. For the `master` branch, some required
+_should_ work most of the time. For the `master` branch, some required
 implicit configuration and build command lines might be missing from the
-scripts.
+scripts when you use the update script.
 
 
 OPTIONS
@@ -346,12 +385,11 @@ opt:-i 'PROJECT', opt:--ignore-project='PROJECT'::
     profile.
 +
 You can repeat this option. `vlttng` ignores projects once
-it has processed the override (opt:--override) and the profile
-(opt:--profile) options.
+it has processed the (opt:--override) and (opt:--profile) options.
 
 opt:-j ['JOBS'], opt:--jobs[='JOBS']::
 		Run 'JOBS' commands simultaneously when building each
-    project. `vlttng` passes this option as is to `make`.
+    project. `vlttng` passes this option as is to man:make(1).
 
 opt:--list-default-profiles::
     List the default (built-in) profile names and exit.
@@ -407,10 +445,10 @@ opt:-V, opt:--version::
 
 EXIT STATUS
 -----------
-*0*::
+0::
     Success
 
-*Not 0*::
+Not 0::
     Error
 
 
@@ -432,7 +470,7 @@ RESOURCES
 
 COPYRIGHT
 ---------
-Copyright (c) 2016 mailto:eeppeliteloop@gmail.com[Philippe Proulx].
+Copyright (c) 2016-2020 mailto:eeppeliteloop@gmail.com[Philippe Proulx].
 
 vlttng is distributed under the
 https://github.com/eepp/vlttng/blob/master/LICENSE[MIT License].

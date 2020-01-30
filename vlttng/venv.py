@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2016-2017 Philippe Proulx <eepp.ca>
+# Copyright (c) 2016-2020 Philippe Proulx <eepp.ca>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -321,16 +321,17 @@ class VEnvCreator:
         self._project_instructions = {}
         self._create_project_instructions_cbs = {
             'babeltrace': self._create_project_instructions_generic_autotools,
+            'babeltrace2': self._create_project_instructions_generic_autotools,
             'elfutils': self._create_project_instructions_generic_autotools,
             'glib': self._create_project_instructions_generic_autotools,
             'libxml2': self._create_project_instructions_generic_autotools,
             'lttng-analyses': self._create_project_instructions_lttng_analyses,
             'lttng-modules': self._create_project_instructions_lttng_modules,
+            'lttng-scope': self._create_project_instructions_lttng_scope,
             'lttng-tools': self._create_project_instructions_lttng_tools,
             'lttng-ust': self._create_project_instructions_lttng_ust,
             'popt': self._create_project_instructions_generic_autotools,
             'tracecompass': self._create_project_instructions_tracecompass,
-            'lttng-scope': self._create_project_instructions_lttng_scope,
             'urcu': self._create_project_instructions_generic_autotools,
         }
         self._create()
@@ -378,6 +379,7 @@ class VEnvCreator:
         check_dep('lttng-ust', 'urcu')
         check_dep('lttng-analyses', 'babeltrace')
         check_dep('babeltrace', 'glib')
+        check_dep('babeltrace2', 'glib')
         check_dep('lttng-tools', 'libxml2')
         check_dep('lttng-tools', 'popt')
         check_dep('babeltrace', 'popt')
@@ -396,6 +398,12 @@ class VEnvCreator:
 
             if '--enable-debug-info' in project.configure or '--disable-debug-info' not in project.configure:
                 check_dep('babeltrace', 'elfutils')
+
+        if 'babeltrace2' in projects:
+            project = projects['babeltrace2']
+
+            if '--enable-debug-info' in project.configure or '--disable-debug-info' not in project.configure:
+                check_dep('babeltrace2', 'elfutils')
 
         if 'lttng-tools' in projects:
             self._check_man_pages('LTTng-tools', projects['lttng-tools'])
@@ -586,6 +594,7 @@ class VEnvCreator:
         self._build_project('glib')
         self._build_project('elfutils')
         self._build_project('babeltrace')
+        self._build_project('babeltrace2')
         self._build_project('lttng-analyses')
         self._build_project('tracecompass')
         self._build_project('lttng-scope')

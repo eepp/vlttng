@@ -2,18 +2,19 @@
 
 = vlttng
 Philippe Proulx <https://eepp.ca/>
-
+:toc:
 
 image:https://img.shields.io/pypi/v/vlttng.svg?label=Latest%20version[link="https://pypi.python.org/pypi/vlttng"]
 
 **_vlttng_** is a tool which creates a virtual environment (a sandbox)
-to run specific versions of the http://lttng.org/[LTTng] packages. The
-http://diamon.org/babeltrace[Babeltrace], http://liburcu.org/[Userspace
-RCU], https://github.com/lttng/lttng-analyses[LTTng analyses],
+to run specific versions of the http://lttng.org/[LTTng] packages.
+
+The https://babeltrace.org/[Babeltrace]{nbsp}1 and{nbsp}2,
+https://liburcu.org/[Userspace RCU],
+https://github.com/lttng/lttng-analyses[LTTng analyses],
 https://github.com/lttng/lttng-scope[LTTng Scope], and
 http://tracecompass.org/[Trace Compass] projects are also supported, as
 well as some of the project dependencies.
-
 
 == Install vlttng
 
@@ -23,7 +24,7 @@ To install vlttng on the system:
 +
 --
 ----
-sudo pip3 install --upgrade vlttng
+$ sudo pip3 install --upgrade vlttng
 ----
 --
 
@@ -33,7 +34,7 @@ To install vlttng in your home directory:
 +
 --
 ----
-pip3 install --user --upgrade vlttng
+$ pip3 install --user --upgrade vlttng
 ----
 --
 +
@@ -41,36 +42,36 @@ The commands are installed in `~/.local/bin`.
 
 Two new commands are available: `vlttng` and `vlttng-quick`.
 
-
 == Quickstart
 
-The easiest way to use vlttng is to use the `vlttng-quick` command. This
-command interactively asks you a few questions to create a basic
-`vlttng` command line that you can use later or immediately after.
+The easiest way to get started with vlttng is to use its `vlttng-quick`
+command. This command interactively asks you a few questions to create a
+basic `vlttng` command line that you can use later or immediately.
 
-
-== How does it work?
+== How does vlttng work?
 
 The `vlttng` command does the following:
 
-. It reads one or more _profiles_ that you give on the command line to
-  know which packages to fetch and build.
+. Reads one or more _profiles_ that you give on the command line to know
+  which packages to fetch and build.
 
-. It fetches and extracts the requested packages. Git, with a specific
-  branch/tag/commit, as well as HTTP/FTP tarball sources are supported.
-  The Git clone URL can point to a local Git repository using the
-  `file://` protocol.
+. Fetches and extracts the requested packages.
++
+vlttng supports Git with a specific branch/tag/commit as well as
+HTTP/FTP tarball sources. The Git clone URL can point to a local Git
+repository using the `file://` protocol.
 
-. It builds one package at a time, setting some environment variables
-  and configure options so that the dependencies of the packages are
+. Builds one package at a time, setting some environment variables and
+  configure options so that the dependencies of the packages are
   contained within the virtual environment.
 
-. It creates an `activate` script which you can _source_ from your
-  Bash/Zsh prompt to "`enter`" the virtual environment. This script sets
-  a few environment variables, like `PATH`, `LD_LIBRARY_PATH`, and
-  `PYTHONPATH`, to achieve this. By default, it also prepends the name
-  of the virtual environment directory to your shell prompt for you to
-  know which virtual environment is active.
+. Creates an `activate` script which you can _source_ from your
+  Bash/Zsh prompt to "`enter`" the virtual environment.
++
+This script sets a few environment variables, like `PATH`,
+`LD_LIBRARY_PATH`, and `PYTHONPATH`, to achieve this. By default, it
+also prepends the name of the virtual environment directory to your
+shell prompt for you to know which virtual environment is active.
 +
 When you source the `activate` script, if the LTTng-modules project is
 part of the effective profile, `vlttng` removes the currently loaded
@@ -81,354 +82,420 @@ modules.
 Example:
 
 ----
-vlttng -p lttng-stable-2.8 -p babeltrace-master -p babeltrace-python \
-       -p lttng-tools-no-lttng-relayd -p urcu-stable-0.10 virt
+$ vlttng -p lttng-stable-2.11 -p babeltrace2-master -p babeltrace2-python \
+         -p lttng-tools-no-lttng-relayd -p urcu-stable-0.10 virt
 ----
 
-Here, five profiles are used to create a virtual environment in the
-`virt` directory. You can source the `activate` script to enter
-the virtual environment:
+Here, we're using five profiles to create a virtual environment in the
+`virt` directory. Source the generated `activate` script to enter the
+virtual environment:
 
 ----
-. ./virt/activate
+$ . ./virt/activate
 ----
 
-Your prompt should start with `[virt]` after this (the name of the
-virtual environment directory).
+Your prompt starts with `[virt]` after this (the name of the virtual
+environment directory).
 
-You can "`exit`" the virtual environment with the `vlttng-deactivate`
-command. Your prompt should return to its previous value.
-
+"`Exit`" the virtual environment with the `vlttng-deactivate` command.
+Your prompt will return to its previous value.
 
 == Write and use profiles
 
 A vlttng profile is a layer of configuration. You can use multiple
 profiles to create an _effective profile_.
 
-The following default profiles are shipped with the project:
+The project ships with the following default profiles:
 
-----
-all-master
-babeltrace-debug-info
-babeltrace-master
-babeltrace-python
-babeltrace-stable-1.2
-babeltrace-stable-1.3
-babeltrace-stable-1.4
-babeltrace-stable-1.5
-debug-flags
-elfutils-0.166
-elfutils-0.167
-elfutils-0.168
-elfutils-0.169
-elfutils-0.170
-elfutils-0.171
-elfutils-0.172
-elfutils-0.173
-elfutils-0.174
-elfutils-0.175
-elfutils-0.176
-glib-2.22.5
-glib-2.23.6
-glib-2.24.2
-glib-2.25.17
-glib-2.26.1
-glib-2.27.93
-glib-2.28.8
-glib-2.29.92
-glib-2.30.3
-glib-2.31.22
-glib-2.32.4
-glib-2.33.14
-glib-2.34.3
-glib-2.35.9
-glib-2.36.4
-glib-2.37.93
-glib-2.38.2
-glib-2.39.92
-glib-2.40.2
-glib-2.41.5
-glib-2.42.2
-glib-2.43.92
-glib-2.44.1
-glib-2.45.8
-glib-2.46.2
-glib-2.47.92
-glib-2.48.1
-glib-2.48.2
-glib-2.49.7
-glib-2.50.1
-glib-2.51.5
-glib-2.52.2
-glib-2.53.2
-glib-2.54.1
-glib-2.54.2
-glib-2.54.3
-glib-2.55.0
-glib-2.55.1
-glib-2.55.2
-glib-2.56.0
-glib-2.56.1
-glib-2.56.2
-glib-2.56.3
-glib-2.56.4
-glib-2.57.1
-glib-2.57.2
-glib-2.57.3
-glib-2.58.0
-glib-2.58.1
-glib-2.58.2
-glib-2.58.3
-glib-2.59.0
-glib-2.59.1
-glib-2.59.2
-glib-2.59.3
-glib-2.60.0
-glib-master
-libxml2-2.8.0
-libxml2-2.9.0
-libxml2-2.9.1
-libxml2-2.9.2
-libxml2-2.9.3
-libxml2-2.9.4
-libxml2-2.9.5
-libxml2-2.9.6
-libxml2-2.9.7
-libxml2-2.9.8
-libxml2-2.9.9
-libxml2-master
-lttng-analyses-0.3.0
-lttng-analyses-0.4.0
-lttng-analyses-0.4.1
-lttng-analyses-0.4.2
-lttng-analyses-0.4.3
-lttng-analyses-0.5.0
-lttng-analyses-0.5.1
-lttng-analyses-0.5.2
-lttng-analyses-0.5.3
-lttng-analyses-0.5.4
-lttng-analyses-0.6.0
-lttng-analyses-0.6.1
-lttng-analyses-master
-lttng-master
-lttng-modules-2.10.0-rc1
-lttng-modules-2.10.0-rc2
-lttng-modules-2.10.0
-lttng-modules-2.10.1
-lttng-modules-2.10.2
-lttng-modules-2.10.3
-lttng-modules-2.10.4
-lttng-modules-2.10.5
-lttng-modules-2.10.6
-lttng-modules-2.10.7
-lttng-modules-2.10.8
-lttng-modules-2.10.9
-lttng-modules-2.11.0-rc1
-lttng-modules-2.11.0-rc2
-lttng-modules-2.11.0-rc3
-lttng-modules-2.11.0-rc4
-lttng-modules-2.6.0-rc1
-lttng-modules-2.6.0-rc2
-lttng-modules-2.6.0
-lttng-modules-2.6.1
-lttng-modules-2.6.2
-lttng-modules-2.6.3
-lttng-modules-2.6.4
-lttng-modules-2.6.5
-lttng-modules-2.6.6
-lttng-modules-2.7.0-rc1
-lttng-modules-2.7.0-rc2
-lttng-modules-2.7.0
-lttng-modules-2.7.1
-lttng-modules-2.7.2
-lttng-modules-2.7.3
-lttng-modules-2.7.4
-lttng-modules-2.7.5
-lttng-modules-2.7.6
-lttng-modules-2.7.7
-lttng-modules-2.8.0-rc1
-lttng-modules-2.8.0-rc2
-lttng-modules-2.8.0
-lttng-modules-2.8.1
-lttng-modules-2.8.2
-lttng-modules-2.8.3
-lttng-modules-2.8.4
-lttng-modules-2.8.5
-lttng-modules-2.8.6
-lttng-modules-2.8.7
-lttng-modules-2.9.0-rc1
-lttng-modules-2.9.0-rc2
-lttng-modules-2.9.0
-lttng-modules-2.9.1
-lttng-modules-2.9.2
-lttng-modules-2.9.3
-lttng-modules-2.9.4
-lttng-modules-2.9.5
-lttng-modules-master
-lttng-modules-stable-2.10
-lttng-modules-stable-2.11
-lttng-modules-stable-2.6
-lttng-modules-stable-2.7
-lttng-modules-stable-2.8
-lttng-modules-stable-2.9
-lttng-scope-0.3.0
-lttng-scope-master
-lttng-stable-2.10
-lttng-stable-2.11
-lttng-stable-2.6
-lttng-stable-2.7
-lttng-stable-2.8
-lttng-stable-2.9
-lttng-tools-2.10.0-rc1
-lttng-tools-2.10.0-rc2
-lttng-tools-2.10.0
-lttng-tools-2.10.1
-lttng-tools-2.10.2
-lttng-tools-2.10.3
-lttng-tools-2.10.4
-lttng-tools-2.10.5
-lttng-tools-2.10.6
-lttng-tools-2.11.0-rc1
-lttng-tools-2.6.0-rc1
-lttng-tools-2.6.0-rc2
-lttng-tools-2.6.0-rc3
-lttng-tools-2.6.0-rc4
-lttng-tools-2.6.0
-lttng-tools-2.6.1
-lttng-tools-2.6.2
-lttng-tools-2.6.3
-lttng-tools-2.7.0-rc1
-lttng-tools-2.7.0-rc2
-lttng-tools-2.7.0
-lttng-tools-2.7.1
-lttng-tools-2.7.2
-lttng-tools-2.7.3
-lttng-tools-2.7.4
-lttng-tools-2.7.5
-lttng-tools-2.7.6
-lttng-tools-2.8.0-rc1
-lttng-tools-2.8.0
-lttng-tools-2.8.1
-lttng-tools-2.8.2
-lttng-tools-2.8.3
-lttng-tools-2.8.4
-lttng-tools-2.8.5
-lttng-tools-2.8.6
-lttng-tools-2.8.7
-lttng-tools-2.8.8
-lttng-tools-2.9.0-rc1
-lttng-tools-2.9.0
-lttng-tools-2.9.1
-lttng-tools-2.9.2
-lttng-tools-2.9.3
-lttng-tools-2.9.4
-lttng-tools-2.9.5
-lttng-tools-2.9.6
-lttng-tools-embedded-help
-lttng-tools-master
-lttng-tools-no-lttng-consumerd
-lttng-tools-no-lttng-crash
-lttng-tools-no-lttng-relayd
-lttng-tools-no-lttng-sessiond
-lttng-tools-no-lttng
-lttng-tools-no-man-pages
-lttng-tools-no-python
-lttng-tools-python
-lttng-tools-stable-2.10
-lttng-tools-stable-2.11
-lttng-tools-stable-2.6
-lttng-tools-stable-2.7
-lttng-tools-stable-2.8
-lttng-tools-stable-2.9
-lttng-ust-2.10.0-rc1
-lttng-ust-2.10.0-rc2
-lttng-ust-2.10.0
-lttng-ust-2.10.1
-lttng-ust-2.10.2
-lttng-ust-2.10.3
-lttng-ust-2.11.0-rc1
-lttng-ust-2.11.0-rc2
-lttng-ust-2.6.0-rc1
-lttng-ust-2.6.0-rc2
-lttng-ust-2.6.0-rc3
-lttng-ust-2.6.0
-lttng-ust-2.6.1
-lttng-ust-2.6.2
-lttng-ust-2.6.3
-lttng-ust-2.6.4
-lttng-ust-2.6.5
-lttng-ust-2.6.6
-lttng-ust-2.6.7
-lttng-ust-2.7.0-rc1
-lttng-ust-2.7.0-rc2
-lttng-ust-2.7.0
-lttng-ust-2.7.1
-lttng-ust-2.7.2
-lttng-ust-2.7.3
-lttng-ust-2.7.4
-lttng-ust-2.7.5
-lttng-ust-2.8.0-rc1
-lttng-ust-2.8.0-rc2
-lttng-ust-2.8.0
-lttng-ust-2.8.1
-lttng-ust-2.8.2
-lttng-ust-2.8.3
-lttng-ust-2.8.4
-lttng-ust-2.9.0-rc1
-lttng-ust-2.9.0
-lttng-ust-2.9.1
-lttng-ust-jul-agent
-lttng-ust-log4j-agent
-lttng-ust-master
-lttng-ust-no-man-pages
-lttng-ust-python-agent
-lttng-ust-stable-2.10
-lttng-ust-stable-2.11
-lttng-ust-stable-2.6
-lttng-ust-stable-2.7
-lttng-ust-stable-2.8
-lttng-ust-stable-2.9
-popt-1.16
-tracecompass-1.1.0
-tracecompass-1.2.0
-tracecompass-1.2.1
-tracecompass-2.0.0
-tracecompass-linux-x86-64-1.1.0
-tracecompass-linux-x86-64-1.2.0
-tracecompass-linux-x86-64-1.2.1
-tracecompass-linux-x86-64-2.0.0
-tracecompass-linux-x86-64-2.0.1
-tracecompass-linux-x86-64-2.1.0
-tracecompass-linux-x86-64-2.2.0
-tracecompass-linux-x86-64-2.3.0
-tracecompass-linux-x86-64-3.0.0
-tracecompass-linux-x86-64-3.1.0
-tracecompass-linux-x86-64-3.2.0
-tracecompass-linux-x86-64-3.3.0
-tracecompass-macos-x86-64-1.1.0
-tracecompass-macos-x86-64-1.2.0
-tracecompass-macos-x86-64-1.2.1
-tracecompass-macos-x86-64-2.0.0
-tracecompass-macos-x86-64-2.0.1
-tracecompass-macos-x86-64-2.1.0
-tracecompass-macos-x86-64-2.2.0
-tracecompass-macos-x86-64-2.3.0
-tracecompass-macos-x86-64-3.0.0
-tracecompass-macos-x86-64-3.1.0
-tracecompass-macos-x86-64-3.2.0
-tracecompass-macos-x86-64-3.3.0
-tracecompass-master
-urcu-master
-urcu-stable-0.10
-urcu-stable-0.7
-urcu-stable-0.8
-urcu-stable-0.9
-use-ccache-gcc
-----
+* `+all-master+`
+* `+babeltrace2-2.0.0+`
+* `+babeltrace2-2.0.0-rc1+`
+* `+babeltrace2-2.0.0-rc2+`
+* `+babeltrace2-2.0.0-rc4+`
+* `+babeltrace2-debug-info+`
+* `+babeltrace2-master+`
+* `+babeltrace2-python+`
+* `+babeltrace2-stable-2.0+`
+* `+babeltrace-debug-info+`
+* `+babeltrace-python+`
+* `+babeltrace-stable-1.2+`
+* `+babeltrace-stable-1.3+`
+* `+babeltrace-stable-1.4+`
+* `+babeltrace-stable-1.5+`
+* `+debug-flags+`
+* `+elfutils-0.166+`
+* `+elfutils-0.167+`
+* `+elfutils-0.168+`
+* `+elfutils-0.169+`
+* `+elfutils-0.170+`
+* `+elfutils-0.171+`
+* `+elfutils-0.172+`
+* `+elfutils-0.173+`
+* `+elfutils-0.174+`
+* `+elfutils-0.175+`
+* `+elfutils-0.176+`
+* `+elfutils-0.177+`
+* `+elfutils-0.178+`
+* `+glib-2.22.5+`
+* `+glib-2.23.6+`
+* `+glib-2.24.2+`
+* `+glib-2.25.17+`
+* `+glib-2.26.1+`
+* `+glib-2.27.93+`
+* `+glib-2.28.8+`
+* `+glib-2.29.92+`
+* `+glib-2.30.3+`
+* `+glib-2.31.22+`
+* `+glib-2.32.4+`
+* `+glib-2.33.14+`
+* `+glib-2.34.3+`
+* `+glib-2.35.9+`
+* `+glib-2.36.4+`
+* `+glib-2.37.93+`
+* `+glib-2.38.2+`
+* `+glib-2.39.92+`
+* `+glib-2.40.2+`
+* `+glib-2.41.5+`
+* `+glib-2.42.2+`
+* `+glib-2.43.92+`
+* `+glib-2.44.1+`
+* `+glib-2.45.8+`
+* `+glib-2.46.2+`
+* `+glib-2.47.92+`
+* `+glib-2.48.1+`
+* `+glib-2.48.2+`
+* `+glib-2.49.7+`
+* `+glib-2.50.1+`
+* `+glib-2.51.5+`
+* `+glib-2.52.2+`
+* `+glib-2.53.2+`
+* `+glib-2.54.1+`
+* `+glib-2.54.2+`
+* `+glib-2.54.3+`
+* `+glib-2.55.0+`
+* `+glib-2.55.1+`
+* `+glib-2.55.2+`
+* `+glib-2.56.0+`
+* `+glib-2.56.1+`
+* `+glib-2.56.2+`
+* `+glib-2.56.3+`
+* `+glib-2.56.4+`
+* `+glib-2.57.1+`
+* `+glib-2.57.2+`
+* `+glib-2.57.3+`
+* `+glib-2.58.0+`
+* `+glib-2.58.1+`
+* `+glib-2.58.2+`
+* `+glib-2.58.3+`
+* `+glib-2.59.0+`
+* `+glib-2.59.1+`
+* `+glib-2.59.2+`
+* `+glib-2.59.3+`
+* `+glib-2.60.0+`
+* `+glib-2.60.1+`
+* `+glib-2.60.2+`
+* `+glib-2.60.3+`
+* `+glib-2.60.4+`
+* `+glib-2.60.5+`
+* `+glib-2.60.6+`
+* `+glib-2.60.7+`
+* `+glib-2.61.0+`
+* `+glib-2.61.1+`
+* `+glib-2.61.2+`
+* `+glib-2.61.3+`
+* `+glib-2.62.0+`
+* `+glib-2.62.1+`
+* `+glib-2.62.2+`
+* `+glib-2.62.3+`
+* `+glib-2.62.4+`
+* `+glib-2.63.0+`
+* `+glib-2.63.1+`
+* `+glib-2.63.2+`
+* `+glib-2.63.3+`
+* `+glib-2.63.4+`
+* `+glib-master+`
+* `+libxml2-2.8.0+`
+* `+libxml2-2.9.0+`
+* `+libxml2-2.9.1+`
+* `+libxml2-2.9.10+`
+* `+libxml2-2.9.2+`
+* `+libxml2-2.9.3+`
+* `+libxml2-2.9.4+`
+* `+libxml2-2.9.5+`
+* `+libxml2-2.9.6+`
+* `+libxml2-2.9.7+`
+* `+libxml2-2.9.8+`
+* `+libxml2-2.9.9+`
+* `+libxml2-master+`
+* `+lttng-analyses-0.3.0+`
+* `+lttng-analyses-0.4.0+`
+* `+lttng-analyses-0.4.1+`
+* `+lttng-analyses-0.4.2+`
+* `+lttng-analyses-0.4.3+`
+* `+lttng-analyses-0.5.0+`
+* `+lttng-analyses-0.5.1+`
+* `+lttng-analyses-0.5.2+`
+* `+lttng-analyses-0.5.3+`
+* `+lttng-analyses-0.5.4+`
+* `+lttng-analyses-0.6.0+`
+* `+lttng-analyses-0.6.1+`
+* `+lttng-analyses-master+`
+* `+lttng-master+`
+* `+lttng-modules-2.10.0+`
+* `+lttng-modules-2.10.0-rc1+`
+* `+lttng-modules-2.10.0-rc2+`
+* `+lttng-modules-2.10.1+`
+* `+lttng-modules-2.10.10+`
+* `+lttng-modules-2.10.11+`
+* `+lttng-modules-2.10.12+`
+* `+lttng-modules-2.10.13+`
+* `+lttng-modules-2.10.2+`
+* `+lttng-modules-2.10.3+`
+* `+lttng-modules-2.10.4+`
+* `+lttng-modules-2.10.5+`
+* `+lttng-modules-2.10.6+`
+* `+lttng-modules-2.10.7+`
+* `+lttng-modules-2.10.8+`
+* `+lttng-modules-2.10.9+`
+* `+lttng-modules-2.11.0+`
+* `+lttng-modules-2.11.0-rc1+`
+* `+lttng-modules-2.11.0-rc2+`
+* `+lttng-modules-2.11.0-rc3+`
+* `+lttng-modules-2.11.0-rc4+`
+* `+lttng-modules-2.11.0-rc5+`
+* `+lttng-modules-2.11.0-rc6+`
+* `+lttng-modules-2.11.0-rc7+`
+* `+lttng-modules-2.11.1+`
+* `+lttng-modules-2.6.0+`
+* `+lttng-modules-2.6.0-rc1+`
+* `+lttng-modules-2.6.0-rc2+`
+* `+lttng-modules-2.6.1+`
+* `+lttng-modules-2.6.2+`
+* `+lttng-modules-2.6.3+`
+* `+lttng-modules-2.6.4+`
+* `+lttng-modules-2.6.5+`
+* `+lttng-modules-2.6.6+`
+* `+lttng-modules-2.7.0+`
+* `+lttng-modules-2.7.0-rc1+`
+* `+lttng-modules-2.7.0-rc2+`
+* `+lttng-modules-2.7.1+`
+* `+lttng-modules-2.7.2+`
+* `+lttng-modules-2.7.3+`
+* `+lttng-modules-2.7.4+`
+* `+lttng-modules-2.7.5+`
+* `+lttng-modules-2.7.6+`
+* `+lttng-modules-2.7.7+`
+* `+lttng-modules-2.8.0+`
+* `+lttng-modules-2.8.0-rc1+`
+* `+lttng-modules-2.8.0-rc2+`
+* `+lttng-modules-2.8.1+`
+* `+lttng-modules-2.8.2+`
+* `+lttng-modules-2.8.3+`
+* `+lttng-modules-2.8.4+`
+* `+lttng-modules-2.8.5+`
+* `+lttng-modules-2.8.6+`
+* `+lttng-modules-2.8.7+`
+* `+lttng-modules-2.9.0+`
+* `+lttng-modules-2.9.0-rc1+`
+* `+lttng-modules-2.9.0-rc2+`
+* `+lttng-modules-2.9.1+`
+* `+lttng-modules-2.9.2+`
+* `+lttng-modules-2.9.3+`
+* `+lttng-modules-2.9.4+`
+* `+lttng-modules-2.9.5+`
+* `+lttng-modules-master+`
+* `+lttng-modules-stable-2.10+`
+* `+lttng-modules-stable-2.11+`
+* `+lttng-modules-stable-2.6+`
+* `+lttng-modules-stable-2.7+`
+* `+lttng-modules-stable-2.8+`
+* `+lttng-modules-stable-2.9+`
+* `+lttng-scope-0.3.0+`
+* `+lttng-scope-master+`
+* `+lttng-stable-2.10+`
+* `+lttng-stable-2.11+`
+* `+lttng-stable-2.6+`
+* `+lttng-stable-2.7+`
+* `+lttng-stable-2.8+`
+* `+lttng-stable-2.9+`
+* `+lttng-tools-2.10.0+`
+* `+lttng-tools-2.10.0-rc1+`
+* `+lttng-tools-2.10.0-rc2+`
+* `+lttng-tools-2.10.1+`
+* `+lttng-tools-2.10.2+`
+* `+lttng-tools-2.10.3+`
+* `+lttng-tools-2.10.4+`
+* `+lttng-tools-2.10.5+`
+* `+lttng-tools-2.10.6+`
+* `+lttng-tools-2.10.7+`
+* `+lttng-tools-2.10.8+`
+* `+lttng-tools-2.10.9+`
+* `+lttng-tools-2.11.0+`
+* `+lttng-tools-2.11.0-rc1+`
+* `+lttng-tools-2.11.0-rc2+`
+* `+lttng-tools-2.11.0-rc3+`
+* `+lttng-tools-2.11.0-rc4+`
+* `+lttng-tools-2.6.0+`
+* `+lttng-tools-2.6.0-rc1+`
+* `+lttng-tools-2.6.0-rc2+`
+* `+lttng-tools-2.6.0-rc3+`
+* `+lttng-tools-2.6.0-rc4+`
+* `+lttng-tools-2.6.1+`
+* `+lttng-tools-2.6.2+`
+* `+lttng-tools-2.6.3+`
+* `+lttng-tools-2.7.0+`
+* `+lttng-tools-2.7.0-rc1+`
+* `+lttng-tools-2.7.0-rc2+`
+* `+lttng-tools-2.7.1+`
+* `+lttng-tools-2.7.2+`
+* `+lttng-tools-2.7.3+`
+* `+lttng-tools-2.7.4+`
+* `+lttng-tools-2.7.5+`
+* `+lttng-tools-2.7.6+`
+* `+lttng-tools-2.8.0+`
+* `+lttng-tools-2.8.0-rc1+`
+* `+lttng-tools-2.8.1+`
+* `+lttng-tools-2.8.2+`
+* `+lttng-tools-2.8.3+`
+* `+lttng-tools-2.8.4+`
+* `+lttng-tools-2.8.5+`
+* `+lttng-tools-2.8.6+`
+* `+lttng-tools-2.8.7+`
+* `+lttng-tools-2.8.8+`
+* `+lttng-tools-2.9.0+`
+* `+lttng-tools-2.9.0-rc1+`
+* `+lttng-tools-2.9.1+`
+* `+lttng-tools-2.9.2+`
+* `+lttng-tools-2.9.3+`
+* `+lttng-tools-2.9.4+`
+* `+lttng-tools-2.9.5+`
+* `+lttng-tools-2.9.6+`
+* `+lttng-tools-embedded-help+`
+* `+lttng-tools-master+`
+* `+lttng-tools-no-lttng+`
+* `+lttng-tools-no-lttng-consumerd+`
+* `+lttng-tools-no-lttng-crash+`
+* `+lttng-tools-no-lttng-relayd+`
+* `+lttng-tools-no-lttng-sessiond+`
+* `+lttng-tools-no-man-pages+`
+* `+lttng-tools-no-python+`
+* `+lttng-tools-python+`
+* `+lttng-tools-stable-2.10+`
+* `+lttng-tools-stable-2.11+`
+* `+lttng-tools-stable-2.6+`
+* `+lttng-tools-stable-2.7+`
+* `+lttng-tools-stable-2.8+`
+* `+lttng-tools-stable-2.9+`
+* `+lttng-ust-2.10.0+`
+* `+lttng-ust-2.10.0-rc1+`
+* `+lttng-ust-2.10.0-rc2+`
+* `+lttng-ust-2.10.1+`
+* `+lttng-ust-2.10.2+`
+* `+lttng-ust-2.10.3+`
+* `+lttng-ust-2.10.4+`
+* `+lttng-ust-2.10.5+`
+* `+lttng-ust-2.10.6+`
+* `+lttng-ust-2.11.0+`
+* `+lttng-ust-2.11.0-rc1+`
+* `+lttng-ust-2.11.0-rc2+`
+* `+lttng-ust-2.11.0-rc3+`
+* `+lttng-ust-2.11.0-rc4+`
+* `+lttng-ust-2.11.0-rc5+`
+* `+lttng-ust-2.6.0+`
+* `+lttng-ust-2.6.0-rc1+`
+* `+lttng-ust-2.6.0-rc2+`
+* `+lttng-ust-2.6.0-rc3+`
+* `+lttng-ust-2.6.1+`
+* `+lttng-ust-2.6.2+`
+* `+lttng-ust-2.6.3+`
+* `+lttng-ust-2.6.4+`
+* `+lttng-ust-2.6.5+`
+* `+lttng-ust-2.6.6+`
+* `+lttng-ust-2.6.7+`
+* `+lttng-ust-2.7.0+`
+* `+lttng-ust-2.7.0-rc1+`
+* `+lttng-ust-2.7.0-rc2+`
+* `+lttng-ust-2.7.1+`
+* `+lttng-ust-2.7.2+`
+* `+lttng-ust-2.7.3+`
+* `+lttng-ust-2.7.4+`
+* `+lttng-ust-2.7.5+`
+* `+lttng-ust-2.8.0+`
+* `+lttng-ust-2.8.0-rc1+`
+* `+lttng-ust-2.8.0-rc2+`
+* `+lttng-ust-2.8.1+`
+* `+lttng-ust-2.8.2+`
+* `+lttng-ust-2.8.3+`
+* `+lttng-ust-2.8.4+`
+* `+lttng-ust-2.9.0+`
+* `+lttng-ust-2.9.0-rc1+`
+* `+lttng-ust-2.9.1+`
+* `+lttng-ust-jul-agent+`
+* `+lttng-ust-log4j-agent+`
+* `+lttng-ust-master+`
+* `+lttng-ust-no-man-pages+`
+* `+lttng-ust-python-agent+`
+* `+lttng-ust-stable-2.10+`
+* `+lttng-ust-stable-2.11+`
+* `+lttng-ust-stable-2.6+`
+* `+lttng-ust-stable-2.7+`
+* `+lttng-ust-stable-2.8+`
+* `+lttng-ust-stable-2.9+`
+* `+popt-1.16+`
+* `+tracecompass-1.1.0+`
+* `+tracecompass-1.2.0+`
+* `+tracecompass-1.2.1+`
+* `+tracecompass-2.0.0+`
+* `+tracecompass-linux-x86-64-1.1.0+`
+* `+tracecompass-linux-x86-64-1.2.0+`
+* `+tracecompass-linux-x86-64-1.2.1+`
+* `+tracecompass-linux-x86-64-2.0.0+`
+* `+tracecompass-linux-x86-64-2.0.1+`
+* `+tracecompass-linux-x86-64-2.1.0+`
+* `+tracecompass-linux-x86-64-2.2.0+`
+* `+tracecompass-linux-x86-64-2.3.0+`
+* `+tracecompass-linux-x86-64-3.0.0+`
+* `+tracecompass-linux-x86-64-3.1.0+`
+* `+tracecompass-linux-x86-64-3.2.0+`
+* `+tracecompass-linux-x86-64-3.3.0+`
+* `+tracecompass-linux-x86-64-4.0.0+`
+* `+tracecompass-linux-x86-64-4.1.0+`
+* `+tracecompass-linux-x86-64-4.2.0+`
+* `+tracecompass-linux-x86-64-4.3.0+`
+* `+tracecompass-linux-x86-64-5.0.0+`
+* `+tracecompass-linux-x86-64-5.1.0+`
+* `+tracecompass-linux-x86-64-5.2.0+`
+* `+tracecompass-macos-x86-64-1.1.0+`
+* `+tracecompass-macos-x86-64-1.2.0+`
+* `+tracecompass-macos-x86-64-1.2.1+`
+* `+tracecompass-macos-x86-64-2.0.0+`
+* `+tracecompass-macos-x86-64-2.0.1+`
+* `+tracecompass-macos-x86-64-2.1.0+`
+* `+tracecompass-macos-x86-64-2.2.0+`
+* `+tracecompass-macos-x86-64-2.3.0+`
+* `+tracecompass-macos-x86-64-3.0.0+`
+* `+tracecompass-macos-x86-64-3.1.0+`
+* `+tracecompass-macos-x86-64-3.2.0+`
+* `+tracecompass-macos-x86-64-3.3.0+`
+* `+tracecompass-macos-x86-64-4.0.0+`
+* `+tracecompass-macos-x86-64-4.1.0+`
+* `+tracecompass-macos-x86-64-4.2.0+`
+* `+tracecompass-macos-x86-64-4.3.0+`
+* `+tracecompass-macos-x86-64-5.0.0+`
+* `+tracecompass-macos-x86-64-5.1.0+`
+* `+tracecompass-macos-x86-64-5.2.0+`
+* `+tracecompass-master+`
+* `+urcu-master+`
+* `+urcu-stable-0.10+`
+* `+urcu-stable-0.11+`
+* `+urcu-stable-0.7+`
+* `+urcu-stable-0.8+`
+* `+urcu-stable-0.9+`
+* `+use-ccache-gcc+`
 
-You can get this list using `vlttng --list-default-profiles`.
+Get this list with `vlttng --list-default-profiles`.
 
-Profiles are written in YAML. Here is an example:
+Profiles are written in YAML. Here's an example:
 
 [source,yaml]
 ----
@@ -440,16 +507,16 @@ virt-env:
 projects:
   lttng-tools:
     source: 'git://git.lttng.org/lttng-tools.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
     build-env:
       CC: clang
       CFLAGS: ''
   lttng-ust:
-    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.7.2.tar.bz2'
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.11.0.tar.bz2'
     configure: --enable-python-agent
   lttng-modules:
     source: 'git://git.lttng.org/lttng-modules.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
 ----
@@ -462,51 +529,57 @@ A few things to note here:
   do:
 +
 ----
-CC=clang CFLAGS='-O0 -g3' vlttng ...
+$ CC=clang CFLAGS='-O0 -g3' vlttng ...
 ----
 
-* The root `virt-env` property defines the virtual environment variables,
-  which are set when activating the virtual environment. Exported
-  shell variables, when invoking `vlttng`, are _not_ set when activating
-  the resulting virtual environment.
+* The root `virt-env` property defines the virtual environment
+  variables, which are set when you activate the virtual environment.
+  Exported shell variables when you run `vlttng` are _not_ set when
+  you activate the resulting virtual environment.
 * The available project names, as of this version, are:
+** `babeltrace2`
 ** `babeltrace`
 ** `elfutils`
 ** `glib`
 ** `libxml2`
 ** `lttng-analyses`
 ** `lttng-modules`
+** `lttng-scope`
 ** `lttng-tools`
 ** `lttng-ust`
 ** `popt`
 ** `tracecompass`
-** `lttng-scope`
 ** `urcu`
 * The `build-env` property of a specific project defines environment
   variables to be used only during the build stage of this project. A
   project-specific build-time environment variable overrides a base
   build-time environment variable sharing its name.
-* When the `source` property contains a Git URL, or when `checkout`
+* When the `source` property contains a Git URL, or when the `checkout`
   property is set, the `checkout` property indicates which branch, tag,
   or commit to check out. When it's not specified, `vlttng` checks out
   the `master` branch.
 * The `configure` property specifies the options to pass to the
-  `configure` script of a given project. `vlttng` handles some options
-  itself, like `--prefix` and `--without-lttng-ust`, to create a working
-  virtual environment.
+  `configure` script of a given project. `vlttng` takes care of some
+  options itself, like `--prefix` and `--without-lttng-ust`, to create a
+  working virtual environment.
 
-The profile above can be saved to a file, for example `my-profile.yml`,
-and you can create a virtual environment out of it:
+You can save the profile above to a file, for example `my-profile.yml`,
+and then you can create a virtual environment out of it:
 
 ----
-vlttng -p my-profile.yml virt
+$ vlttng -p my-profile.yml virt
 ----
 
 When you give multiple profiles to `vlttng`, the first profile is
 "`patched`" with the second, which is then patched with the third, and
-so on. Nonexistent properties are created; existing ones are replaced
-recursively. The `configure` properties are _joined_. For example, let's
-add the following profile (call it `more.yaml`) to the example above:
+so on, as such:
+
+* Nonexistent properties are created.
+* Existing properties are replaced recursively.
+* The `configure` properties are _joined_.
+
+For example, let's add the following profile (call it `more.yaml`) to
+the example above:
 
 [source,yaml]
 ----
@@ -523,7 +596,7 @@ projects:
 With this command:
 
 ----
-vlttng -p my-profile.yml -p more.yaml virt
+$ vlttng -p my-profile.yml -p more.yaml virt
 ----
 
 the effective profile is:
@@ -536,53 +609,46 @@ build-env:
 projects:
   lttng-tools:
     source: 'https://github.com/lttng/lttng-tools.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
     build-env:
       CC: clang
       CFLAGS: ''
   lttng-ust:
-    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.7.2.tar.bz2'
+    source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.11.0.tar.bz2'
     configure: --enable-python-agent --enable-java-agent-jul
   lttng-modules:
     source: 'git://git.lttng.org/lttng-modules.git'
-    checkout: stable-2.7
+    checkout: stable-2.11
   urcu:
     source: 'git://git.liburcu.org/userspace-rcu.git'
 ----
 
-
 [[override]]
 == Override a profile property
 
-You can replace, append to, and remove effective profile properties
-(after `vlttng` has merged all the profiles given with the `--profile`
-option as an effective profile) with the `--override` (`-o`) option.
+Replace, append to, and remove effective profile properties (after
+`vlttng` has merged all the profiles given with the `--profile` option
+as an effective profile) with the `--override` (`-o`) option.
 
 The three override operations are:
 
-Replace a property::
+Replace a property:: {empty}
 +
---
 ----
 PATH=REPLACEMENT
 ----
---
 
-Append to a property::
+Append to a property:: {empty}
 +
---
 ----
 PATH+=APPEND
 ----
---
 
-Remove a property::
+Remove a property:: {empty}
 +
---
 ----
 !PATH
 ----
---
 
 `PATH` is the path to the property, from the root of the profile, using
 a dot-separated list of keys to find recursively.
@@ -600,29 +666,27 @@ not exist. This allows you to create projects on the command line:
 
 ----
 -o projects.lttng-tools.source=https://github.com/lttng/lttng-tools.git \
--o projects.lttng-tools.checkout=v2.7.1 \
+-o projects.lttng-tools.checkout=v2.11.0 \
 -o projects.lttng-tools.configure='--disable-bin-lttng --disable-man-pages'
 ----
 
-Note that the overrides are applied in command line order.
-
+`vlttng` applies the overrides in command line order.
 
 == Ignore a project
 
-You can ignore specific projects that exist in the effective profile
-using the `--ignore-project` (`-i`) option:
+Ignore specific projects that exist in the effective profile with the
+`--ignore-project` (`-i`) option:
 
 ----
-vlttng -p lttng-stable-2.7 -p urcu-master -i lttng-ust virt
+$ vlttng -p lttng-stable-2.11 -p urcu-master -i lttng-ust virt
 ----
 
 This is the equivalent of removing the project's property with an
 <<override,override>>:
 
 ----
-vlttng -p lttng-stable-2.7 -p urcu-master -o '!projects.lttng-ust' virt
+$ vlttng -p lttng-stable-2.11 -p urcu-master -o '!projects.lttng-ust' virt
 ----
-
 
 == Make the output verbose
 
@@ -637,16 +701,14 @@ You can use the `--verbose` (`-v`) option to also print the standard
 output and error of all the executed commands, and the effective profile
 used to create the virtual environment.
 
-
 == Define the number of make jobs
 
 `vlttng` passes its `--jobs` (`-j`) option as is to `make`.
 
-
 == `activate` script options
 
-When you source the `activate` script, you can use the following
-environment variables to alter its behaviour:
+When you source the `activate` script, use the following environment
+variables to alter its behaviour:
 
 `VLTTNG_NO_RMMOD`::
     Set to `1` to disable the unloading of the currently loaded LTTng
@@ -655,20 +717,18 @@ environment variables to alter its behaviour:
 `VLTTNG_NO_PROMPT`::
     Set to `1` to keep your current shell prompt after the activation.
 
-
 == Use `sudo`
 
 If you use `sudo` when the virtual environment is activated, make sure
-to use its `--preserve-env` (`-E`) option, so that the virtual
+to use its `--preserve-env` (`-E`) option so that the virtual
 environment is preserved when it executes the command.
 
-For example, to start a root session daemon which loads the LTTng kernel
-modules installed in the virtual environment:
+For example, to start a root LTTng session daemon which loads the LTTng
+kernel modules installed in the virtual environment:
 
 ----
-sudo --preserve-env lttng-sessiond --daemonize
+$ sudo --preserve-env lttng-sessiond --daemonize
 ----
-
 
 == Trace a Java application
 
@@ -680,12 +740,11 @@ Java applications.
 Example:
 
 ----
-javac -cp $VLTTNG_CLASSPATH MyClass.java
-java -cp $VLTTNG_CLASSPATH:. MyClass
+$ javac -cp $VLTTNG_CLASSPATH MyClass.java
+$ java -cp $VLTTNG_CLASSPATH:. MyClass
 ----
 
-
-== Trace a Python application
+== Use the virtual environment's Python packages
 
 If the LTTng-UST Python agent is built and installed in the virtual
 environment, there's nothing special to do to trace a Python
@@ -693,27 +752,29 @@ application: the `PYTHONPATH` environment variable contains the path to
 the LTTng-UST Python agent package in the virtual environment. You can
 import the `lttngust` package as usual.
 
+As such, you can import the `babeltrace` and `bt2` Python{nbsp}3
+packages directly.
 
 == Update a project with a Git source
 
 `vlttng` generates the following scripts in the virtual environment's
-root directory (`_name_` is the project name):
+root directory (`_NAME_` is the project name):
 
-`conf-_name_.bash`::
+`conf-_NAME_.bash`::
     Runs the configuration step of the project.
 
-`build-_name_.bash`::
+`build-_NAME_.bash`::
     Runs the build step of the project.
 
-`install-_name_.bash`::
+`install-_NAME_.bash`::
     Runs the install step of the project.
 
-`update-_name_.bash` (only with a Git source)::
+`update-_NAME_.bash` (only with a Git source)::
     Fetches the project's configured Git remote, checks out the latest
-    version of the configured branch, and runs `conf-_name_.bash`,
-    `build-_name_.bash`, and `install-_name_.bash`.
+    version of the configured branch, and runs `conf-_NAME_.bash`,
+    `build-_NAME_.bash`, and `install-_NAME_.bash`.
 
 IMPORTANT: Use those scripts with caution. For a stable branch, they
-should work most of the time. For the `master` branch, some required
+_should_ work most of the time. For the `master` branch, some required
 implicit configuration and build command lines might be missing from the
 scripts when you use the update script.
