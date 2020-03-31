@@ -48,7 +48,7 @@ setup(name='vlttng',
       package_data={
           'vlttng': ['profiles/*.yml'],
       },
-      install_requires=['pyyaml', 'termcolor', 'setuptools'],
+      install_requires=['pyyaml>=5.1', 'termcolor', 'setuptools'],
       entry_points={
           'console_scripts': [
               'vlttng = vlttng.vlttng_cli:run',
