@@ -1,0 +1,3 @@
+projects:
+  lttng-tools:
+    source: https://lttng.org/files/lttng-tools/lttng-tools-2.9.13.tar.bz2

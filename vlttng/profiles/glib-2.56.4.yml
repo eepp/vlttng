@@ -1,7 +1,5 @@
 projects:
   glib:
-    source: 'http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.56/glib-2.56.4.tar.xz'
-    configure: >
-      --with-pcre=internal --disable-xattr --disable-selinux
-      --disable-dtrace --disable-systemtap --disable-gtk-doc
-      --disable-man --disable-coverage
+    configure: --with-pcre=internal --disable-xattr --disable-selinux --disable-dtrace
+      --disable-systemtap --disable-gtk-doc --disable-man --disable-coverage
+    source: https://ftp.gnome.org/pub/gnome/sources/glib/2.56/glib-2.56.4.tar.xz

@@ -1,0 +1,4 @@
+projects:
+  elfutils:
+    configure: --with-zlib --without-bzlib --with-lzma
+    source: https://sourceware.org/elfutils/ftp/elfutils-0.135.tar.gz
