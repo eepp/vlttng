@@ -61,6 +61,9 @@ def _create_elfutils_profile(tb):
 
 
 def _create_glib_profile(tb):
+    if tb.version.major != 2:
+        return
+
     conf = '--with-pcre=internal --disable-xattr --disable-selinux ' + \
            '--disable-dtrace --disable-systemtap --disable-gtk-doc ' + \
            '--disable-man --disable-coverage'
