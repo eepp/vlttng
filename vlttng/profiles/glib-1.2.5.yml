@@ -1,5 +1,0 @@
-projects:
-  glib:
-    configure: --with-pcre=internal --disable-xattr --disable-selinux --disable-dtrace
-      --disable-systemtap --disable-gtk-doc --disable-man --disable-coverage
-    source: https://ftp.gnome.org/pub/gnome/sources/glib/1.2/glib-1.2.5.tar.gz
