@@ -1,7 +1,7 @@
 import logging
 import sys
 import findtb
-import packaging.version
+import semver
 import yaml
 import os.path
 
@@ -22,10 +22,9 @@ def _find_tarballs(logger):
     tbs = set()
 
     for project_name, url in project_urls.items():
-        logger.info('Finding `{}` tarballs.'.format(project_name))
+        logger.info(f'Finding `{project_name}` tarballs.')
         project_tbs = findtb.find_tarballs(project_name, url, logger)
-        logger.info('Found {} tarballs for `{}`.'.format(len(project_tbs),
-                                                         project_name))
+        logger.info(f'Found {len(project_tbs)} tarballs for `{project_name}`.')
         tbs |= project_tbs
 
     return tbs
@@ -87,13 +86,10 @@ _create_profile_funcs = {
 
 
 def _create_yaml_profile(tb, out_dir, logger):
-    if type(tb.version) is not packaging.version.Version:
+    if type(tb.version) is not semver.VersionInfo:
         return
 
-    if tb.version.is_devrelease:
-        return
-
-    if tb.version.is_postrelease:
+    if tb.version.build is not None:
         return
 
     func = _create_profile_funcs.get(tb.project_name, _create_basic_profile)
@@ -107,14 +103,8 @@ def _create_yaml_profile(tb, out_dir, logger):
     if prefix == 'userspace-rcu':
         prefix = 'urcu'
 
-    file_name = '{}-{}'.format(prefix, tb.version.base_version)
-
-    if tb.version.is_prerelease:
-        file_name += '-{}{}'.format(tb.version.pre[0], tb.version.pre[1])
-
-    file_name += '.yml'
-    path = os.path.join(out_dir, file_name)
-    logger.info('Writing profile `{}`.'.format(path))
+    path = os.path.join(out_dir, f'{prefix}-{tb.version}.yml')
+    logger.info(f'Writing profile `{path}`.')
 
     with open(path, 'w') as f:
         yaml.dump(profile, f)
@@ -138,4 +128,3 @@ def _create_profiles(out_dir):
 
 if __name__ == '__main__':
     _create_profiles(sys.argv[1])
-
