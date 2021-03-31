@@ -91,7 +91,7 @@ export MANPATH
 
 # Set new $PKG_CONFIG_PATH
 vlttng-save-env PKG_CONFIG_PATH
-PKG_CONFIG_PATH="$VLTTNG/lib/pkgconfig:$PKG_CONFIG_PATH"
+PKG_CONFIG_PATH="$VLTTNG/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PKG_CONFIG_PATH
 
 # Set $VLTTNG_CLASSPATH
