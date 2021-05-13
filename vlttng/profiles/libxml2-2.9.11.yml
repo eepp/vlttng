@@ -1,0 +1,4 @@
+projects:
+  libxml2:
+    configure: --without-coverage --with-threads --without-python
+    source: ftp://xmlsoft.org/libxml2/libxml2-2.9.11.tar.gz
