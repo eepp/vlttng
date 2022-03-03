@@ -27,7 +27,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'vlttng'
-version = '0.10.6'
+version = '0.10.7'
 description = 'Generator of LTTng virtual environment'
 license = 'MIT'
 authors = ['Philippe Proulx <eeppeliteloop@gmail.com>']
