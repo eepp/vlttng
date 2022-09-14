@@ -121,7 +121,7 @@ class Override:
     OP_REMOVE = 'remove'
 
     def __init__(self, path, op, rep):
-        if len(path) is 0:
+        if len(path) == 0:
             raise InvalidOverride('Empty override path')
 
         self._path = path
