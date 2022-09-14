@@ -29,7 +29,7 @@ projects:
     source: 'git://git.lttng.org/lttng-ust.git'
     configure: --enable-java-agent-jul --enable-java-agent-log4j --enable-python-agent
   popt:
-    source: 'http://rpm5.org/files/popt/popt-1.16.tar.gz'
+    source: 'http://ftp.rpm.org/popt/releases/historical/popt-1.16.tar.gz'
     configure: --without-libiconv-prefix --without-libintl-prefix
   tracecompass:
     source: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
