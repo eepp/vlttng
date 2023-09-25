@@ -318,6 +318,9 @@ used to create the virtual environment.
 
 `vlttng` passes its `--jobs` (`-j`) option as is to `make`.
 
+The default value of the `--jobs` option is the number of active CPUs on
+your system.
+
 == `activate` script options
 
 When you source the `activate` script, use the following environment
