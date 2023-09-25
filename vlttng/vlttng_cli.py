@@ -33,6 +33,11 @@ import os
 
 
 def _parse_args():
+    try:
+        default_jobs = len(os.sched_getaffinity(0))
+    except:
+        default_jobs = 1
+
     ap = argparse.ArgumentParser()
     ap.add_argument('-f', '--force', action='store_true',
                     help='force the virtual environment creation')
@@ -42,8 +47,8 @@ def _parse_args():
                     action='append',
                     help='ignore project PROJECT (may be repeated)')
     ap.add_argument('-j', '--jobs', nargs='?', const=None, metavar='JOBS',
-                    action='store', type=int,
-                    default=1, help='number of make jobs to run simultaneously')
+                    action='store', type=int, default=default_jobs,
+                    help='number of make jobs to run simultaneously instead of {}'.format(default_jobs))
     ap.add_argument('-l', '--list-default-profiles', action='store_true',
                     help='list default profile names and exit')
     ap.add_argument('-o', '--override', metavar='PROP',
