@@ -584,6 +584,11 @@ class VEnvCreator:
         # create build instructions for projects to build
         self._create_project_instructions()
 
+        # create activate script
+        # when a build fails, the activation scripts are
+        # still useful to enter the environment and investigate
+        self._create_activate()
+
         # build projects in this order
         self._build_project('urcu')
         self._build_project('popt')
@@ -598,9 +603,6 @@ class VEnvCreator:
         self._build_project('lttng-analyses')
         self._build_project('tracecompass')
         self._build_project('lttng-scope')
-
-        # create activate script
-        self._create_activate()
 
     def _create_activate(self):
         from vlttng.activate_template import activate_template
