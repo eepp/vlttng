@@ -412,6 +412,8 @@ class VEnvCreator:
             if '--enable-debug-info' in project.configure or '--disable-debug-info' not in project.configure:
                 check_dep('babeltrace2', 'elfutils')
 
+            self._check_man_pages('babeltrace2', projects['babeltrace2'])
+
         if 'lttng-tools' in projects:
             self._check_man_pages('LTTng-tools', projects['lttng-tools'])
 
