@@ -84,10 +84,11 @@ class _WizardState(enum.Enum):
     ASK_LTTNG_TOOLS_PYTHON = 7
     ASK_LTTNG_UST_JUL_AGENT = 8
     ASK_LTTNG_UST_LOG4J_AGENT = 9
-    ASK_LTTNG_UST_PYTHON_AGENT = 10
-    ASK_PYTHON_INTERPRETER = 11
-    ASK_PATH = 12
-    END = 13
+    ASK_LTTNG_UST_LOG4J2_AGENT = 10
+    ASK_LTTNG_UST_PYTHON_AGENT = 11
+    ASK_PYTHON_INTERPRETER = 12
+    ASK_PATH = 13
+    END = 14
 
 
 class _Wizard:
@@ -107,6 +108,7 @@ class _Wizard:
             _WizardState.ASK_LTTNG_TOOLS_PYTHON: self._state_ask_lttng_tools_python,
             _WizardState.ASK_LTTNG_UST_JUL_AGENT: self._state_ask_lttng_ust_jul_agent,
             _WizardState.ASK_LTTNG_UST_LOG4J_AGENT: self._state_ask_lttng_ust_log4j_agent,
+            _WizardState.ASK_LTTNG_UST_LOG4J2_AGENT: self._state_ask_lttng_ust_log4j2_agent,
             _WizardState.ASK_LTTNG_UST_PYTHON_AGENT: self._state_ask_lttng_ust_python_agent,
             _WizardState.ASK_PYTHON_INTERPRETER: self._state_ask_python_interpreter,
             _WizardState.ASK_PATH: self._state_ask_path,
@@ -410,7 +412,7 @@ the projects and features you need.
 
     def _state_ask_lttng_ust_log4j_agent(self):
         if 'lttng-ust' not in self._projects:
-            self._state = _WizardState.ASK_LTTNG_UST_PYTHON_AGENT
+            self._state = _WizardState.ASK_LTTNG_UST_LOG4J2_AGENT
             return
 
         print(_cquestion('Would you like to build the LTTng-UST log4j agent?'))
@@ -418,6 +420,20 @@ the projects and features you need.
 
         if self._get_yes_no(False):
             self._profiles.append('lttng-ust-log4j-agent')
+
+        print()
+        self._state = _WizardState.ASK_LTTNG_UST_LOG4J2_AGENT
+
+    def _state_ask_lttng_ust_log4j2_agent(self):
+        if 'lttng-ust' not in self._projects:
+            self._state = _WizardState.ASK_LTTNG_UST_PYTHON_AGENT
+            return
+
+        print(_cquestion('Would you like to build the LTTng-UST Log4j 2 agent?'))
+        print()
+
+        if self._get_yes_no(False):
+            self._profiles.append('lttng-ust-log4j2-agent')
 
         print()
         self._state = _WizardState.ASK_LTTNG_UST_PYTHON_AGENT

@@ -207,6 +207,10 @@ class _Runner:
                                                               _sq(output_name))
         self.run(cmd)
 
+    def unzip(self, path, output_name):
+        cmd = 'unzip -d {} {}'.format(_sq(output_name), _sq(path))
+        self.run(cmd)
+
     def rm_rf(self, path):
         # some basic protection
         no_rm_dirs = (
@@ -288,6 +292,11 @@ class _Paths:
     def log4j_jar(self):
         return os.path.join(self.share_java, 'log4j.jar')
 
+    @property
+    def log4j2_jars(self):
+        jars = ['log4j-api.jar', 'log4j-core.jar', 'log4j-1.2-api.jar']
+        return [os.path.join(self.share_java, 'log4j2', f) for f in jars]
+
     def project_src(self, name):
         return os.path.join(self.src, name)
 
@@ -309,6 +318,7 @@ class _ProjectInstructions:
 
 class VEnvCreator:
     _LOG4J_NAME = 'log4j-1.2.17'
+    _LOG4J2_NAME = 'log4j2-2.22.1'
 
     def __init__(self, path, profile, force, verbose, jobs, hide_export):
         self._paths = _Paths(os.path.abspath(path))
@@ -440,7 +450,7 @@ class VEnvCreator:
     def _create_project_instructions_lttng_ust(self, project):
         instructions = self._create_project_instructions_generic_autotools(project)
         instructions.add_env = {
-            'CLASSPATH': self._paths.log4j_jar,
+            'CLASSPATH': ":".join([self._paths.log4j_jar] + self._paths.log4j2_jars),
         }
 
         return instructions
@@ -729,6 +739,26 @@ class VEnvCreator:
             # install
             self._runner.cp_rv(os.path.join(log4j_name, log4j_jar),
                                self._paths.log4j_jar)
+
+        if '--enable-java-agent-all' in project.configure or '--enable-java-agent-log4j2' in project.configure:
+            log4j2_version = '2.22.1'
+            log4j2_name  = 'log4j-{}'.format(log4j2_version)
+            log4j2_zipfile = 'apache-{}-bin.zip'.format(log4j2_name)
+            _pinfo('Download Apache Log4j 2')
+            self._runner.cd(self._paths.src)
+            self._runner.wget('https://archive.apache.org/dist/logging/log4j/{}/{}'.format(log4j2_version,
+                                                                                           log4j2_zipfile),
+                              log4j2_zipfile)
+
+            # extract
+            self._runner.mkdir_p(log4j2_name)
+            self._runner.unzip(log4j2_zipfile, log4j2_name)
+
+            # install
+            self._runner.mkdir_p(os.path.dirname(self._paths.log4j2_jars[0]))
+            for dest_jar in self._paths.log4j2_jars:
+                src_jar = os.path.basename(dest_jar).replace('.jar', '-{}.jar'.format(log4j2_version))
+                self._runner.cp_rv(os.path.join(log4j2_name, src_jar), dest_jar)
 
         self._build_project('lttng-ust')
 
