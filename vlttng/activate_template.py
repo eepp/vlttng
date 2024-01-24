@@ -96,7 +96,11 @@ export PKG_CONFIG_PATH
 
 # Set $VLTTNG_CLASSPATH
 if [ $_vlttng_has_java = 1 ]; then
-    VLTTNG_CLASSPATH="$VLTTNG/usr/share/java/liblttng-ust-agent.jar:$VLTTNG/usr/share/java/log4j.jar"
+    VLTTNG_CLASSPATH="$VLTTNG/usr/share/java/liblttng-ust-agent.jar"
+    VLTTNG_CLASSPATH+=":$VLTTNG/usr/share/java/log4j.jar"
+    VLTTNG_CLASSPATH+=":$VLTTNG/usr/share/java/log4j2/log4j-api.jar"
+    VLTTNG_CLASSPATH+=":$VLTTNG/usr/share/java/log4j2/log4j-core.jar"
+    VLTTNG_CLASSPATH+=":$VLTTNG/usr/share/java/log4j2/log4j-1.2-api.jar"
     export VLTTNG_CLASSPATH
 fi
 
