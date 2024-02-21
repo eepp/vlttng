@@ -57,3 +57,7 @@ setuptools = '*'
 [tool.poetry.scripts]
 vlttng = 'vlttng.vlttng_cli:run'
 vlttng-quick = 'vlttng.vlttng_quick_cli:run'
+
+[tool.poetry.group.dev.dependencies]
+findtb = "^0.2.0"
+
