@@ -1,0 +1,3 @@
+projects:
+  babeltrace2:
+    configure: '--disable-man-pages'
