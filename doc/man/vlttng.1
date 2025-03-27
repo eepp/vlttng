@@ -536,13 +536,15 @@ to keep your current shell prompt after the activation\&.
 .sp
 If you use \fBsudo\fR when the virtual environment is activated, make sure to use its \fB--preserve-env\fR (\fB-E\fR) option so that the virtual environment is preserved when it executes the command\&.
 .sp
+Also use the \fBenv\fR command, setting the \fBPATH\fR variable to its current value because otherwise \fBsudo\fR won\(cqt find the command\&.
+.sp
 For example, to start a root LTTng session daemon which loads the LTTng kernel modules installed in the virtual environment:
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-$ sudo \-\-preserve\-env lttng\-sessiond \-\-daemonize
+$ sudo \-\-preserve\-env env PATH="$PATH" lttng\-sessiond \-\-daemonize
 .fi
 .if n \{\
 .RE

@@ -310,11 +310,14 @@ If you use `sudo` when the virtual environment is activated, make sure
 to use its `--preserve-env` (`-E`) option so that the virtual
 environment is preserved when it executes the command.
 
+Also use the `env` command, setting the `PATH` variable to its current
+value because otherwise `sudo` won't find the command.
+
 For example, to start a root LTTng session daemon which loads the LTTng
 kernel modules installed in the virtual environment:
 
 ----
-$ sudo --preserve-env lttng-sessiond --daemonize
+$ sudo --preserve-env env PATH="$PATH" lttng-sessiond --daemonize
 ----
 
 
