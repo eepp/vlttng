@@ -144,7 +144,7 @@ virt-env:
   SOME_PATH: /path/to/omg
 projects:
   lttng-tools:
-    source: 'git://git.lttng.org/lttng-tools.git'
+    source: 'https://git.lttng.org/lttng-tools.git'
     checkout: stable-2.11
     build-env:
       CC: clang
@@ -153,10 +153,10 @@ projects:
     source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.11.0.tar.bz2'
     configure: --enable-python-agent
   lttng-modules:
-    source: 'git://git.lttng.org/lttng-modules.git'
+    source: 'https://git.lttng.org/lttng-modules.git'
     checkout: stable-2.11
   urcu:
-    source: 'git://git.liburcu.org/userspace-rcu.git'
+    source: 'https://git.liburcu.org/userspace-rcu.git'
 
 A few things to note here:
 
@@ -241,10 +241,10 @@ projects:
     source: 'http://lttng.org/files/lttng-ust/lttng-ust-2.11.0.tar.bz2'
     configure: --enable-python-agent --enable-java-agent-jul
   lttng-modules:
-    source: 'git://git.lttng.org/lttng-modules.git'
+    source: 'https://git.lttng.org/lttng-modules.git'
     checkout: stable-2.11
   urcu:
-    source: 'git://git.liburcu.org/userspace-rcu.git'
+    source: 'https://git.liburcu.org/userspace-rcu.git'
 
 
 [[override]]

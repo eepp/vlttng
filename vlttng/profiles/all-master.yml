@@ -1,12 +1,12 @@
 projects:
   babeltrace2:
-    source: 'git://git.efficios.com/babeltrace.git'
+    source: 'https://git.efficios.com/babeltrace.git'
     configure: --enable-python-bindings --enable-debug-info
   elfutils:
     source: 'https://sourceware.org/elfutils/ftp/0.179/elfutils-0.179.tar.bz2'
     configure: --with-zlib --without-bzlib --with-lzma
   glib:
-    source: 'git://git.gnome.org/glib'
+    source: 'https://git.gnome.org/glib'
     configure: >
       --with-pcre=internal --disable-xattr --disable-selinux
       --disable-dtrace --disable-systemtap --disable-gtk-doc
@@ -21,19 +21,19 @@ projects:
     source: 'https://github.com/lttng/lttng-analyses.git'
     checkout: master
   lttng-modules:
-    source: 'git://git.lttng.org/lttng-modules.git'
+    source: 'https://git.lttng.org/lttng-modules.git'
   lttng-tools:
-    source: 'git://git.lttng.org/lttng-tools.git'
+    source: 'https://git.lttng.org/lttng-tools.git'
     configure: --enable-python-bindings
   lttng-ust:
-    source: 'git://git.lttng.org/lttng-ust.git'
+    source: 'https://git.lttng.org/lttng-ust.git'
     configure: --enable-java-agent-jul --enable-java-agent-log4j --enable-python-agent
   popt:
     source: 'http://ftp.rpm.org/popt/releases/historical/popt-1.16.tar.gz'
     configure: --without-libiconv-prefix --without-libintl-prefix
   tracecompass:
-    source: 'git://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
+    source: 'https://git.eclipse.org/gitroot/tracecompass/org.eclipse.tracecompass.git'
   lttng-scope:
     source: 'https://github.com/lttng/lttng-scope.git'
   urcu:
-    source: 'git://git.liburcu.org/userspace-rcu.git'
+    source: 'https://git.liburcu.org/userspace-rcu.git'
