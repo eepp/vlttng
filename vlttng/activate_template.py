@@ -46,11 +46,11 @@ activate_template = '''# The MIT License (MIT)
 # LTTng virtual environment.
 
 vlttng-save-env() {{
-    local varname="$1"
-    local issetvarname="_VLTTNG_${{varname}}_SET"
-    local oldvarname="_VLTTNG_OLD_$varname"
-    eval local issetvalue="\${{$varname+set}}"
-    eval local varvalue="\$$varname"
+    local varname=$1
+    local issetvarname=_VLTTNG_${{varname}}_SET
+    local oldvarname=_VLTTNG_OLD_$varname
+    eval local issetvalue='$'"{{$varname+set}}"
+    eval local varvalue='$'"$varname"
     eval "$issetvarname"='$issetvalue'
     eval "$oldvarname"='$varvalue'
 }}
@@ -64,38 +64,38 @@ _vlttng_has_lttng_scope={has_lttng_scope}
 VLTTNG={venv_path}
 export VLTTNG
 
-# Set new $PATH
+# Set new `PATH`
 vlttng-save-env PATH
 PATH="$VLTTNG/usr/bin:$PATH"
 export PATH
 
-# Set new $LD_LIBRARY_PATH
+# Set new `LD_LIBRARY_PATH`
 vlttng-save-env LD_LIBRARY_PATH
 LD_LIBRARY_PATH="$VLTTNG/usr/lib:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH
 
-# Set new $CPPFLAGS
+# Set new `CPPFLAGS`
 vlttng-save-env CPPFLAGS
 CPPFLAGS="-I$VLTTNG/usr/include $CPPFLAGS"
 export CPPFLAGS
 
-# Set new $LDFLAGS
+# Set new `LDFLAGS`
 vlttng-save-env LDFLAGS
 LDFLAGS="-L$VLTTNG/usr/lib $LDFLAGS"
 export LDFLAGS
 
-# Set new $MANPATH
+# Set new `MANPATH
 vlttng-save-env MANPATH
 MANPATH="$VLTTNG/usr/share/man:$MANPATH"
 export MANPATH
 
-# Set new $PKG_CONFIG_PATH
+# Set new `PKG_CONFIG_PATH`
 vlttng-save-env PKG_CONFIG_PATH
 PKG_CONFIG_PATH="$VLTTNG/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PKG_CONFIG_PATH
 
-# Set $VLTTNG_CLASSPATH
-if [ $_vlttng_has_java = 1 ]; then
+# Set `VLTTNG_CLASSPATH`
+if ((_vlttng_has_java)); then
     VLTTNG_CLASSPATH="$VLTTNG/usr/share/java/liblttng-ust-agent.jar"
     VLTTNG_CLASSPATH+=":$VLTTNG/usr/share/java/log4j.jar"
     VLTTNG_CLASSPATH+=":$VLTTNG/usr/share/java/log4j2/log4j-api.jar"
@@ -104,20 +104,20 @@ if [ $_vlttng_has_java = 1 ]; then
     export VLTTNG_CLASSPATH
 fi
 
-# Save old $PYTHONPATH
+# Save old `PYTHONPATH`
 vlttng-save-env PYTHONPATH
 
-# Add Python site packages to $PYTHONPATH
-while read _vlttng_python_root; do
+# Add Python site packages to `PYTHONPATH`
+while read -r _vlttng_python_root; do
     # Installed Python packages directory, if available
-    _vlttng_python_packages="$(find "$_vlttng_python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)"
+    _vlttng_python_packages=$(find "$_vlttng_python_root" -maxdepth 1 -iname '*-packages' -a -type d | head -n1)
 
-    if [ -n "$_vlttng_python_packages" ]; then
-        # Set new $PYTHONPATH
-        if [ -z "$PYTHONPATH" ]; then
-            PYTHONPATH="$_vlttng_python_packages"
+    if [[ -n "$_vlttng_python_packages" ]]; then
+        # Set new `PYTHONPATH`
+        if [[ -z "$PYTHONPATH" ]]; then
+            PYTHONPATH=$_vlttng_python_packages
         else
-            PYTHONPATH="$_vlttng_python_packages:$PYTHONPATH"
+            PYTHONPATH=$_vlttng_python_packages:$PYTHONPATH
         fi
 
         export PYTHONPATH
@@ -128,28 +128,29 @@ done < <(find "$VLTTNG/usr/lib" -maxdepth 1 -iname 'python*' -a -type d)
 
 unset _vlttng_python_root
 
-# Set new $LTTNG_HOME
+# Set new `LTTNG_HOME`
 vlttng-save-env LTTNG_HOME
 LTTNG_HOME="$VLTTNG/home"
 export LTTNG_HOME
 
-# Save old $MODPROBE_OPTIONS
+# Save old `MODPROBE_OPTIONS`
 vlttng-save-env MODPROBE_OPTIONS
 
-if [ $_vlttng_has_modules = 1 ]; then
-    if [ "$VLTTNG_NO_RMMOD" != 1 ]; then
+if ((_vlttng_has_modules)); then
+    if [[ $VLTTNG_NO_RMMOD != 1 ]]; then
         _vlttng_removed_all_modules=0
 
         # Try to remove all the LTTng kernel modules
-        while [ $_vlttng_removed_all_modules -eq 0 ]; do
+        while ((! _vlttng_removed_all_modules)); do
             _vlttng_one_module=0
 
-            for _vlttng_module in $(cat /proc/modules | cut -d' ' -f1 | grep '^lttng'); do
+            # shellcheck disable=SC2013
+            for _vlttng_module in $(cut -d' ' -f1 < /proc/modules | grep '^lttng'); do
                 _vlttng_one_module=1
-                sudo rmmod $_vlttng_module 2>/dev/null
+                sudo rmmod "$_vlttng_module" 2>/dev/null
             done
 
-            if [ $_vlttng_one_module -eq 0 ]; then
+            if ((! _vlttng_one_module)); then
                 _vlttng_removed_all_modules=1
             fi
         done
@@ -162,10 +163,10 @@ if [ $_vlttng_has_modules = 1 ]; then
     export MODPROBE_OPTIONS="-d '$VLTTNG/usr'"
 fi
 
-# Define the lttng-scope function to launch the JAR
-if [ $_vlttng_has_lttng_scope = 1 ]; then
+# Define the lttng-scope() function to launch the JAR
+if ((_vlttng_has_lttng_scope)); then
     lttng-scope() {{
-        java -jar "$VLTTNG/usr/opt/lttng-scope.jar" $@
+        java -jar "$VLTTNG/usr/opt/lttng-scope.jar" "$@"
     }}
 fi
 
@@ -176,13 +177,13 @@ fi
 vlttng-save-env PS1
 
 # Set new prompt
-if [ "$VLTTNG_NO_PROMPT" != 1 ]; then
+if [[ "$VLTTNG_NO_PROMPT" != 1 ]]; then
     PS1="[$(basename "$VLTTNG")] $PS1"
     export PS1
 fi
 
 # Rehash
-if [ -n "${{BASH-}}" ] || [ -n "${{ZSH_VERSION-}}" ]; then
+if [[ -n "${{BASH-}}" || -n "${{ZSH_VERSION-}}" ]]; then
     hash -r 2>/dev/null
 fi
 
@@ -191,13 +192,14 @@ unset _vlttng_has_java
 unset _vlttng_has_lttng_scope
 
 vlttng-restore-env() {{
-    local varname="$1"
-    local issetvarname="_VLTTNG_${{varname}}_SET"
-    local oldvarname="_VLTTNG_OLD_$varname"
-    eval local issetvalue="\$$issetvarname"
-    eval local oldvarvalue="\$$oldvarname"
+    local varname=$1
+    local issetvarname=_VLTTNG_${{varname}}_SET
+    local oldvarname=_VLTTNG_OLD_$varname
+    eval local issetvalue='$'"$issetvarname"
+    eval local oldvarvalue='$'"$oldvarname"
 
-    if [ "$issetvalue" = 'set' ]; then
+    # shellcheck disable=SC2154
+    if [[ "$issetvalue" == set ]]; then
         eval "$varname"='$oldvarvalue'
     else
         eval unset "$varname"

@@ -48,7 +48,7 @@ update_template = '''#!/usr/bin/env bash
 # within this virtual environment.
 
 # Make sure we're in the right current working directory
-cd {src_path}
+cd {src_path} || exit 1
 
 # Uninstall {name}
 {uninstall_lines}
@@ -56,10 +56,9 @@ cd {src_path}
 # Update the code
 git clean -xdf
 git fetch origin
-git checkout origin/{gitref}
 
-if [ $? -ne 0 ]; then
-    echo 'Error: Cannot checkout origin/{gitref}'
+if ! git checkout origin/{gitref}; then
+    echo 'Error: Cannot checkout origin/{gitref}' >&2
     exit 1
 fi
 

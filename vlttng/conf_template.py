@@ -48,7 +48,7 @@ conf_template = '''#!/usr/bin/env bash
 # within this virtual environment.
 
 # Make sure we're in the right current working directory
-cd {src_path}
+cd {src_path} || exit 1
 
 # Set the original build-time environment
 {exports}
