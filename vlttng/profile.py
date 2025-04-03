@@ -270,13 +270,12 @@ def _merge_nodes(base, patch):
                     base[k] = v
 
 
-def _from_yaml_files(paths, ignored_projects, overrides, verbose):
+def _from_yaml_profiles(yaml_profiles, ignored_projects, overrides, verbose):
     root_node = {}
 
-    for path in paths:
-        with open(path) as f:
-            patch_root_node = yaml.load(f, Loader=yaml.FullLoader)
-            _merge_nodes(root_node, patch_root_node)
+    for yaml_profile in yaml_profiles:
+        patch_root_node = yaml.load(yaml_profile, Loader=yaml.FullLoader)
+        _merge_nodes(root_node, patch_root_node)
 
     for override in overrides:
         override.apply(root_node)
@@ -306,9 +305,9 @@ def _from_yaml_files(paths, ignored_projects, overrides, verbose):
     return Profile(virt_env, build_env, projects)
 
 
-def from_yaml_files(paths, ignored_projects, overrides, verbose):
+def from_yaml_profiles(yaml_profiles, ignored_projects, overrides, verbose):
     try:
-        return _from_yaml_files(paths, ignored_projects, overrides, verbose)
+        return _from_yaml_profiles(yaml_profiles, ignored_projects, overrides, verbose)
     except (UnknownSourceFormat, InvalidProfile):
         raise
     except Exception as e:

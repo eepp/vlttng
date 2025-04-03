@@ -21,8 +21,8 @@
 # THE SOFTWARE.
 
 from vlttng.utils import perror
+import importlib.resources
 import vlttng.profile
-import pkg_resources
 import vlttng.venv
 import argparse
 import platform
@@ -85,20 +85,16 @@ def _parse_args():
 
 
 def _find_profile(profile_name):
-    try:
-        filename = os.path.join(vlttng._PROFILES_DIRNAME,
-                                '{}.yml'.format(profile_name))
-        filename = pkg_resources.resource_filename(__name__, filename)
+    trav_res = importlib.resources.files() / vlttng._PROFILES_DIRNAME / '{}.yml'.format(profile_name)
 
-        if not os.path.isfile(filename):
-            filename = profile_name
-    except:
-        filename = profile_name
+    if trav_res.is_file():
+        return trav_res.read_text()
+    else:
+        if os.path.isfile(profile_name):
+            perror('Cannot find profile "{}"'.format(profile_name))
 
-    if not os.path.isfile(filename):
-        perror('Cannot find profile "{}"'.format(profile_name))
-
-    return filename
+        with open(profile_name) as f:
+            return f.read()
 
 
 def _create_overrides(override_args):
@@ -145,7 +141,7 @@ def _create_overrides(override_args):
 
 
 def _create_profile(profile_names, ignored_projects, override_args, verbose):
-    filenames = []
+    yaml_profiles = []
 
     try:
         overrides = _create_overrides(override_args)
@@ -153,11 +149,11 @@ def _create_profile(profile_names, ignored_projects, override_args, verbose):
         perror('Cannot parse overrides: {}'.format(e))
 
     for profile_name in profile_names:
-        filenames.append(_find_profile(profile_name))
+        yaml_profiles.append(_find_profile(profile_name))
 
     try:
-        profile = vlttng.profile.from_yaml_files(filenames, ignored_projects,
-                                                 overrides, verbose)
+        profile = vlttng.profile.from_yaml_profiles(yaml_profiles, ignored_projects,
+                                                    overrides, verbose)
     except vlttng.profile.ParseError:
         perror('Malformed YAML profile')
     except vlttng.profile.UnknownSourceFormat as e:
@@ -180,12 +176,14 @@ def _register_sigint():
 
 
 def _list_default_profiles():
-    dirname = pkg_resources.resource_filename(__name__,
-                                              vlttng._PROFILES_DIRNAME)
+    filenames = []
 
-    for filename in sorted(os.listdir(dirname)):
-        if filename.endswith('.yml'):
-            print(filename[:-4])
+    for res in (importlib.resources.files() / vlttng._PROFILES_DIRNAME).iterdir():
+        if res.is_file() and res.name.endswith('.yml'):
+            filenames.append(res.name)
+
+    for filename in sorted(filenames):
+        print(filename[:-4])
 
 
 def run():

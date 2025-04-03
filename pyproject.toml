@@ -52,7 +52,6 @@ packages = [{include = 'vlttng'}]
 python = '^3.6'
 termcolor = '^1.1'
 pyyaml = '^6'
-setuptools = '*'
 
 [tool.poetry.scripts]
 vlttng = 'vlttng.vlttng_cli:run'

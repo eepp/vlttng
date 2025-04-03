@@ -23,7 +23,7 @@
 from collections import namedtuple
 from vlttng.utils import perror
 from termcolor import colored
-import pkg_resources
+import importlib.resources
 import argparse
 import platform
 import vlttng
@@ -144,20 +144,22 @@ class _Wizard:
             'urcu': [],
         }
 
-        dirname = pkg_resources.resource_filename(__name__,
-                                                  vlttng._PROFILES_DIRNAME)
+        filenames = []
 
-        for filename in sorted(os.listdir(dirname)):
-            if filename.endswith('.yml'):
-                profile = filename[:-4]
+        for res in (importlib.resources.files() / vlttng._PROFILES_DIRNAME).iterdir():
+            if res.is_file() and res.name.endswith('.yml'):
+                filenames.append(res.name)
 
-                if not re.match(r'^.+-\d+(\.\d+)*$', profile):
-                    continue
+        for filename in sorted(filenames):
+            profile = filename[:-4]
 
-                for project_name in self._project_name_to_versions:
-                    if profile.startswith(project_name + '-'):
-                        profile_suffix = profile[len(project_name) + 1:]
-                        self._project_name_to_versions[project_name].append(profile_suffix)
+            if not re.match(r'^.+-\d+(\.\d+)*$', profile):
+                continue
+
+            for project_name in self._project_name_to_versions:
+                if profile.startswith(project_name + '-'):
+                    profile_suffix = profile[len(project_name) + 1:]
+                    self._project_name_to_versions[project_name].append(profile_suffix)
 
     def _handle_state(self):
         self._state_handlers[self._state]()
