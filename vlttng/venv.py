@@ -726,7 +726,7 @@ class VEnvCreator:
             log4j1_jar = '{}.jar'.format(log4j1_name)
             _pinfo('Download Apache log4j')
             self._runner.cd(self._paths.src)
-            self._runner.wget('http://apache.mirror.gtcomm.net/logging/log4j/1.2.17/{}'.format(log4j1_tarball),
+            self._runner.wget('https://archive.apache.org/dist/logging/log4j/1.2.17/{}'.format(log4j1_tarball),
                               log4j1_tarball)
 
             # extract
