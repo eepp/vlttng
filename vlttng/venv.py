@@ -450,6 +450,7 @@ class VEnvCreator:
         instructions = self._create_project_instructions_generic_autotools(project)
         instructions.add_env = {
             'CLASSPATH': ':'.join([self._paths.log4j1_jar] + self._paths.log4j2_jars),
+            'CMAKE_POLICY_VERSION_MINIMUM': '3.5',
         }
 
         return instructions
