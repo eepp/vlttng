@@ -723,22 +723,16 @@ class VEnvCreator:
             return
 
         if '--enable-java-agent-all' in project.configure or re.search(r'--enable-java-agent-log4j\b', project.configure):
-            # get Apache log4j 1.2
-            log4j1_name = 'log4j-1.2.17'
-            log4j1_tarball = '{}.tar.gz'.format(log4j1_name)
-            log4j1_jar = '{}.jar'.format(log4j1_name)
-            _pinfo('Download Apache log4j')
+            # get Reload4j
+            reload4j_version='1.2.26'
+            reload4j_jar = 'reload4j-{}.jar'.format(reload4j_version)
+            _pinfo('Download Reload4j')
             self._runner.cd(self._paths.src)
-            self._runner.wget('https://archive.apache.org/dist/logging/log4j/1.2.17/{}'.format(log4j1_tarball),
-                              log4j1_tarball)
-
-            # extract
-            self._runner.mkdir_p(log4j1_name)
-            self._runner.tar_x(log4j1_tarball, log4j1_name)
+            self._runner.wget('https://repo1.maven.org/maven2/ch/qos/reload4j/reload4j/{v}/reload4j-{v}.jar'.format(v=reload4j_version),
+                              reload4j_jar)
 
             # install
-            self._runner.cp_rv(os.path.join(log4j1_name, log4j1_jar),
-                               self._paths.log4j1_jar)
+            self._runner.cp_rv(reload4j_jar, self._paths.log4j1_jar)
 
         if '--enable-java-agent-all' in project.configure or '--enable-java-agent-log4j2' in project.configure:
             # get Apache Log4j 2.24
