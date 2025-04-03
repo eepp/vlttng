@@ -36,4 +36,4 @@ projects:
   lttng-scope:
     source: 'https://github.com/lttng/lttng-scope.git'
   urcu:
-    source: 'https://git.liburcu.org/userspace-rcu.git'
+    source: 'https://git.lttng.org/userspace-rcu.git'

@@ -1,4 +1,4 @@
 projects:
   urcu:
-    source: 'https://git.liburcu.org/userspace-rcu.git'
+    source: 'https://git.lttng.org/userspace-rcu.git'
     checkout: stable-0.7
