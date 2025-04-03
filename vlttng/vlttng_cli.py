@@ -90,7 +90,7 @@ def _find_profile(profile_name):
     if trav_res.is_file():
         return trav_res.read_text()
     else:
-        if os.path.isfile(profile_name):
+        if not os.path.isfile(profile_name):
             perror('Cannot find profile "{}"'.format(profile_name))
 
         with open(profile_name) as f:
