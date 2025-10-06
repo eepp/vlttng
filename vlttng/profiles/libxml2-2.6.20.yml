@@ -1,0 +1,4 @@
+projects:
+  libxml2:
+    configure: --without-coverage --with-threads --without-python
+    source: https://download.gnome.org/sources/libxml2/2.6/libxml2-2.6.20.tar.gz

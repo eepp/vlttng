@@ -12,7 +12,7 @@ def _find_tarballs(logger):
         'babeltrace2': 'https://www.efficios.com/files/babeltrace/',
         'elfutils': 'https://sourceware.org/elfutils/ftp/',
         'glib': 'https://ftp.gnome.org/pub/gnome/sources/glib/',
-        'libxml2': 'ftp://xmlsoft.org/libxml2/',
+        'libxml2': 'https://download.gnome.org/sources/libxml2/',
         'lttng-modules': 'https://lttng.org/files/lttng-modules/',
         'lttng-tools': 'https://lttng.org/files/lttng-tools/',
         'lttng-ust': 'https://lttng.org/files/lttng-ust/',
